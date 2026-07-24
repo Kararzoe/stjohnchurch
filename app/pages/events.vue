@@ -1,0 +1,98 @@
+<template>
+  <!-- Hero -->
+  <section class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 parallax-hero"
+      style="background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1800&q=80')" />
+    <div class="absolute inset-0 bg-navy/80" />
+    <div class="relative z-10 text-center text-white px-6">
+      <span class="section-label">Parish Life</span>
+      <h1 class="font-playfair text-6xl md:text-7xl font-black">Events</h1>
+      <p class="text-gray-300 mt-4 text-lg">Stay connected with our community</p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
+    </div>
+  </section>
+
+  <section class="py-24 px-6 bg-cream">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div
+        v-for="(e, i) in events"
+        :key="e.title"
+        :class="`reveal delay-${(i % 3 + 1) * 100}`"
+      >
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl hover:border-gold/30 hover:-translate-y-2 transition-all duration-400 h-full flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img :src="e.image" :alt="e.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
+            <div class="absolute top-4 left-4 bg-navy/90 backdrop-blur-sm text-white rounded-2xl px-3 py-2 text-center min-w-[56px]">
+              <p class="text-gold-light text-xs font-black tracking-widest">{{ e.date.month }}</p>
+              <p class="font-playfair text-3xl font-black leading-none">{{ e.date.day }}</p>
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="font-playfair font-bold text-navy text-xl mb-1 group-hover:text-gold transition-colors">{{ e.title }}</h3>
+            <p class="text-xs text-gold font-semibold mb-1">{{ e.time }}</p>
+            <p class="text-xs text-gray-400 mb-3 flex items-center gap-1">📍 {{ e.location }}</p>
+            <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ e.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+useScrollReveal()
+
+const events = [
+  {
+    date: { month: 'JUL', day: '20' },
+    title: 'Parish Picnic',
+    time: 'After 11:00 AM Mass',
+    location: 'Church Grounds',
+    desc: 'Bring the whole family for food, games, and fellowship after the 11 AM Mass.',
+    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
+  },
+  {
+    date: { month: 'JUL', day: '27' },
+    title: 'Youth Group Retreat',
+    time: 'Friday 6 PM – Sunday 2 PM',
+    location: 'Camp Lumen Christi',
+    desc: 'A weekend of prayer, community, and fun for high school students. Register by July 21.',
+    image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80',
+  },
+  {
+    date: { month: 'AUG', day: '3' },
+    title: 'Back-to-School Blessing',
+    time: 'All Sunday Masses',
+    location: 'Main Church',
+    desc: 'Students, teachers, and school staff will receive a special blessing at all Masses.',
+    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80',
+  },
+  {
+    date: { month: 'AUG', day: '10' },
+    title: 'Knights of Columbus Breakfast',
+    time: '8:00 AM – 12:00 PM',
+    location: 'Parish Hall',
+    desc: 'Monthly pancake breakfast hosted by the Knights of Columbus. All are welcome.',
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+  },
+  {
+    date: { month: 'AUG', day: '17' },
+    title: 'Faith Formation Registration',
+    time: '9:00 AM – 1:00 PM',
+    location: 'Parish Office',
+    desc: 'Register children and youth for the upcoming faith formation year.',
+    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80',
+  },
+  {
+    date: { month: 'SEP', day: '7' },
+    title: 'Parish Mission',
+    time: '7:00 PM nightly (Mon–Wed)',
+    location: 'Main Church',
+    desc: 'Three evenings of renewal and reflection led by a guest missionary speaker.',
+    image: 'https://images.unsplash.com/photo-1438032005730-c779502df39b?w=600&q=80',
+  },
+]
+</script>
