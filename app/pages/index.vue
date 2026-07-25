@@ -57,12 +57,6 @@
       </div>
     </div>
 
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/50 animate-bounce">
-      <span class="text-xs tracking-widest uppercase">Scroll</span>
-      <span>↓</span>
-    </div>
-
     <!-- Wave -->
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
