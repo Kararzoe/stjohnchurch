@@ -25,10 +25,11 @@
       </div>
 
       <p class="section-label text-center animate-fade-in">Welcome to</p>
-      <h1 class="font-playfair text-6xl md:text-8xl font-black text-white leading-none mb-4 animate-fade-in">
-        St. John
+      <h1 class="font-playfair text-5xl md:text-7xl font-black text-white leading-none mb-4 animate-fade-in">
+        St. John of the Cross
         <span class="block gold-text">Catholic Church</span>
       </h1>
+      <p class="text-gold-light/80 text-sm uppercase tracking-widest mb-3 animate-fade-in">Mararaba, Nasarawa State</p>
       <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in">
         A community of faith, hope, and love — gathering at the table of the Lord
         and serving our neighbors with joy.
@@ -98,7 +99,7 @@
   <!-- ── ABOUT BANNER ── -->
   <section class="relative py-32 px-6 overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1800&q=80')" />
+      style="background-image: url('/church-4.jpg')" />
     <div class="absolute inset-0 bg-navy/80" />
     <div class="relative z-10 max-w-4xl mx-auto text-center text-white">
       <span class="section-label reveal">Our Parish</span>
@@ -239,21 +240,21 @@ const events = [
     title: 'Parish Picnic',
     time: 'After 11:00 AM Mass',
     desc: 'Bring the whole family for food, games, and fellowship after the 11 AM Mass.',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
+    image: '/church-3.jpg',
   },
   {
     date: { month: 'JUL', day: '27' },
     title: 'Youth Group Retreat',
     time: 'Friday 6 PM – Sunday 2 PM',
     desc: 'A weekend of prayer, community, and fun for high school students.',
-    image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80',
+    image: '/church-5.jpg',
   },
   {
     date: { month: 'AUG', day: '3' },
     title: 'Back-to-School Blessing',
     time: 'All Sunday Masses',
     desc: 'Students and teachers will receive a special blessing at all Masses.',
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80',
+    image: '/church-6.jpg',
   },
 ]
 
@@ -269,11 +270,14 @@ const ministries = [
 ]
 
 const galleryImages = [
-  'https://images.unsplash.com/photo-1548625149-720754874e4e?w=600&q=70',
-  'https://images.unsplash.com/photo-1438032005730-c779502df39b?w=600&q=70',
-  'https://images.unsplash.com/photo-1519817650390-64a93db51149?w=600&q=70',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=70',
-  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=70',
+  '/church-interior.jpg',
+  '/church-1.jpg',
+  '/church-2.jpg',
+  '/church-3.jpg',
+  '/church-4.jpg',
+  '/church-5.jpg',
+  '/church-6.jpg',
+  '/church-7.jpg',
 ]
 </script>
 

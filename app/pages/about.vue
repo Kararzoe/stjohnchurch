@@ -32,7 +32,7 @@
       <div class="reveal-right">
         <div class="relative">
           <img
-            src="https://images.unsplash.com/photo-1548625149-720754874e4e?w=800&q=80"
+            src="/church-2.jpg"
             alt="Church interior"
             class="rounded-2xl shadow-2xl w-full h-80 object-cover"
           />
@@ -65,7 +65,7 @@
       <div class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
         <div class="md:w-64 shrink-0">
           <img
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+            src="/church-10.jpg"
             alt="Pastor"
             class="w-full h-64 md:h-full object-cover"
           />
@@ -87,7 +87,7 @@
   <!-- Mission -->
   <section class="relative py-24 px-6 overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1800&q=80')" />
+      style="background-image: url('/church-4.jpg')" />
     <div class="absolute inset-0 bg-navy/85" />
     <div class="relative z-10 max-w-3xl mx-auto text-center text-white reveal">
       <span class="section-label">Our Mission</span>

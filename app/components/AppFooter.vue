@@ -8,12 +8,12 @@
             <span class="text-gold-light text-lg">✝</span>
           </div>
           <div>
-            <p class="text-white font-playfair font-bold text-lg leading-tight">St. John</p>
-            <p class="text-gold-light text-xs tracking-widest uppercase">Catholic Church</p>
+            <p class="text-white font-playfair font-bold text-lg leading-tight">St. John of the Cross</p>
+            <p class="text-gold-light text-xs tracking-widest uppercase">Catholic Church · Mararaba</p>
           </div>
         </div>
         <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
-          A welcoming community rooted in faith, nourished by the sacraments, and called to serve one another in love.
+          A welcoming community rooted in faith, nourished by the sacraments, and called to serve — Mararaba, Nasarawa State.
         </p>
         <div class="flex gap-3 mt-5">
           <a v-for="s in socials" :key="s.label" :href="s.href"
@@ -42,22 +42,22 @@
         <ul class="space-y-3 text-sm">
           <li class="flex items-start gap-2">
             <span class="text-gold-light mt-0.5">📍</span>
-            <span>123 Church Street<br>Your City, ST 00000</span>
+            <span>Mararaba, Nasarawa State<br>Nigeria</span>
           </li>
           <li class="flex items-center gap-2">
             <span class="text-gold-light">📞</span>
-            (555) 123-4567
+            +234 000 000 0000
           </li>
           <li class="flex items-center gap-2">
             <span class="text-gold-light">✉️</span>
-            info@stjohncatholic.org
+            info@stjohnofthecross.org
           </li>
         </ul>
       </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-6 mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-gray-500">
-      <p>© {{ new Date().getFullYear() }} St. John Catholic Church. All rights reserved.</p>
+      <p>© {{ new Date().getFullYear() }} St. John of the Cross Catholic Church, Mararaba. All rights reserved.</p>
       <p>Built with ❤️ for our parish community</p>
     </div>
   </footer>
@@ -66,9 +66,13 @@
 <script setup lang="ts">
 const links = [
   { to: '/about', label: 'About Us' },
+  { to: '/clergy', label: 'Clergy' },
   { to: '/mass-times', label: 'Mass Times' },
-  { to: '/events', label: 'Events' },
   { to: '/ministries', label: 'Ministries' },
+  { to: '/events', label: 'Events' },
+  { to: '/news', label: 'News' },
+  { to: '/gallery', label: 'Gallery' },
+  { to: '/elections', label: 'Elections' },
   { to: '/contact', label: 'Contact' },
   { to: '/donate', label: 'Donate' },
 ]

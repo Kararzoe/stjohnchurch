@@ -52,7 +52,7 @@ const events = [
     time: 'After 11:00 AM Mass',
     location: 'Church Grounds',
     desc: 'Bring the whole family for food, games, and fellowship after the 11 AM Mass.',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80',
+    image: '/church-3.jpg',
   },
   {
     date: { month: 'JUL', day: '27' },
@@ -60,7 +60,7 @@ const events = [
     time: 'Friday 6 PM – Sunday 2 PM',
     location: 'Camp Lumen Christi',
     desc: 'A weekend of prayer, community, and fun for high school students. Register by July 21.',
-    image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=600&q=80',
+    image: '/church-5.jpg',
   },
   {
     date: { month: 'AUG', day: '3' },
@@ -68,7 +68,7 @@ const events = [
     time: 'All Sunday Masses',
     location: 'Main Church',
     desc: 'Students, teachers, and school staff will receive a special blessing at all Masses.',
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80',
+    image: '/church-6.jpg',
   },
   {
     date: { month: 'AUG', day: '10' },
@@ -76,7 +76,7 @@ const events = [
     time: '8:00 AM – 12:00 PM',
     location: 'Parish Hall',
     desc: 'Monthly pancake breakfast hosted by the Knights of Columbus. All are welcome.',
-    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80',
+    image: '/church-7.jpg',
   },
   {
     date: { month: 'AUG', day: '17' },
@@ -84,7 +84,7 @@ const events = [
     time: '9:00 AM – 1:00 PM',
     location: 'Parish Office',
     desc: 'Register children and youth for the upcoming faith formation year.',
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80',
+    image: '/church-8.jpg',
   },
   {
     date: { month: 'SEP', day: '7' },
@@ -92,7 +92,7 @@ const events = [
     time: '7:00 PM nightly (Mon–Wed)',
     location: 'Main Church',
     desc: 'Three evenings of renewal and reflection led by a guest missionary speaker.',
-    image: 'https://images.unsplash.com/photo-1438032005730-c779502df39b?w=600&q=80',
+    image: '/church-9.jpg',
   },
 ]
 </script>

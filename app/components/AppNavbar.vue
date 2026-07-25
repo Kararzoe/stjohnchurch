@@ -12,8 +12,8 @@
           <span class="text-gold-light text-lg">✝</span>
         </div>
         <div>
-          <p class="text-white font-playfair font-bold text-lg leading-tight">St. John</p>
-          <p class="text-gold-light text-xs tracking-widest uppercase">Catholic Church</p>
+          <p class="text-white font-playfair font-bold text-lg leading-tight">St. John of the Cross</p>
+          <p class="text-gold-light text-xs tracking-widest uppercase">Catholic Church · Mararaba</p>
         </div>
       </NuxtLink>
 
@@ -78,9 +78,13 @@ const menuOpen = ref(false)
 const links = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
+  { to: '/clergy', label: 'Clergy' },
   { to: '/mass-times', label: 'Mass Times' },
-  { to: '/events', label: 'Events' },
   { to: '/ministries', label: 'Ministries' },
+  { to: '/events', label: 'Events' },
+  { to: '/news', label: 'News' },
+  { to: '/gallery', label: 'Gallery' },
+  { to: '/elections', label: 'Elections' },
   { to: '/contact', label: 'Contact' },
 ]
 </script>
