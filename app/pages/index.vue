@@ -78,28 +78,50 @@
 
   <!-- ── MASS TIMES ── -->
   <section class="py-16 md:py-24 px-4 bg-cream">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-10 md:mb-14 reveal">
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-10 reveal">
         <span class="section-label">Join Us</span>
         <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Mass Schedule</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div v-for="(m, i) in massTimes" :key="m.day" :class="`reveal delay-${(i + 1) * 100}`">
-          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 stained-glow hover:border-gold/30 hover:-translate-y-2 transition-all duration-300 group h-full">
-            <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center mb-4 group-hover:bg-gold transition-colors">
-              <span class="text-gold group-hover:text-white text-lg transition-colors">🕐</span>
+
+      <div class="space-y-3 reveal">
+        <div
+          v-for="(m, i) in massTimes"
+          :key="m.day"
+          class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:border-gold/30"
+        >
+          <!-- Header -->
+          <button
+            @click="openMass = openMass === i ? null : i"
+            class="w-full flex items-center justify-between px-5 py-4 group"
+          >
+            <div class="flex items-center gap-3">
+              <div :class="['w-9 h-9 rounded-xl flex items-center justify-center transition-colors duration-300', openMass === i ? 'bg-gold' : 'bg-gold/10 group-hover:bg-gold/20']">
+                <span class="text-base">🕐</span>
+              </div>
+              <span class="font-playfair font-bold text-navy text-base">{{ m.day }}</span>
             </div>
-            <h3 class="font-playfair font-bold text-navy text-lg mb-3">{{ m.day }}</h3>
-            <ul class="space-y-1.5">
-              <li v-for="t in m.times" :key="t" class="text-gray-500 text-sm flex items-center gap-2">
-                <span class="text-gold-light text-xs">✝</span>
+            <svg
+              :class="['w-4 h-4 text-gold transition-transform duration-300', openMass === i ? 'rotate-180' : '']"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Body -->
+          <div :class="['mass-accordion', openMass === i ? 'mass-accordion--open' : '']">
+            <ul class="px-5 pb-4 space-y-2">
+              <li v-for="t in m.times" :key="t" class="flex items-center gap-2 text-gray-600 text-sm">
+                <span class="text-gold text-xs">✝</span>
                 {{ t }}
               </li>
             </ul>
           </div>
         </div>
       </div>
+
       <div class="text-center mt-8 reveal">
         <NuxtLink to="/mass-times" class="inline-flex items-center gap-2 text-gold hover:text-navy font-medium transition-colors group text-sm">
           Full schedule & confession times
@@ -275,6 +297,8 @@
 <script setup lang="ts">
 useScrollReveal()
 
+const openMass = ref<number | null>(0)
+
 const massTimes = [
   { day: 'Saturday', times: ['5:00 PM (Vigil)'] },
   { day: 'Sunday', times: ['7:30 AM', '9:00 AM', '11:00 AM', '5:00 PM'] },
@@ -349,5 +373,13 @@ const galleryImages = [
 @keyframes scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+.mass-accordion {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mass-accordion--open {
+  max-height: 200px;
 }
 </style>
