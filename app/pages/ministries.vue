@@ -1,27 +1,27 @@
 <template>
   <!-- Hero -->
-  <section class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+  <section class="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1800&q=80')" />
+      style="background-image: url('/church-8.jpg')" />
     <div class="absolute inset-0 bg-navy/80" />
-    <div class="relative z-10 text-center text-white px-6">
+    <div class="relative z-10 text-center text-white px-4">
       <span class="section-label">Get Involved</span>
-      <h1 class="font-playfair text-6xl md:text-7xl font-black">Ministries</h1>
-      <p class="text-gray-300 mt-4 text-lg max-w-xl mx-auto">There is a place for everyone in our parish family</p>
+      <h1 class="font-playfair text-4xl sm:text-6xl md:text-7xl font-black">Ministries</h1>
+      <p class="text-gray-300 mt-3 text-base md:text-lg max-w-xl mx-auto">There is a place for everyone in our parish family</p>
     </div>
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
     </div>
   </section>
 
-  <section class="py-24 px-6 bg-cream">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <section class="py-12 md:py-24 px-4 md:px-6 bg-cream">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       <div
         v-for="(m, i) in ministries"
         :key="m.name"
         :class="`reveal delay-${(i % 3 + 1) * 100}`"
       >
-        <div class="group bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:border-gold/30 hover:-translate-y-2 transition-all duration-300 h-full">
+        <div class="group bg-white rounded-2xl p-5 md:p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:border-gold/30 hover:-translate-y-2 transition-all duration-300 h-full">
           <div class="w-16 h-16 rounded-2xl bg-gold/10 flex items-center justify-center text-3xl mb-5 group-hover:bg-gold group-hover:scale-110 transition-all duration-300">
             {{ m.icon }}
           </div>

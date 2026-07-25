@@ -1,22 +1,22 @@
 <template>
-  <section class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+  <section class="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
       style="background-image: url('/church-interior.jpg')" />
     <div class="absolute inset-0 bg-navy/80" />
-    <div class="relative z-10 text-center text-white px-6">
+    <div class="relative z-10 text-center text-white px-4">
       <span class="section-label">Our Moments</span>
-      <h1 class="font-playfair text-6xl md:text-7xl font-black">Photo Gallery</h1>
-      <p class="text-gray-300 mt-4 text-lg">Memories from our parish life</p>
+      <h1 class="font-playfair text-4xl sm:text-6xl md:text-7xl font-black">Photo Gallery</h1>
+      <p class="text-gray-300 mt-3 text-base md:text-lg">Memories from our parish life</p>
     </div>
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
     </div>
   </section>
 
-  <section class="py-24 px-6 bg-cream">
+  <section class="py-12 md:py-24 px-4 md:px-6 bg-cream">
     <div class="max-w-6xl mx-auto">
       <!-- Category filter -->
-      <div class="flex flex-wrap gap-3 justify-center mb-12 reveal">
+      <div class="flex flex-wrap gap-2 justify-center mb-8 md:mb-12 reveal">
         <button
           v-for="cat in categories"
           :key="cat"

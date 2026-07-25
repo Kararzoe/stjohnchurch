@@ -196,7 +196,7 @@
         v-for="(img, i) in [...galleryImages, ...galleryImages]"
         :key="i"
         :src="img"
-        class="h-48 w-72 object-cover rounded-xl shrink-0 opacity-80 hover:opacity-100 transition-opacity"
+        class="h-36 md:h-48 w-56 md:w-72 object-cover rounded-xl shrink-0 opacity-80 hover:opacity-100 transition-opacity"
       />
     </div>
   </section>

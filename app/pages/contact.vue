@@ -1,21 +1,21 @@
 <template>
   <!-- Hero -->
-  <section class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+  <section class="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1519817650390-64a93db51149?w=1800&q=80')" />
+      style="background-image: url('/church-11.jpg')" />
     <div class="absolute inset-0 bg-navy/80" />
-    <div class="relative z-10 text-center text-white px-6">
+    <div class="relative z-10 text-center text-white px-4">
       <span class="section-label">Reach Out</span>
-      <h1 class="font-playfair text-6xl md:text-7xl font-black">Contact Us</h1>
-      <p class="text-gray-300 mt-4 text-lg">We'd love to hear from you</p>
+      <h1 class="font-playfair text-4xl sm:text-6xl md:text-7xl font-black">Contact Us</h1>
+      <p class="text-gray-300 mt-3 text-base md:text-lg">We'd love to hear from you</p>
     </div>
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
     </div>
   </section>
 
-  <section class="py-24 px-6 bg-cream">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+  <section class="py-12 md:py-24 px-4 md:px-6 bg-cream">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12">
       <!-- Info -->
       <div class="space-y-6 reveal-left">
         <div>
@@ -35,7 +35,7 @@
       </div>
 
       <!-- Form -->
-      <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 reveal-right">
+      <div class="bg-white rounded-3xl p-5 md:p-8 shadow-xl border border-gray-100 reveal-right">
         <h2 class="font-playfair text-2xl font-bold text-navy mb-6">Send a Message</h2>
         <form class="space-y-4" @submit.prevent>
           <div class="grid grid-cols-2 gap-4">

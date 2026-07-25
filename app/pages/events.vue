@@ -1,20 +1,20 @@
 <template>
   <!-- Hero -->
-  <section class="relative h-[50vh] flex items-center justify-center overflow-hidden">
+  <section class="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1800&q=80')" />
+      style="background-image: url('/church-5.jpg')" />
     <div class="absolute inset-0 bg-navy/80" />
-    <div class="relative z-10 text-center text-white px-6">
+    <div class="relative z-10 text-center text-white px-4">
       <span class="section-label">Parish Life</span>
-      <h1 class="font-playfair text-6xl md:text-7xl font-black">Events</h1>
-      <p class="text-gray-300 mt-4 text-lg">Stay connected with our community</p>
+      <h1 class="font-playfair text-4xl sm:text-6xl md:text-7xl font-black">Events</h1>
+      <p class="text-gray-300 mt-3 text-base md:text-lg">Stay connected with our community</p>
     </div>
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
     </div>
   </section>
 
-  <section class="py-24 px-6 bg-cream">
+  <section class="py-12 md:py-24 px-4 md:px-6 bg-cream">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <div
         v-for="(e, i) in events"
