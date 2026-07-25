@@ -1,55 +1,66 @@
 <template>
   <!-- ── HERO ── -->
   <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- Real church photo -->
-    <div
-      class="absolute inset-0 parallax-hero"
-      style="background-image: url('/church-interior.jpg')"
-    />
-    <!-- Beautiful multi-layer blend -->
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,39,68,0.75) 0%, rgba(26,39,68,0.45) 40%, rgba(26,39,68,0.85) 100%)" />
-    <!-- Gold warm glow from the stained glass window area -->
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.18) 0%, transparent 65%)" />
-
-    <!-- Animated dot grid -->
+    <!-- Background image — works on ALL devices -->
+    <div class="absolute inset-0">
+      <img
+        src="/church-interior.jpg"
+        alt="St. John of the Cross Catholic Church"
+        class="w-full h-full object-cover object-center"
+      />
+    </div>
+    <!-- Multi-layer blend -->
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,39,68,0.80) 0%, rgba(26,39,68,0.50) 40%, rgba(26,39,68,0.90) 100%)" />
+    <!-- Gold glow from stained glass -->
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.22) 0%, transparent 60%)" />
+    <!-- Dot grid -->
     <div class="absolute inset-0 opacity-10"
-      style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 50px 50px;" />
+      style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 40px 40px;" />
 
     <!-- Content -->
-    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-      <!-- Floating cross -->
-      <div class="animate-float inline-block mb-6">
-        <div class="w-16 h-16 rounded-full bg-gold/20 border-2 border-gold-light/50 flex items-center justify-center mx-auto">
-          <span class="text-gold-light text-3xl">✝</span>
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20">
+      <!-- Animated cross -->
+      <div class="animate-float inline-block mb-5">
+        <div class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-gold/20 border-2 border-gold-light/60 flex items-center justify-center mx-auto shadow-lg shadow-gold/20">
+          <span class="text-gold-light text-2xl md:text-4xl">✝</span>
         </div>
       </div>
 
       <p class="section-label text-center animate-fade-in">Welcome to</p>
-      <h1 class="font-playfair text-5xl md:text-7xl font-black text-white leading-none mb-4 animate-fade-in">
+      <h1 class="font-playfair text-4xl sm:text-5xl md:text-7xl font-black text-white leading-tight mb-3 animate-fade-in">
         St. John of the Cross
         <span class="block gold-text">Catholic Church</span>
       </h1>
-      <p class="text-gold-light/80 text-sm uppercase tracking-widest mb-3 animate-fade-in">Mararaba, Nasarawa State</p>
-      <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in">
-        A community of faith, hope, and love — gathering at the table of the Lord
-        and serving our neighbors with joy.
+      <p class="text-gold-light/90 text-xs sm:text-sm uppercase tracking-[0.25em] mb-5 animate-fade-in">
+        Mararaba · Nasarawa State · Nigeria
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
+
+      <!-- Catholic ornamental divider -->
+      <div class="catholic-divider animate-fade-in">
+        <span class="text-gold-light text-lg">✦</span>
+      </div>
+
+      <p class="text-gray-200 text-base md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-in italic">
+        "Come to me, all you who are weary and burdened, and I will give you rest."
+        <span class="block text-gold-light/70 text-xs mt-1 not-italic">— Matthew 11:28</span>
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in">
         <NuxtLink to="/mass-times"
-          class="px-8 py-4 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 hover:-translate-y-1">
-          View Mass Times
+          class="px-7 py-3.5 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 text-sm md:text-base">
+          ✝ View Mass Times
         </NuxtLink>
         <NuxtLink to="/about"
-          class="px-8 py-4 rounded-full glass text-white font-semibold hover:bg-white/20 transition-all hover:-translate-y-1">
+          class="px-7 py-3.5 rounded-full glass text-white font-semibold hover:bg-white/20 transition-all text-sm md:text-base">
           Our Parish Story
         </NuxtLink>
       </div>
     </div>
 
     <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/50 animate-bounce">
       <span class="text-xs tracking-widest uppercase">Scroll</span>
-      <span class="text-lg">↓</span>
+      <span>↓</span>
     </div>
 
     <!-- Wave -->
@@ -60,35 +71,43 @@
     </div>
   </section>
 
+  <!-- ── DAILY VERSE ── -->
+  <section class="py-10 px-4 bg-cream rosary-border">
+    <div class="max-w-3xl mx-auto text-center reveal">
+      <p class="text-gold text-xs uppercase tracking-widest font-semibold mb-2">Daily Scripture</p>
+      <p class="font-playfair text-lg md:text-2xl text-navy italic leading-relaxed">
+        "I can do all things through Christ who strengthens me."
+      </p>
+      <p class="text-gray-400 text-xs mt-2">— Philippians 4:13</p>
+    </div>
+  </section>
+
   <!-- ── MASS TIMES ── -->
-  <section class="py-24 px-6 bg-cream">
+  <section class="py-16 md:py-24 px-4 bg-cream">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-14 reveal">
+      <div class="text-center mb-10 md:mb-14 reveal">
         <span class="section-label">Join Us</span>
-        <h2 class="font-playfair text-5xl font-bold text-navy">Mass Schedule</h2>
+        <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Mass Schedule</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          v-for="(m, i) in massTimes"
-          :key="m.day"
-          :class="`reveal delay-${(i + 1) * 100}`"
-        >
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold/30 hover:-translate-y-2 transition-all duration-300 group h-full">
-            <div class="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mb-4 group-hover:bg-gold transition-colors">
-              <span class="text-gold group-hover:text-white text-xl transition-colors">🕐</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div v-for="(m, i) in massTimes" :key="m.day" :class="`reveal delay-${(i + 1) * 100}`">
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 stained-glow hover:border-gold/30 hover:-translate-y-2 transition-all duration-300 group h-full">
+            <div class="w-11 h-11 rounded-xl bg-gold/10 flex items-center justify-center mb-4 group-hover:bg-gold transition-colors">
+              <span class="text-gold group-hover:text-white text-lg transition-colors">🕐</span>
             </div>
-            <h3 class="font-playfair font-bold text-navy text-xl mb-3">{{ m.day }}</h3>
-            <ul class="space-y-1">
+            <h3 class="font-playfair font-bold text-navy text-lg mb-3">{{ m.day }}</h3>
+            <ul class="space-y-1.5">
               <li v-for="t in m.times" :key="t" class="text-gray-500 text-sm flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-gold-light shrink-0" />
+                <span class="text-gold-light text-xs">✝</span>
                 {{ t }}
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <div class="text-center mt-10 reveal">
-        <NuxtLink to="/mass-times" class="inline-flex items-center gap-2 text-gold hover:text-navy font-medium transition-colors group">
+      <div class="text-center mt-8 reveal">
+        <NuxtLink to="/mass-times" class="inline-flex items-center gap-2 text-gold hover:text-navy font-medium transition-colors group text-sm">
           Full schedule & confession times
           <span class="group-hover:translate-x-1 transition-transform">→</span>
         </NuxtLink>
@@ -97,67 +116,90 @@
   </section>
 
   <!-- ── ABOUT BANNER ── -->
-  <section class="relative py-32 px-6 overflow-hidden">
-    <div class="absolute inset-0 parallax-hero"
-      style="background-image: url('/church-4.jpg')" />
-    <div class="absolute inset-0 bg-navy/80" />
+  <section class="relative py-20 md:py-32 px-4 overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="/church-4.jpg" alt="Parish" class="w-full h-full object-cover object-center" />
+    </div>
+    <div class="absolute inset-0 bg-navy/85" />
+    <!-- Decorative cross pattern -->
+    <div class="absolute inset-0 opacity-5"
+      style="background-image: repeating-linear-gradient(0deg, #d4af37 0px, #d4af37 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #d4af37 0px, #d4af37 1px, transparent 1px, transparent 60px);" />
+
     <div class="relative z-10 max-w-4xl mx-auto text-center text-white">
       <span class="section-label reveal">Our Parish</span>
-      <h2 class="font-playfair text-5xl md:text-6xl font-black mb-6 reveal">
+      <h2 class="font-playfair text-3xl sm:text-5xl md:text-6xl font-black mb-4 reveal">
         Rooted in Faith,<br>
         <span class="gold-text">Called to Serve</span>
       </h2>
-      <p class="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto mb-10 reveal">
-        For over a century, St. John Catholic Church has been a spiritual home for families
-        in our community. We celebrate the sacraments, grow in discipleship, and reach out
+      <div class="catholic-divider reveal"><span class="text-gold-light text-base">✦</span></div>
+      <p class="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-8 reveal">
+        St. John of the Cross Catholic Church, Mararaba has been a spiritual home for families
+        in Nasarawa State. We celebrate the sacraments, grow in discipleship, and reach out
         to those in need.
       </p>
-      <!-- Stats -->
-      <div class="grid grid-cols-3 gap-6 max-w-xl mx-auto mb-10 reveal">
-        <div v-for="s in stats" :key="s.label" class="glass rounded-2xl p-4">
-          <p class="font-playfair text-4xl font-black gold-text">{{ s.value }}</p>
+      <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto mb-8 reveal">
+        <div v-for="s in stats" :key="s.label" class="glass rounded-2xl p-3 md:p-4">
+          <p class="font-playfair text-2xl md:text-4xl font-black gold-text">{{ s.value }}</p>
           <p class="text-gray-400 text-xs mt-1">{{ s.label }}</p>
         </div>
       </div>
       <NuxtLink to="/about"
-        class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 hover:-translate-y-1 reveal">
+        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 reveal text-sm md:text-base">
         Our Story →
       </NuxtLink>
     </div>
   </section>
 
-  <!-- ── EVENTS ── -->
-  <section class="py-24 px-6 bg-white">
+  <!-- ── SACRAMENTS ── -->
+  <section class="py-16 md:py-24 px-4 bg-white">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-14 reveal">
-        <span class="section-label">Stay Connected</span>
-        <h2 class="font-playfair text-5xl font-bold text-navy">Upcoming Events</h2>
+      <div class="text-center mb-10 reveal">
+        <span class="section-label">The Seven Sacraments</span>
+        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Life in the Church</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          v-for="(e, i) in events"
-          :key="e.title"
-          :class="`reveal delay-${(i + 1) * 100}`"
-        >
-          <div class="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-gold/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+        <div v-for="(s, i) in sacraments" :key="s.name" :class="`reveal delay-${(i % 4 + 1) * 100}`">
+          <div class="flex flex-col items-center gap-2 p-4 bg-cream rounded-2xl border border-gray-100 hover:border-gold/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group text-center stained-glow">
+            <div class="w-12 h-12 rounded-full bg-navy/5 flex items-center justify-center text-2xl group-hover:bg-gold/10 transition-colors">
+              {{ s.icon }}
+            </div>
+            <span class="text-xs font-semibold text-navy group-hover:text-gold transition-colors leading-tight">{{ s.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EVENTS ── -->
+  <section class="py-16 md:py-24 px-4 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10 reveal">
+        <span class="section-label">Stay Connected</span>
+        <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Upcoming Events</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div v-for="(e, i) in events" :key="e.title" :class="`reveal delay-${(i + 1) * 100}`">
+          <div class="group rounded-2xl overflow-hidden border border-gray-100 stained-glow hover:border-gold/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col bg-white">
             <div class="relative h-44 overflow-hidden">
               <img :src="e.image" :alt="e.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              <div class="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
-              <div class="absolute top-3 left-3 bg-navy text-white rounded-xl px-3 py-1.5 text-center min-w-[52px]">
+              <div class="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
+              <div class="absolute top-3 left-3 bg-navy/90 text-white rounded-xl px-3 py-1.5 text-center min-w-[52px]">
                 <p class="text-gold-light text-xs font-bold tracking-widest">{{ e.date.month }}</p>
                 <p class="font-playfair text-2xl font-black leading-none">{{ e.date.day }}</p>
               </div>
             </div>
             <div class="p-5 flex-1 flex flex-col">
-              <h3 class="font-playfair font-bold text-navy text-xl mb-2 group-hover:text-gold transition-colors">{{ e.title }}</h3>
+              <h3 class="font-playfair font-bold text-navy text-lg mb-1 group-hover:text-gold transition-colors">{{ e.title }}</h3>
               <p class="text-xs text-gold font-semibold mb-2">{{ e.time }}</p>
               <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ e.desc }}</p>
             </div>
           </div>
         </div>
       </div>
-      <div class="text-center mt-10 reveal">
-        <NuxtLink to="/events" class="inline-flex items-center gap-2 text-gold hover:text-navy font-medium transition-colors group">
+      <div class="text-center mt-8 reveal">
+        <NuxtLink to="/events" class="inline-flex items-center gap-2 text-gold hover:text-navy font-medium transition-colors group text-sm">
           All events <span class="group-hover:translate-x-1 transition-transform">→</span>
         </NuxtLink>
       </div>
@@ -165,24 +207,20 @@
   </section>
 
   <!-- ── MINISTRIES ── -->
-  <section class="py-24 px-6 bg-cream">
+  <section class="py-16 md:py-24 px-4 bg-white">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-14 reveal">
+      <div class="text-center mb-10 reveal">
         <span class="section-label">Get Involved</span>
-        <h2 class="font-playfair text-5xl font-bold text-navy">Ministries</h2>
+        <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Ministries & Groups</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-        <NuxtLink
-          v-for="(m, i) in ministries"
-          :key="m.label"
-          to="/ministries"
-          :class="`reveal delay-${(i + 1) * 100}`"
-        >
-          <div class="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl border border-gray-100 hover:border-gold/40 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group text-center h-full">
-            <div class="w-14 h-14 rounded-2xl bg-gold/10 flex items-center justify-center text-2xl group-hover:bg-gold group-hover:scale-110 transition-all duration-300">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <NuxtLink v-for="(m, i) in ministries" :key="m.label" to="/ministries" :class="`reveal delay-${(i + 1) * 100}`">
+          <div class="flex flex-col items-center gap-3 p-5 bg-cream rounded-2xl border border-gray-100 stained-glow hover:border-gold/40 hover:-translate-y-2 transition-all duration-300 group text-center h-full">
+            <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center text-2xl group-hover:bg-gold group-hover:scale-110 transition-all duration-300">
               {{ m.icon }}
             </div>
-            <span class="text-sm font-semibold text-navy group-hover:text-gold transition-colors">{{ m.label }}</span>
+            <span class="text-xs sm:text-sm font-semibold text-navy group-hover:text-gold transition-colors">{{ m.label }}</span>
           </div>
         </NuxtLink>
       </div>
@@ -190,28 +228,50 @@
   </section>
 
   <!-- ── GALLERY STRIP ── -->
-  <section class="py-4 overflow-hidden bg-navy">
-    <div class="flex gap-4 animate-[scroll_30s_linear_infinite] w-max">
+  <section class="py-3 overflow-hidden bg-navy">
+    <div class="flex gap-3 animate-[scroll_30s_linear_infinite] w-max">
       <img
         v-for="(img, i) in [...galleryImages, ...galleryImages]"
         :key="i"
         :src="img"
-        class="h-36 md:h-48 w-56 md:w-72 object-cover rounded-xl shrink-0 opacity-80 hover:opacity-100 transition-opacity"
+        class="h-32 md:h-48 w-48 md:w-72 object-cover rounded-xl shrink-0 opacity-80 hover:opacity-100 transition-opacity"
       />
     </div>
   </section>
 
-  <!-- ── DONATE CTA ── -->
-  <section class="py-24 px-6 bg-white">
+  <!-- ── PRAYER INTENTION ── -->
+  <section class="py-16 px-4 bg-cream">
     <div class="max-w-3xl mx-auto text-center reveal">
+      <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center mx-auto mb-5">
+        <span class="text-gold-light text-2xl">🙏</span>
+      </div>
+      <span class="section-label">Prayer of the Month</span>
+      <h2 class="font-playfair text-2xl md:text-3xl font-bold text-navy mb-4">Act of Contrition</h2>
+      <div class="catholic-divider"><span class="text-gold text-base">✦</span></div>
+      <p class="text-gray-600 leading-relaxed italic text-sm md:text-base mt-4 max-w-xl mx-auto">
+        "O my God, I am heartily sorry for having offended Thee, and I detest all my sins
+        because of Thy just punishments, but most of all because they offend Thee, my God,
+        who art all good and deserving of all my love..."
+      </p>
+    </div>
+  </section>
+
+  <!-- ── DONATE CTA ── -->
+  <section class="relative py-16 md:py-24 px-4 overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="/church-14.jpg" alt="Support" class="w-full h-full object-cover object-center" />
+    </div>
+    <div class="absolute inset-0 bg-navy/88" />
+    <div class="relative z-10 max-w-2xl mx-auto text-center text-white reveal">
       <span class="section-label">Support Us</span>
-      <h2 class="font-playfair text-5xl font-bold text-navy mb-4">Support Our Parish</h2>
-      <p class="text-gray-500 text-lg mb-10 leading-relaxed">
+      <h2 class="font-playfair text-3xl sm:text-4xl font-bold mb-3">Support Our Parish</h2>
+      <div class="catholic-divider"><span class="text-gold-light text-base">✦</span></div>
+      <p class="text-gray-300 text-sm md:text-base mb-8 leading-relaxed mt-4">
         Your generosity helps us maintain our church, support our ministries,
         and serve those in need in our community.
       </p>
       <NuxtLink to="/donate"
-        class="inline-block px-12 py-4 rounded-full bg-gold text-white font-semibold text-lg hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 hover:-translate-y-1">
+        class="inline-block px-10 py-4 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40">
         Make a Gift ✝
       </NuxtLink>
     </div>
@@ -229,9 +289,19 @@ const massTimes = [
 ]
 
 const stats = [
-  { value: '1902', label: 'Year Founded' },
+  { value: '1902', label: 'Founded' },
   { value: '2,400+', label: 'Families' },
   { value: '30+', label: 'Ministries' },
+]
+
+const sacraments = [
+  { icon: '💧', name: 'Baptism' },
+  { icon: '🕊️', name: 'Confirmation' },
+  { icon: '🍞', name: 'Eucharist' },
+  { icon: '🙏', name: 'Reconciliation' },
+  { icon: '🛢️', name: 'Anointing' },
+  { icon: '✝️', name: 'Holy Orders' },
+  { icon: '💍', name: 'Matrimony' },
 ]
 
 const events = [
@@ -265,7 +335,7 @@ const ministries = [
   { icon: '🙏', label: 'Prayer Groups' },
   { icon: '👨‍👩‍👧', label: 'Family & Youth' },
   { icon: '✝️', label: 'Liturgical Ministry' },
-  { icon: '🤝', label: 'Men\'s & Women\'s' },
+  { icon: '🤝', label: "Men's & Women's" },
   { icon: '🕊️', label: 'Bereavement' },
 ]
 
