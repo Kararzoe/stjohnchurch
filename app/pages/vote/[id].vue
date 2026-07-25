@@ -1,75 +1,77 @@
 <template>
-  <div class="min-h-screen bg-cream pt-24 pb-16 px-6">
+  <div class="min-h-screen bg-cream pt-24 pb-16 px-4">
     <div class="max-w-2xl mx-auto">
-
-      <!-- Login step -->
-      <div v-if="step === 'login'" class="reveal">
-        <div class="text-center mb-8">
-          <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center mx-auto mb-4">
-            <span class="text-gold-light text-2xl">🔑</span>
-          </div>
-          <h1 class="font-playfair text-3xl font-bold text-navy mb-2">Member Login</h1>
-          <p class="text-gray-500 text-sm">Enter the credentials provided by the parish office</p>
-        </div>
-        <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
-          <form class="space-y-4" @submit.prevent="login">
-            <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Member ID</label>
-              <input v-model="form.memberId" type="text" placeholder="e.g. SJC-2026-001"
-                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Password</label>
-              <input v-model="form.password" type="password" placeholder="Your password"
-                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-            </div>
-            <p v-if="error" class="text-red-500 text-sm text-center">{{ error }}</p>
-            <button type="submit"
-              class="w-full py-4 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-lg hover:shadow-gold/30">
-              Login to Vote →
-            </button>
-          </form>
-          <p class="text-center text-xs text-gray-400 mt-4">
-            Don't have credentials? Contact the parish office.
-          </p>
-        </div>
-      </div>
 
       <!-- Voting step -->
       <div v-if="step === 'vote'">
+        <!-- Header -->
         <div class="text-center mb-8 reveal">
-          <h1 class="font-playfair text-3xl font-bold text-navy mb-2">Parish Council Elections 2026</h1>
-          <p class="text-gray-500 text-sm">Select one candidate per position. You cannot change your vote after submitting.</p>
+          <div class="w-14 h-14 rounded-full bg-navy flex items-center justify-center mx-auto mb-4">
+            <span class="text-gold-light text-2xl">🗳️</span>
+          </div>
+          <h1 class="font-playfair text-3xl md:text-4xl font-bold text-navy mb-2">
+            Parish Council Elections 2026
+          </h1>
+          <p class="text-gray-500 text-sm max-w-sm mx-auto">
+            Select one candidate per position. Review your choices before submitting.
+          </p>
+          <!-- Progress -->
+          <div class="mt-5 flex items-center justify-center gap-2">
+            <div v-for="(pos, i) in positions" :key="pos.title"
+              :class="['w-2.5 h-2.5 rounded-full transition-all', votes[pos.title] ? 'bg-gold scale-125' : 'bg-gray-300']" />
+          </div>
+          <p class="text-xs text-gray-400 mt-2">{{ Object.keys(votes).length }} of {{ positions.length }} positions selected</p>
         </div>
 
-        <div class="space-y-8">
+        <!-- Positions -->
+        <div class="space-y-6">
           <div v-for="(pos, i) in positions" :key="pos.title" :class="`reveal delay-${(i + 1) * 100}`">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 class="font-playfair font-bold text-navy text-xl mb-4 flex items-center gap-2">
-                <span class="w-7 h-7 rounded-full bg-gold text-white text-xs flex items-center justify-center font-bold">{{ i + 1 }}</span>
-                {{ pos.title }}
-              </h2>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <!-- Position header -->
+              <div class="bg-navy px-5 py-3 flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-gold text-white text-xs flex items-center justify-center font-bold shrink-0">
+                  {{ i + 1 }}
+                </span>
+                <h2 class="font-playfair font-bold text-white text-lg">{{ pos.title }}</h2>
+                <span v-if="votes[pos.title]" class="ml-auto text-green-400 text-xs font-semibold flex items-center gap-1">
+                  ✓ Selected
+                </span>
+              </div>
+
+              <!-- Candidates -->
+              <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   v-for="c in pos.candidates"
                   :key="c.name"
                   :class="[
-                    'flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all',
+                    'flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all w-full',
                     votes[pos.title] === c.name
                       ? 'border-gold bg-gold/5 shadow-md'
-                      : 'border-gray-100 hover:border-gold/40'
+                      : 'border-gray-100 hover:border-gold/40 hover:bg-gray-50'
                   ]"
                   @click="votes[pos.title] = c.name"
                 >
-                  <div class="w-10 h-10 rounded-full bg-navy/10 flex items-center justify-center shrink-0 text-lg">
-                    {{ c.icon }}
+                  <!-- Candidate photo/avatar -->
+                  <div class="w-14 h-14 rounded-full overflow-hidden shrink-0 border-2"
+                    :class="votes[pos.title] === c.name ? 'border-gold' : 'border-gray-200'">
+                    <img v-if="c.photo" :src="c.photo" :alt="c.name" class="w-full h-full object-cover" />
+                    <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-2xl">
+                      👤
+                    </div>
                   </div>
+
+                  <!-- Info -->
                   <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-navy text-sm">{{ c.name }}</p>
-                    <p class="text-gray-400 text-xs truncate">{{ c.desc }}</p>
+                    <p class="font-bold text-navy text-sm">{{ c.name }}</p>
+                    <p class="text-gray-400 text-xs mt-0.5">{{ c.desc }}</p>
                   </div>
-                  <div :class="['w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all', votes[pos.title] === c.name ? 'border-gold bg-gold' : 'border-gray-300']">
-                    <span v-if="votes[pos.title] === c.name" class="text-white text-xs">✓</span>
+
+                  <!-- Radio indicator -->
+                  <div :class="[
+                    'w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all',
+                    votes[pos.title] === c.name ? 'border-gold bg-gold' : 'border-gray-300'
+                  ]">
+                    <span v-if="votes[pos.title] === c.name" class="text-white text-xs font-bold">✓</span>
                   </div>
                 </button>
               </div>
@@ -77,34 +79,95 @@
           </div>
         </div>
 
+        <!-- Submit -->
         <div class="mt-8 reveal">
-          <p v-if="submitError" class="text-red-500 text-sm text-center mb-4">{{ submitError }}</p>
+          <p v-if="submitError" class="text-red-500 text-sm text-center mb-4 bg-red-50 rounded-xl p-3">
+            {{ submitError }}
+          </p>
           <button
-            class="w-full py-4 rounded-full bg-gold text-white font-semibold text-lg hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40 disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="[
+              'w-full py-4 rounded-full font-semibold text-base transition-all',
+              allVoted
+                ? 'bg-gold text-white hover:bg-gold-light hover:shadow-xl hover:shadow-gold/40'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            ]"
             :disabled="!allVoted"
-            @click="submitVotes"
+            @click="goToConfirm"
           >
-            Submit My Votes ✅
+            Review & Submit Votes →
           </button>
           <p class="text-center text-xs text-gray-400 mt-3">
-            {{ Object.keys(votes).length }} of {{ positions.length }} positions selected
+            You will be able to review your choices before final submission.
           </p>
+        </div>
+      </div>
+
+      <!-- Confirm step -->
+      <div v-if="step === 'confirm'" class="reveal">
+        <div class="text-center mb-8">
+          <div class="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">📋</span>
+          </div>
+          <h1 class="font-playfair text-3xl font-bold text-navy mb-2">Review Your Votes</h1>
+          <p class="text-gray-500 text-sm">Please confirm your selections before submitting.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
+          <div class="bg-navy px-5 py-3">
+            <p class="text-white font-semibold text-sm">Parish Council Elections 2026</p>
+          </div>
+          <div class="divide-y divide-gray-50">
+            <div v-for="pos in positions" :key="pos.title" class="flex items-center justify-between px-5 py-4">
+              <div>
+                <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ pos.title }}</p>
+                <p class="font-bold text-navy mt-0.5">{{ votes[pos.title] }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-green-500 text-lg">✓</span>
+                <button @click="step = 'vote'" class="text-xs text-gold hover:text-navy transition-colors font-medium">
+                  Change
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+          <span class="text-amber-500 text-lg shrink-0">⚠️</span>
+          <p class="text-amber-700 text-xs leading-relaxed">
+            Once submitted, your vote cannot be changed. Please make sure your selections are correct.
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <button @click="step = 'vote'"
+            class="flex-1 py-3.5 rounded-full border-2 border-gray-200 text-gray-600 font-semibold hover:border-gray-300 transition-all text-sm">
+            ← Go Back
+          </button>
+          <button @click="submitVotes"
+            class="flex-1 py-3.5 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-lg hover:shadow-gold/30 text-sm">
+            Submit Final Vote ✅
+          </button>
         </div>
       </div>
 
       <!-- Success step -->
       <div v-if="step === 'done'" class="text-center py-16 reveal">
-        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-          <span class="text-4xl">✅</span>
+        <div class="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
+          <span class="text-5xl">✅</span>
         </div>
-        <h1 class="font-playfair text-4xl font-bold text-navy mb-4">Vote Submitted!</h1>
-        <p class="text-gray-500 mb-8 max-w-sm mx-auto">
-          Thank you for participating. Your vote has been recorded securely.
-          Results will be announced by the parish admin.
+        <h1 class="font-playfair text-4xl font-bold text-navy mb-3">Vote Submitted!</h1>
+        <div class="catholic-divider mb-4"><span class="text-gold text-base">✦</span></div>
+        <p class="text-gray-500 mb-3 max-w-sm mx-auto text-sm leading-relaxed">
+          Thank you for participating in the Parish Council Elections 2026.
+          Your vote has been recorded securely.
+        </p>
+        <p class="text-gray-400 text-xs mb-8 italic">
+          "Let all things be done decently and in order." — 1 Corinthians 14:40
         </p>
         <NuxtLink to="/"
           class="inline-block px-8 py-3 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all">
-          Back to Home
+          Back to Home ✝
         </NuxtLink>
       </div>
 
@@ -115,9 +178,7 @@
 <script setup lang="ts">
 useScrollReveal()
 
-const step = ref<'login' | 'vote' | 'done'>('login')
-const form = reactive({ memberId: '', password: '' })
-const error = ref('')
+const step = ref<'vote' | 'confirm' | 'done'>('vote')
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
 
@@ -125,51 +186,45 @@ const positions = [
   {
     title: 'Chairman',
     candidates: [
-      { name: 'Candidate A', desc: 'Parish member since 2010', icon: '👤' },
-      { name: 'Candidate B', desc: 'Parish member since 2008', icon: '👤' },
+      { name: 'Candidate A', desc: 'Parish member since 2010', photo: '' },
+      { name: 'Candidate B', desc: 'Parish member since 2008', photo: '' },
     ],
   },
   {
     title: 'Secretary',
     candidates: [
-      { name: 'Candidate C', desc: 'Parish member since 2015', icon: '👤' },
-      { name: 'Candidate D', desc: 'Parish member since 2012', icon: '👤' },
+      { name: 'Candidate C', desc: 'Parish member since 2015', photo: '' },
+      { name: 'Candidate D', desc: 'Parish member since 2012', photo: '' },
     ],
   },
   {
     title: 'Treasurer',
     candidates: [
-      { name: 'Candidate E', desc: 'Parish member since 2009', icon: '👤' },
-      { name: 'Candidate F', desc: 'Parish member since 2014', icon: '👤' },
+      { name: 'Candidate E', desc: 'Parish member since 2009', photo: '' },
+      { name: 'Candidate F', desc: 'Parish member since 2014', photo: '' },
     ],
   },
   {
     title: 'PRO',
     candidates: [
-      { name: 'Candidate G', desc: 'Parish member since 2016', icon: '👤' },
-      { name: 'Candidate H', desc: 'Parish member since 2011', icon: '👤' },
+      { name: 'Candidate G', desc: 'Parish member since 2016', photo: '' },
+      { name: 'Candidate H', desc: 'Parish member since 2011', photo: '' },
     ],
   },
 ]
 
 const allVoted = computed(() => Object.keys(votes).length === positions.length)
 
-function login() {
-  if (!form.memberId || !form.password) {
-    error.value = 'Please enter your Member ID and password.'
-    return
-  }
-  // Demo: accept any credentials — real auth handled by backend
-  error.value = ''
-  step.value = 'vote'
-}
-
-function submitVotes() {
+function goToConfirm() {
   if (!allVoted.value) {
-    submitError.value = 'Please vote for all positions before submitting.'
+    submitError.value = 'Please select a candidate for every position before continuing.'
     return
   }
   submitError.value = ''
+  step.value = 'confirm'
+}
+
+function submitVotes() {
   step.value = 'done'
 }
 </script>

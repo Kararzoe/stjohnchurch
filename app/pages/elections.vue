@@ -89,8 +89,8 @@ const elections = [
 ]
 
 const steps = [
-  { icon: '🔑', title: 'Log In', desc: 'Use the credentials provided to you by the parish office.' },
-  { icon: '🗳️', title: 'Cast Your Vote', desc: 'Select one candidate per position. You can only vote once.' },
-  { icon: '✅', title: 'Done', desc: 'Your vote is recorded securely. Results are announced by the admin.' },
+  { icon: '🗳️', title: 'Open the Election', desc: 'Click on any active election below to go directly to the voting page.' },
+  { icon: '✅', title: 'Cast Your Vote', desc: 'Select one candidate per position. Review your choices before submitting.' },
+  { icon: '📋', title: 'Done', desc: 'Your vote is recorded securely. Results are announced by the parish admin.' },
 ]
 </script>
