@@ -1,13 +1,15 @@
 <template>
   <!-- ── HERO ── -->
   <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- Parallax background -->
+    <!-- Real church photo -->
     <div
       class="absolute inset-0 parallax-hero"
-      style="background-image: url('https://images.unsplash.com/photo-1548625149-720754874e4e?w=1800&q=80')"
+      style="background-image: url('/church-interior.jpg')"
     />
-    <!-- Dark overlay with gradient -->
-    <div class="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/60 to-navy/90" />
+    <!-- Beautiful multi-layer blend -->
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,39,68,0.75) 0%, rgba(26,39,68,0.45) 40%, rgba(26,39,68,0.85) 100%)" />
+    <!-- Gold warm glow from the stained glass window area -->
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.18) 0%, transparent 65%)" />
 
     <!-- Animated dot grid -->
     <div class="absolute inset-0 opacity-10"
