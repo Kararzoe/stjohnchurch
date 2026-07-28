@@ -25,7 +25,7 @@
         <p class="text-gold text-xs uppercase tracking-[0.4em] font-semibold mb-2">St. John of the Cross Catholic Church</p>
         <h1 class="font-playfair text-5xl sm:text-7xl font-black text-white leading-tight drop-shadow-2xl">
           Harvest Festival
-          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2025 Voting</span>
+          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2026 Voting</span>
         </h1>
         <div class="flex items-center justify-center gap-3 mt-4">
           <div class="h-px w-16 bg-gold/40" />
@@ -288,7 +288,7 @@
         <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Vote Submitted Successfully</p>
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
         <p class="text-gray-500 mb-2 text-sm leading-relaxed max-w-sm mx-auto">
-          Your votes for the <strong class="text-navy">Harvest Festival 2025</strong> have been recorded. May God bless our celebration!
+          Your votes for the <strong class="text-navy">Harvest Festival 2026</strong> have been recorded. May God bless our celebration!
         </p>
         <p class="text-gray-400 text-xs mb-8 italic">"Give thanks to the Lord, for He is good; His love endures forever." — Psalm 107:1</p>
 
