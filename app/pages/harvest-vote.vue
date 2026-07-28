@@ -319,10 +319,11 @@ const categories = [
     label: 'Face of Harvest',
     icon: '👑',
     contestants: [
-      { id: 'f1', number: 1, name: 'Chisom Okafor', tagline: 'Grace & Elegance', photo: '' },
-      { id: 'f2', number: 2, name: 'Adaeze Nwosu', tagline: 'Faith & Beauty', photo: '' },
-      { id: 'f3', number: 3, name: 'Blessing Eze', tagline: 'Joy & Radiance', photo: '' },
-      { id: 'f4', number: 4, name: 'Ngozi Amadi', tagline: 'Poise & Devotion', photo: '' },
+      { id: 'f1', number: 1, name: 'Miss Chimamanda Lawrence', tagline: '📞 08087350321', photo: '/foh-chimamanda.jpg' },
+      { id: 'f2', number: 2, name: 'Miss Emmanuelle Moses', tagline: '📞 07039730834', photo: '/foh-emmanuelle.jpg' },
+      { id: 'f3', number: 3, name: 'Mr. Sebastian Felix', tagline: 'Face of Harvest', photo: '/foh-sebastian.jpg' },
+      { id: 'f4', number: 4, name: 'Master John Agim', tagline: 'Face of Harvest', photo: '/foh-john.jpg' },
+      { id: 'f5', number: 5, name: 'Master Iyeakachukwu Ugochukwu', tagline: 'Face of Harvest', photo: '/foh-iyeaka.jpg' },
     ],
   },
   {
