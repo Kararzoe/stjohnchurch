@@ -2,82 +2,110 @@
   <div class="min-h-screen bg-cream">
 
     <!-- ── HERO ── -->
-    <section class="relative h-[42vh] flex items-center justify-center overflow-hidden">
+    <section class="relative h-[55vh] flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0">
-        <img src="/church-interior.jpg" alt="Harvest" class="w-full h-full object-cover object-center" />
+        <img src="/church-interior.jpg" alt="Harvest" class="w-full h-full object-cover object-center scale-105" />
       </div>
-      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,39,68,0.88) 0%, rgba(26,39,68,0.65) 50%, rgba(26,39,68,0.92) 100%)" />
-      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.25) 0%, transparent 65%)" />
+      <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(26,39,68,0.95) 0%, rgba(26,39,68,0.6) 50%, rgba(139,90,0,0.85) 100%)" />
+      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 70%, rgba(212,175,55,0.35) 0%, transparent 60%)" />
+      <!-- Grain texture -->
+      <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"n\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"4\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23n)\" opacity=\"1\"/%3E%3C/svg%3E')" />
 
       <div class="relative z-10 text-center px-4">
-        <div class="animate-float inline-block mb-3">
-          <div class="w-14 h-14 rounded-full bg-gold/20 border-2 border-gold/50 flex items-center justify-center mx-auto">
-            <span class="text-2xl">🌾</span>
+        <!-- Decorative wheat icons -->
+        <div class="flex items-center justify-center gap-4 mb-4">
+          <span class="text-2xl opacity-60">🌾</span>
+          <div class="animate-float">
+            <div class="w-16 h-16 rounded-full border-2 border-gold/60 bg-gold/10 flex items-center justify-center shadow-2xl shadow-gold/30">
+              <span class="text-3xl">🌾</span>
+            </div>
           </div>
+          <span class="text-2xl opacity-60">🌾</span>
         </div>
-        <p class="section-label text-center">St. John of the Cross</p>
-        <h1 class="font-playfair text-4xl sm:text-6xl font-black text-white leading-tight">
+        <p class="text-gold text-xs uppercase tracking-[0.4em] font-semibold mb-2">St. John of the Cross Catholic Church</p>
+        <h1 class="font-playfair text-5xl sm:text-7xl font-black text-white leading-tight drop-shadow-2xl">
           Harvest Festival
-          <span class="block gold-text">2025 Voting</span>
+          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2025 Voting</span>
         </h1>
-        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto">
+        <div class="flex items-center justify-center gap-3 mt-4">
+          <div class="h-px w-16 bg-gold/40" />
+          <span class="text-gold text-lg">✦</span>
+          <div class="h-px w-16 bg-gold/40" />
+        </div>
+        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">
           Cast your vote for your favourite contestants across all five categories
         </p>
       </div>
 
       <div class="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 60" fill="none"><path d="M0 60L1440 60L1440 20C1200 60 960 0 720 20C480 40 240 0 0 20L0 60Z" fill="#faf8f3"/></svg>
+        <svg viewBox="0 0 1440 80" fill="none"><path d="M0 80L1440 80L1440 30C1200 80 960 10 720 30C480 50 240 0 0 30L0 80Z" fill="#faf8f3"/></svg>
       </div>
     </section>
 
     <!-- ── VOTING AREA ── -->
-    <div v-if="step === 'vote'" class="py-12 px-4">
+    <div v-if="step === 'vote'" class="py-10 px-4">
       <div class="max-w-5xl mx-auto">
 
         <!-- Progress bar -->
-        <div class="mb-8">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">Your Progress</p>
-            <p class="text-xs font-bold text-gold">{{ totalVoted }} / {{ categories.length }} categories voted</p>
+        <div class="mb-8 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs text-gray-400 font-semibold uppercase tracking-widest">Your Progress</p>
+            <p class="text-xs font-black text-gold">{{ totalVoted }} / {{ categories.length }} categories</p>
           </div>
-          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
             <div
-              class="h-full bg-gradient-to-r from-gold to-yellow-400 rounded-full transition-all duration-500"
+              class="h-full rounded-full transition-all duration-700"
+              style="background: linear-gradient(90deg, #b8860b, #d4af37, #f5e27a)"
               :style="`width: ${(totalVoted / categories.length) * 100}%`"
             />
+          </div>
+          <div class="flex justify-between mt-2">
+            <span v-for="(cat, i) in categories" :key="cat.id"
+              :class="['text-lg transition-all duration-300', totalVoted > i ? 'opacity-100 scale-110' : 'opacity-30']"
+            >{{ cat.icon }}</span>
           </div>
         </div>
 
         <!-- Category tabs -->
-        <div class="flex gap-2 overflow-x-auto pb-2 mb-8 scrollbar-hide">
+        <div class="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
           <button
             v-for="(cat, i) in categories"
             :key="cat.id"
             @click="activeTab = i"
             :class="[
-              'flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 shrink-0 border-2',
+              'flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap transition-all duration-300 shrink-0 border-2',
               activeTab === i
-                ? 'bg-navy text-white border-navy shadow-lg shadow-navy/30'
+                ? 'text-white border-transparent shadow-xl shadow-navy/30'
                 : votes[cat.id]
-                  ? 'bg-gold/10 text-gold border-gold/40'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-gold/40'
+                  ? 'bg-gold/10 text-gold border-gold/40 hover:bg-gold/20'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-gold/40 hover:text-navy'
             ]"
+            :style="activeTab === i ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''"
           >
-            <span>{{ cat.icon }}</span>
+            <span class="text-base">{{ cat.icon }}</span>
             <span>{{ cat.label }}</span>
-            <span v-if="votes[cat.id]" class="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center text-white text-[10px]">✓</span>
+            <span v-if="votes[cat.id]" class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-[10px] font-black shadow-sm">✓</span>
           </button>
         </div>
 
         <!-- Active category panel -->
         <transition name="tab-slide" mode="out-in">
           <div :key="activeTab">
-            <div class="text-center mb-6">
-              <div class="inline-flex items-center gap-3 bg-navy text-white px-6 py-3 rounded-2xl shadow-lg shadow-navy/20">
-                <span class="text-2xl">{{ categories[activeTab].icon }}</span>
-                <div class="text-left">
-                  <p class="text-xs text-gold uppercase tracking-widest font-semibold">Category {{ activeTab + 1 }} of {{ categories.length }}</p>
-                  <h2 class="font-playfair font-bold text-lg leading-tight">{{ categories[activeTab].label }}</h2>
+            <!-- Category header -->
+            <div class="relative mb-8 rounded-3xl overflow-hidden" style="background: linear-gradient(135deg, #1a2744 0%, #2d4a8a 100%)">
+              <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 24px 24px;" />
+              <div class="relative flex items-center gap-4 px-6 py-5">
+                <div class="w-14 h-14 rounded-2xl bg-gold/20 border border-gold/40 flex items-center justify-center text-3xl shadow-lg">
+                  {{ categories[activeTab].icon }}
+                </div>
+                <div>
+                  <p class="text-gold text-xs uppercase tracking-[0.3em] font-bold">Category {{ activeTab + 1 }} of {{ categories.length }}</p>
+                  <h2 class="font-playfair font-black text-white text-2xl leading-tight">{{ categories[activeTab].label }}</h2>
+                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab].contestants.length }} contestants</p>
+                </div>
+                <div class="ml-auto text-right hidden sm:block">
+                  <p class="text-gray-400 text-xs">Tap a card to vote</p>
+                  <p v-if="votes[categories[activeTab].id]" class="text-green-400 text-xs font-bold mt-1">✓ Vote cast!</p>
                 </div>
               </div>
             </div>
@@ -89,102 +117,105 @@
                 :key="contestant.id"
                 @click="castVote(categories[activeTab].id, contestant.id)"
                 :class="[
-                  'relative rounded-2xl overflow-hidden border-2 transition-all duration-300 text-left group',
+                  'relative rounded-3xl overflow-hidden text-left group transition-all duration-300',
                   votes[categories[activeTab].id] === contestant.id
-                    ? 'border-gold shadow-xl shadow-gold/30 scale-[1.03]'
-                    : 'border-gray-200 hover:border-gold/50 hover:shadow-lg hover:-translate-y-1'
+                    ? 'ring-4 ring-gold shadow-2xl shadow-gold/40 scale-[1.04] -translate-y-1'
+                    : 'shadow-md hover:shadow-xl hover:-translate-y-2 hover:ring-2 hover:ring-gold/40'
                 ]"
               >
                 <!-- Photo -->
-                <div class="relative aspect-[3/4] bg-navy/10 overflow-hidden">
+                <div class="relative aspect-[3/4] overflow-hidden bg-navy/10">
                   <img
                     v-if="contestant.photo"
                     :src="contestant.photo"
                     :alt="contestant.name"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-navy/10 to-gold/10">
-                    <span class="text-5xl mb-2">{{ categories[activeTab].icon }}</span>
-                    <span class="text-xs text-gray-400">No photo</span>
+                  <div v-else class="w-full h-full flex flex-col items-center justify-center" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                    <span class="text-6xl mb-2">{{ categories[activeTab].icon }}</span>
                   </div>
 
-                  <!-- Contestant number badge -->
-                  <div class="absolute top-2 left-2 w-7 h-7 rounded-full bg-navy/80 text-white text-xs font-bold flex items-center justify-center">
+                  <!-- Number badge -->
+                  <div class="absolute top-2.5 left-2.5 w-8 h-8 rounded-full text-white text-xs font-black flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
                     {{ contestant.number }}
                   </div>
 
                   <!-- Selected overlay -->
-                  <div
-                    v-if="votes[categories[activeTab].id] === contestant.id"
-                    class="absolute inset-0 bg-gold/20 flex items-center justify-center"
-                  >
-                    <div class="w-12 h-12 rounded-full bg-gold flex items-center justify-center shadow-lg">
-                      <span class="text-white text-xl font-bold">✓</span>
+                  <transition name="fade">
+                    <div v-if="votes[categories[activeTab].id] === contestant.id"
+                      class="absolute inset-0 flex items-center justify-center"
+                      style="background: rgba(212,175,55,0.25)"
+                    >
+                      <div class="w-14 h-14 rounded-full flex items-center justify-center shadow-2xl" style="background: linear-gradient(135deg, #b8860b, #d4af37)">
+                        <span class="text-white text-2xl font-black">✓</span>
+                      </div>
                     </div>
-                  </div>
+                  </transition>
 
-                  <!-- Gold shimmer on hover -->
-                  <div class="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent" />
+                  <!-- Bottom gradient -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                  <!-- Name on photo -->
+                  <div class="absolute bottom-0 left-0 right-0 p-3">
+                    <p class="font-playfair font-bold text-white text-sm leading-tight drop-shadow-lg">{{ contestant.name }}</p>
+                    <p class="text-gold text-[10px] mt-0.5 leading-tight">{{ contestant.tagline }}</p>
+                  </div>
                 </div>
 
-                <!-- Info -->
-                <div class="p-3 bg-white">
-                  <p class="font-playfair font-bold text-navy text-sm leading-tight">{{ contestant.name }}</p>
-                  <p class="text-xs text-gray-400 mt-0.5">{{ contestant.tagline }}</p>
-                  <div
-                    :class="[
-                      'mt-2 text-xs font-semibold px-2 py-0.5 rounded-full inline-block transition-all',
-                      votes[categories[activeTab].id] === contestant.id
-                        ? 'bg-gold text-white'
-                        : 'bg-gray-100 text-gray-400'
-                    ]"
-                  >
-                    {{ votes[categories[activeTab].id] === contestant.id ? '✓ Your Vote' : 'Tap to Vote' }}
-                  </div>
+                <!-- Vote button bar -->
+                <div
+                  :class="[
+                    'py-2.5 px-3 text-center text-xs font-black uppercase tracking-widest transition-all duration-300',
+                    votes[categories[activeTab].id] === contestant.id
+                      ? 'text-white'
+                      : 'bg-white text-gray-400 group-hover:text-navy'
+                  ]"
+                  :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37)' : ''"
+                >
+                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Your Vote' : 'Vote' }}
                 </div>
               </button>
             </div>
 
             <!-- Category nav -->
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-3">
               <button
                 v-if="activeTab > 0"
                 @click="activeTab--"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:border-navy transition-all"
+                class="flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-gray-200 text-gray-600 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white shadow-sm"
               >
                 ← Previous
               </button>
               <div v-else />
-
               <button
                 v-if="activeTab < categories.length - 1"
                 @click="activeTab++"
                 :class="[
-                  'flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all',
+                  'flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-sm',
                   votes[categories[activeTab].id]
-                    ? 'bg-navy text-white hover:bg-navy/90 shadow-lg'
-                    : 'bg-gray-200 text-gray-400'
+                    ? 'text-white shadow-lg shadow-navy/30'
+                    : 'bg-gray-100 text-gray-400'
                 ]"
+                :style="votes[categories[activeTab].id] ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''"
               >
                 Next Category →
               </button>
-
               <button
                 v-else
                 @click="goToConfirm"
                 :class="[
-                  'flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm transition-all',
+                  'flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all',
                   totalVoted === categories.length
-                    ? 'bg-gold text-white hover:bg-gold-light shadow-lg shadow-gold/30'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'text-white shadow-xl shadow-gold/40'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 ]"
+                :style="totalVoted === categories.length ? 'background: linear-gradient(90deg, #b8860b, #d4af37)' : ''"
                 :disabled="totalVoted < categories.length"
               >
                 Review & Submit 🌾
               </button>
             </div>
-
-            <p v-if="submitError" class="text-red-500 text-xs text-center mt-4 bg-red-50 rounded-xl p-3">
+            <p v-if="submitError" class="text-red-500 text-xs text-center mt-4 bg-red-50 rounded-2xl p-3 border border-red-100">
               {{ submitError }}
             </p>
           </div>
@@ -196,71 +227,44 @@
     <div v-if="step === 'confirm'" class="py-12 px-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
-          <div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <span class="text-3xl">📋</span>
+          <div class="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl" style="background: linear-gradient(135deg, #b8860b, #d4af37)">
+            <span class="text-4xl">📋</span>
           </div>
-          <h1 class="font-playfair text-3xl font-bold text-navy mb-2">Review Your Votes</h1>
+          <h1 class="font-playfair text-3xl font-black text-navy mb-2">Review Your Votes</h1>
           <div class="catholic-divider"><span class="text-gold text-base">✦</span></div>
           <p class="text-gray-500 text-sm mt-3">Confirm your selections before final submission.</p>
         </div>
 
         <div class="space-y-3 mb-6">
-          <div
-            v-for="cat in categories"
-            :key="cat.id"
-            class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          <div v-for="cat in categories" :key="cat.id"
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:border-gold/30 transition-all"
           >
             <div class="flex items-center gap-4 p-4">
-              <!-- Contestant photo thumbnail -->
-              <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 border-gold/30">
-                <img
-                  v-if="getVotedContestant(cat)?.photo"
-                  :src="getVotedContestant(cat)!.photo"
-                  :alt="getVotedContestant(cat)!.name"
-                  class="w-full h-full object-cover"
-                />
-                <div v-else class="w-full h-full bg-gold/10 flex items-center justify-center text-2xl">
-                  {{ cat.icon }}
-                </div>
+              <div class="w-16 h-16 rounded-2xl overflow-hidden shrink-0 border-2 border-gold/30 shadow-sm">
+                <img v-if="getVotedContestant(cat)?.photo" :src="getVotedContestant(cat)!.photo" :alt="getVotedContestant(cat)!.name" class="w-full h-full object-cover" />
+                <div v-else class="w-full h-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">{{ cat.icon }}</div>
               </div>
-
               <div class="flex-1 min-w-0">
-                <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ cat.label }}</p>
-                <p class="font-playfair font-bold text-navy mt-0.5">{{ getVotedContestant(cat)?.name }}</p>
-                <p class="text-xs text-gray-400">{{ getVotedContestant(cat)?.tagline }}</p>
+                <p class="text-[10px] text-gold uppercase tracking-widest font-black">{{ cat.label }}</p>
+                <p class="font-playfair font-bold text-navy mt-0.5 truncate">{{ getVotedContestant(cat)?.name }}</p>
+                <p class="text-xs text-gray-400 truncate">{{ getVotedContestant(cat)?.tagline }}</p>
               </div>
-
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-green-500 text-lg">✓</span>
-                <button
-                  @click="step = 'vote'; activeTab = categories.findIndex(c => c.id === cat.id)"
-                  class="text-xs text-gold hover:text-navy transition-colors font-semibold"
-                >
-                  Change
-                </button>
+                <div class="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-black">✓</div>
+                <button @click="step = 'vote'; activeTab = categories.findIndex(c => c.id === cat.id)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-start gap-3">
-          <span class="text-amber-500 text-lg shrink-0">⚠️</span>
-          <p class="text-amber-700 text-xs leading-relaxed">
-            Once submitted, your vote cannot be changed. Please make sure all your selections are correct.
-          </p>
+        <div class="rounded-2xl p-4 mb-6 flex items-start gap-3 border" style="background: #fffbeb; border-color: #fcd34d">
+          <span class="text-xl shrink-0">⚠️</span>
+          <p class="text-amber-700 text-xs leading-relaxed">Once submitted, your vote cannot be changed. Please make sure all your selections are correct.</p>
         </div>
 
         <div class="flex gap-3">
-          <button
-            @click="step = 'vote'"
-            class="flex-1 py-3.5 rounded-full border-2 border-gray-200 text-gray-600 font-semibold hover:border-gray-300 transition-all text-sm"
-          >
-            ← Go Back
-          </button>
-          <button
-            @click="submitVotes"
-            class="flex-1 py-3.5 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-lg hover:shadow-gold/30 text-sm"
-          >
+          <button @click="step = 'vote'" class="flex-1 py-4 rounded-2xl border-2 border-gray-200 text-gray-600 font-bold hover:border-navy transition-all text-sm bg-white">← Go Back</button>
+          <button @click="submitVotes" class="flex-1 py-4 rounded-2xl text-white font-black transition-all text-sm shadow-xl shadow-gold/30" style="background: linear-gradient(90deg, #b8860b, #d4af37)">
             Submit Final Vote 🌾
           </button>
         </div>
@@ -270,32 +274,39 @@
     <!-- ── SUCCESS STEP ── -->
     <div v-if="step === 'done'" class="py-20 px-4 text-center">
       <div class="max-w-md mx-auto">
-        <div class="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 animate-float">
-          <span class="text-5xl">🌾</span>
-        </div>
-        <h1 class="font-playfair text-4xl font-bold text-navy mb-3">Thank You!</h1>
-        <div class="catholic-divider mb-4"><span class="text-gold text-base">✦</span></div>
-        <p class="text-gray-500 mb-2 text-sm leading-relaxed max-w-sm mx-auto">
-          Your votes for the <strong class="text-navy">Harvest Festival 2025</strong> have been recorded. May God bless our celebration!
-        </p>
-        <p class="text-gray-400 text-xs mb-8 italic">
-          "Give thanks to the Lord, for He is good; His love endures forever." — Psalm 107:1
-        </p>
-
-        <!-- Summary chips -->
-        <div class="flex flex-wrap gap-2 justify-center mb-8">
-          <div
-            v-for="cat in categories"
-            :key="cat.id"
-            class="flex items-center gap-2 bg-gold/10 border border-gold/30 rounded-full px-3 py-1.5"
-          >
-            <span class="text-sm">{{ cat.icon }}</span>
-            <span class="text-xs font-semibold text-navy">{{ getVotedContestant(cat)?.name }}</span>
+        <!-- Animated success icon -->
+        <div class="relative inline-block mb-8">
+          <div class="w-32 h-32 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-gold/40 animate-float" style="background: linear-gradient(135deg, #b8860b, #d4af37, #f5e27a)">
+            <span class="text-6xl">🌾</span>
+          </div>
+          <div class="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+            <span class="text-white text-lg font-black">✓</span>
           </div>
         </div>
 
-        <NuxtLink to="/"
-          class="inline-block px-8 py-3.5 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40">
+        <h1 class="font-playfair text-5xl font-black text-navy mb-2">Thank You!</h1>
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Vote Submitted Successfully</p>
+        <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
+        <p class="text-gray-500 mb-2 text-sm leading-relaxed max-w-sm mx-auto">
+          Your votes for the <strong class="text-navy">Harvest Festival 2025</strong> have been recorded. May God bless our celebration!
+        </p>
+        <p class="text-gray-400 text-xs mb-8 italic">"Give thanks to the Lord, for He is good; His love endures forever." — Psalm 107:1</p>
+
+        <!-- Summary chips -->
+        <div class="flex flex-wrap gap-2 justify-center mb-8">
+          <div v-for="cat in categories" :key="cat.id"
+            class="flex items-center gap-2 rounded-2xl px-4 py-2 border border-gold/30 shadow-sm"
+            style="background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.05))"
+          >
+            <span class="text-base">{{ cat.icon }}</span>
+            <div class="text-left">
+              <p class="text-[9px] text-gold uppercase tracking-widest font-bold">{{ cat.label }}</p>
+              <p class="text-xs font-bold text-navy">{{ getVotedContestant(cat)?.name }}</p>
+            </div>
+          </div>
+        </div>
+
+        <NuxtLink to="/" class="inline-block px-10 py-4 rounded-2xl text-white font-black hover:shadow-2xl transition-all shadow-xl shadow-gold/30" style="background: linear-gradient(90deg, #b8860b, #d4af37)">
           Back to Home ✝
         </NuxtLink>
       </div>
@@ -411,15 +422,21 @@ function submitVotes() {
 <style scoped>
 .tab-slide-enter-active,
 .tab-slide-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tab-slide-enter-from {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(30px);
 }
 .tab-slide-leave-to {
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateX(-30px);
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
