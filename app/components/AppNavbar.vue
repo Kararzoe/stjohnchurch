@@ -97,7 +97,6 @@ const links = [
   { to: '/events', label: 'Events' },
   { to: '/news', label: 'News' },
   { to: '/gallery', label: 'Gallery' },
-  { to: '/elections', label: 'Elections' },
   { to: '/harvest-vote', label: '🌾 Harvest Vote' },
   { to: '/contact', label: 'Contact' },
 ]
