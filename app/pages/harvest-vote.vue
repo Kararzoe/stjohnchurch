@@ -124,7 +124,7 @@
                 ]"
               >
                 <!-- Photo -->
-                <div class="relative aspect-[3/4] overflow-hidden bg-navy/10">
+                <div class="relative aspect-[2/3] sm:aspect-[3/4] overflow-hidden bg-navy/10">
                   <img
                     v-if="contestant.photo"
                     :src="contestant.photo"
