@@ -55,8 +55,7 @@
           <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
             <div
               class="h-full rounded-full transition-all duration-700"
-              style="background: linear-gradient(90deg, #b8860b, #d4af37, #f5e27a)"
-              :style="`width: ${(totalVoted / categories.length) * 100}%`"
+              :style="`width: ${(totalVoted / categories.length) * 100}%; background: linear-gradient(90deg, #b8860b, #d4af37, #f5e27a)`"
             />
           </div>
           <div class="flex justify-between mt-2">
