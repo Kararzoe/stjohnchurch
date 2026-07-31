@@ -85,20 +85,20 @@
             </div>
 
             <!-- Contestant cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              <button
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+              <div
                 v-for="contestant in categories[activeTab].contestants"
                 :key="contestant.id"
                 @click="castVote(categories[activeTab].id, contestant)"
                 :class="[
-                  'relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex sm:flex-col',
+                  'relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex flex-col cursor-pointer',
                   votes[categories[activeTab].id] === contestant.id
                     ? 'ring-2 ring-gold shadow-xl shadow-gold/20'
                     : 'shadow-sm border border-gray-100 hover:shadow-md hover:border-gold/30'
                 ]"
               >
                 <!-- Photo -->
-                <div class="relative w-28 sm:w-full shrink-0 sm:aspect-[3/4] h-36 sm:h-auto overflow-hidden">
+                <div class="relative w-full aspect-[3/4] overflow-hidden">
                   <img
                     v-if="contestant.photo"
                     :src="contestant.photo"
@@ -124,34 +124,21 @@
                     </div>
                   </transition>
 
-                  <!-- Bottom gradient (desktop only) -->
-                  <div class="hidden sm:block absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div class="hidden sm:block absolute bottom-0 left-0 right-0 p-3">
-                    <p class="font-playfair font-black text-white text-base leading-tight">{{ contestant.name }}</p>
+                  <!-- Bottom gradient -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div class="absolute bottom-0 left-0 right-0 p-3">
+                    <p class="font-playfair font-black text-white text-sm leading-tight">{{ contestant.name }}</p>
                   </div>
                 </div>
 
-                <!-- Info (mobile only) -->
-                <div class="flex-1 p-3 flex flex-col justify-between sm:hidden">
-                  <div>
-                    <p class="font-playfair font-black text-navy text-base leading-tight">{{ contestant.name }}</p>
-                  </div>
-                  <div
-                    class="mt-3 text-sm font-black uppercase tracking-widest px-4 py-2.5 rounded-xl text-center transition-all"
-                    :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'"
-                  >
-                    {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote Now' }}
-                  </div>
-                </div>
-
-                <!-- Vote bar (desktop only) -->
+                <!-- Vote button -->
                 <div
-                  class="hidden sm:block py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
+                  class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
                   :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'"
                 >
                   {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote Now' }}
                 </div>
-              </button>
+              </div>
             </div>
 
             <!-- Category nav -->
@@ -460,6 +447,8 @@ function confirmPayment() {
     step.value = 'confirm'
   }
 }
+
+function getVotedContestant(cat: typeof categories[0]) {
   return cat.contestants.find(c => c.id === votes[cat.id])
 }
 

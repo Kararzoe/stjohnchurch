@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div>
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -27,7 +27,7 @@
             <td class="px-5 py-4">
               <div class="flex items-center gap-3">
                 <img v-if="ev.image_url" :src="ev.image_url" class="w-10 h-10 rounded-lg object-cover shrink-0" />
-                <div v-else class="w-10 h-10 rounded-lg bg-navy/5 flex items-center justify-center shrink-0 text-lg">📅</div>
+                <div v-else class="w-10 h-10 rounded-lg bg-navy/5 flex items-center justify-center shrink-0 text-lg">ðŸ“…</div>
                 <p class="font-semibold text-navy truncate max-w-xs">{{ ev.title }}</p>
               </div>
             </td>
@@ -53,7 +53,7 @@
       <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 class="font-playfair text-xl font-bold text-navy">{{ editing ? 'Edit Event' : 'New Event' }}</h2>
-          <button @click="showForm = false" class="text-gray-400 hover:text-navy text-xl">✕</button>
+          <button @click="showForm = false" class="text-gray-400 hover:text-navy text-xl">âœ•</button>
         </div>
         <div class="p-6 space-y-4">
           <div>
@@ -135,9 +135,9 @@ async function handleImageUpload(e: Event) {
   if (!file) return
   uploading.value = true
   const path = `events/${Date.now()}.${file.name.split('.').pop()}`
-  const { data, error } = await supabase.storage.from('parish-media').upload(path, file, { upsert: true })
+  const { data, error } = await supabase.storage.from('parish media').upload(path, file, { upsert: true })
   if (!error && data) {
-    const { data: url } = supabase.storage.from('parish-media').getPublicUrl(path)
+    const { data: url } = supabase.storage.from('parish media').getPublicUrl(path)
     form.image_url = url.publicUrl
   }
   uploading.value = false
@@ -159,3 +159,4 @@ async function deleteEvent(id: string) {
   loadEvents()
 }
 </script>
+

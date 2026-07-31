@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div>
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -58,9 +58,9 @@ async function handleUpload(e: Event) {
     const file = files[i]
     const ext = file.name.split('.').pop()
     const path = `gallery/${Date.now()}-${i}.${ext}`
-    const { data, error } = await supabase.storage.from('parish-media').upload(path, file, { upsert: true })
+    const { data, error } = await supabase.storage.from('parish media').upload(path, file, { upsert: true })
     if (!error && data) {
-      const { data: url } = supabase.storage.from('parish-media').getPublicUrl(path)
+      const { data: url } = supabase.storage.from('parish media').getPublicUrl(path)
       await supabase.from('gallery').insert({ image_url: url.publicUrl, title: file.name.replace(/\.[^.]+$/, '') })
     }
   }
@@ -74,3 +74,4 @@ async function deletePhoto(photo: any) {
   loadPhotos()
 }
 </script>
+

@@ -76,22 +76,25 @@
             <span class="text-gold-light text-xs">✝</span>
             {{ link.label }}
           </NuxtLink>
-          <div class="flex flex-col gap-2 pt-2">
-            <NuxtLink
-              to="/harvest-vote"
-              class="block text-center py-3 rounded-full border border-white/60 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
-              @click="menuOpen = false"
-            >
-              Contest
-            </NuxtLink>
-            <NuxtLink
-              to="/donate"
-              class="block text-center py-3 rounded-full bg-gold text-white text-sm font-semibold hover:bg-gold-light transition-colors"
-              @click="menuOpen = false"
-            >
-              Donate ✝
-            </NuxtLink>
-          </div>
+        </div>
+        <div class="px-4 pb-5 pt-3 border-t border-white/10 flex flex-col gap-3">
+          <NuxtLink
+            to="/harvest-vote"
+            :class="[
+              'block text-center py-3.5 rounded-full text-sm font-bold transition-colors',
+              isActive('/harvest-vote') ? 'bg-white text-navy' : 'border border-white/60 text-white hover:bg-white/10'
+            ]"
+            @click="menuOpen = false"
+          >
+            Contest
+          </NuxtLink>
+          <NuxtLink
+            to="/donate"
+            class="block text-center py-3.5 rounded-full bg-gold text-white text-sm font-bold hover:bg-gold-light transition-colors"
+            @click="menuOpen = false"
+          >
+            Donate ✝
+          </NuxtLink>
         </div>
       </div>
     </Transition>
