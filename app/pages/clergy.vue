@@ -73,32 +73,7 @@
     </div>
   </section>
 
-  <!-- Contact the Priest -->
-  <section class="relative py-14 px-4 overflow-hidden">
-    <div class="absolute inset-0">
-      <img src="/church-4.jpg" alt="Contact" class="w-full h-full object-cover object-center" />
-    </div>
-    <div class="absolute inset-0 bg-navy/88" />
-    <div class="relative z-10 max-w-2xl mx-auto text-center text-white reveal">
-      <span class="section-label">Get in Touch</span>
-      <h2 class="font-playfair text-3xl font-bold mb-3">Speak with a Priest</h2>
-      <div class="catholic-divider mb-4"><span class="text-gold-light text-base">✦</span></div>
-      <p class="text-gray-300 text-sm leading-relaxed mb-6">
-        For sacramental requests, pastoral counselling, hospital visits, home blessings,
-        or any spiritual matter — our priests are always available to serve you.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <NuxtLink to="/contact"
-          class="px-7 py-3 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all text-sm">
-          Contact the Parish Office
-        </NuxtLink>
-        <NuxtLink to="/mass-times"
-          class="px-7 py-3 rounded-full glass text-white font-semibold hover:bg-white/20 transition-all text-sm">
-          View Mass Times
-        </NuxtLink>
-      </div>
-    </div>
-  </section>
+
 </template>
 
 <script setup lang="ts">
