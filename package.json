@@ -14,8 +14,12 @@
     "@supabase/supabase-js": "^2.111.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "^14.3.0",
+    "jimp": "^1.6.1",
     "nuxt": "^4.5.0",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.3"
   }
 }
