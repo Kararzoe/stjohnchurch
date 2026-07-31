@@ -89,7 +89,7 @@
               <button
                 v-for="contestant in categories[activeTab].contestants"
                 :key="contestant.id"
-                @click="castVote(categories[activeTab].id, contestant.id)"
+                @click="castVote(categories[activeTab].id, contestant)"
                 :class="[
                   'relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex sm:flex-col',
                   votes[categories[activeTab].id] === contestant.id
@@ -127,31 +127,29 @@
                   <!-- Bottom gradient (desktop only) -->
                   <div class="hidden sm:block absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                   <div class="hidden sm:block absolute bottom-0 left-0 right-0 p-3">
-                    <p class="font-playfair font-bold text-white text-sm leading-tight">{{ contestant.name }}</p>
-                    <p class="text-gold/80 text-[10px] mt-0.5">{{ contestant.tagline }}</p>
+                    <p class="font-playfair font-black text-white text-base leading-tight">{{ contestant.name }}</p>
                   </div>
                 </div>
 
                 <!-- Info (mobile only) -->
                 <div class="flex-1 p-3 flex flex-col justify-between sm:hidden">
                   <div>
-                    <p class="font-playfair font-bold text-navy text-sm leading-tight">{{ contestant.name }}</p>
-                    <p class="text-gray-400 text-xs mt-1">{{ contestant.tagline }}</p>
+                    <p class="font-playfair font-black text-navy text-base leading-tight">{{ contestant.name }}</p>
                   </div>
                   <div
-                    class="mt-3 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg text-center transition-all"
-                    :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: #f3f4f6; color: #9ca3af'"
+                    class="mt-3 text-sm font-black uppercase tracking-widest px-4 py-2.5 rounded-xl text-center transition-all"
+                    :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'"
                   >
-                    {{ votes[categories[activeTab].id] === contestant.id ? '✓ Selected' : 'Vote' }}
+                    {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote Now' }}
                   </div>
                 </div>
 
                 <!-- Vote bar (desktop only) -->
                 <div
-                  class="hidden sm:block py-2 px-3 text-center text-xs font-black uppercase tracking-widest transition-all duration-300"
-                  :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: white; color: #9ca3af'"
+                  class="hidden sm:block py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
+                  :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'"
                 >
-                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Your Vote' : 'Vote' }}
+                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote Now' }}
                 </div>
               </button>
             </div>
@@ -199,6 +197,72 @@
             </p>
           </div>
         </transition>
+      </div>
+    </div>
+
+    <!-- ── PAYMENT STEP ── -->
+    <div v-if="step === 'payment' && pendingVote" class="py-12 px-4">
+      <div class="max-w-md mx-auto">
+
+        <!-- Selected contestant summary -->
+        <div class="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 mb-6">
+          <div class="relative h-48 overflow-hidden">
+            <img
+              v-if="pendingVote.contestant.photo"
+              :src="pendingVote.contestant.photo"
+              :alt="pendingVote.contestant.name"
+              class="w-full h-full object-cover object-top"
+            />
+            <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
+            <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/30 to-transparent" />
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <p class="text-gold text-[10px] uppercase tracking-widest font-bold">{{ categories.find(c => c.id === pendingVote!.categoryId)?.label }}</p>
+              <p class="font-playfair font-black text-white text-xl">{{ pendingVote.contestant.name }}</p>
+              <p class="text-white/60 text-xs">{{ pendingVote.contestant.tagline }}</p>
+            </div>
+          </div>
+          <div class="px-5 py-4 flex items-center gap-3 bg-gold/5 border-t border-gold/20">
+            <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
+              <span class="text-gold text-sm">✦</span>
+            </div>
+            <p class="text-xs text-gray-600 leading-relaxed">Each vote costs <strong class="text-navy">₦500</strong>. You can vote multiple times to boost your contestant.</p>
+          </div>
+        </div>
+
+        <!-- Payment form -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+          <h2 class="font-playfair text-2xl font-bold text-navy mb-1">Complete Your Vote</h2>
+          <p class="text-gray-400 text-xs mb-5">Fill in your details to proceed to payment</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Number of Votes</label>
+              <div class="flex items-center gap-3">
+                <button @click="voteQty = Math.max(1, voteQty - 1)" class="w-10 h-10 rounded-xl border-2 border-gray-200 text-navy font-black text-lg hover:border-gold transition-all">−</button>
+                <span class="flex-1 text-center font-playfair font-black text-2xl text-navy">{{ voteQty }}</span>
+                <button @click="voteQty++" class="w-10 h-10 rounded-xl border-2 border-gray-200 text-navy font-black text-lg hover:border-gold transition-all">+</button>
+              </div>
+              <p class="text-center text-xs text-gold font-semibold mt-2">Total: ₦{{ (voteQty * 500).toLocaleString() }}</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name</label>
+              <input v-model="paymentForm.name" type="text" placeholder="Your full name"
+                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
+            </div>
+
+            <p v-if="paymentError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ paymentError }}</p>
+
+            <button @click="confirmPayment"
+              class="w-full py-5 rounded-2xl text-white font-black text-xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 tracking-wide"
+              style="background: linear-gradient(90deg, #b8860b, #d4af37)">
+              Pay ₦{{ (voteQty * 500).toLocaleString() }} to Vote
+            </button>
+            <button @click="step = 'vote'" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">
+              ← Back to Contestants
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -286,10 +350,12 @@
 definePageMeta({ layout: 'default' })
 useScrollReveal()
 
-const step = ref<'vote' | 'confirm' | 'done'>('vote')
+const step = ref<'vote' | 'payment' | 'confirm' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
+
+const pendingVote = ref<{ categoryId: string; contestant: any } | null>(null)
 
 const categories = [
   {
@@ -364,11 +430,36 @@ const categories = [
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
-function castVote(categoryId: string, contestantId: string) {
-  votes[categoryId] = contestantId
+function castVote(categoryId: string, contestant: any) {
+  pendingVote.value = { categoryId, contestant }
+  step.value = 'payment'
 }
 
-function getVotedContestant(cat: typeof categories[0]) {
+const voteQty = ref(1)
+const paymentError = ref('')
+const paymentForm = reactive({ name: '' })
+
+function confirmPayment() {
+  if (!paymentForm.name) {
+    paymentError.value = 'Please enter your name to continue.'
+    return
+  }
+  paymentError.value = ''
+  // TODO: trigger Paystack payment here
+  // On success callback:
+  votes[pendingVote.value!.categoryId] = pendingVote.value!.contestant.id
+  pendingVote.value = null
+  voteQty.value = 1
+  paymentForm.name = ''
+  // Move to next unvoted category or confirm
+  const nextUnvoted = categories.findIndex(c => !votes[c.id])
+  if (nextUnvoted !== -1) {
+    activeTab.value = nextUnvoted
+    step.value = 'vote'
+  } else {
+    step.value = 'confirm'
+  }
+}
   return cat.contestants.find(c => c.id === votes[cat.id])
 }
 

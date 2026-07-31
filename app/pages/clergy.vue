@@ -19,50 +19,83 @@
   </section>
 
   <!-- Parish Priest -->
-  <section class="py-14 md:py-20 px-4 bg-cream">
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-10 reveal">
-        <span class="section-label">Parish Priest</span>
-        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Pastor of the Parish</h2>
+  <section class="py-14 md:py-24 px-4 bg-cream">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Meet Our Pastor</span>
+        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Parish Priest</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
 
-      <div class="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 reveal">
-        <div class="flex flex-col md:flex-row">
-          <!-- Photo -->
-          <div class="md:w-72 shrink-0 bg-navy flex flex-col items-center justify-center p-8 gap-4">
-            <div class="w-36 h-36 rounded-full bg-gold/20 border-4 border-gold-light/50 flex items-center justify-center overflow-hidden">
-              <img v-if="priest.photo" :src="priest.photo" :alt="priest.name" class="w-full h-full object-cover" />
-              <span v-else class="text-5xl">✝</span>
+      <div class="reveal">
+        <!-- Top: featured photo + name banner -->
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-100">
+          <!-- Large hero photo -->
+          <div class="relative h-[420px] md:h-[560px]">
+            <img
+              :src="priestPhotos[activePhoto]"
+              alt="Rev. Frederick Wukari"
+              class="w-full h-full object-cover object-top transition-all duration-700"
+            />
+            <!-- Gradient overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
+
+            <!-- Name plate at bottom -->
+            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+              <div class="flex items-end justify-between gap-4">
+                <div>
+                  <p class="text-gold-light text-xs uppercase tracking-[0.2em] font-semibold mb-2">Parish Priest · OSA</p>
+                  <h3 class="font-playfair text-2xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+                    Rev. Frederick Wukari
+                  </h3>
+                  <p class="text-gold-light/80 text-sm mt-1 font-medium">OSA, Esq.</p>
+                  <p class="text-white/60 text-xs mt-2 tracking-wide">St. John of the Cross Catholic Church · Mararaba Gurku · Nasarawa State</p>
+                </div>
+                <!-- Cross emblem -->
+                <div class="shrink-0 w-14 h-14 md:w-20 md:h-20 rounded-full bg-gold/20 border-2 border-gold-light/50 flex items-center justify-center">
+                  <span class="text-gold-light text-2xl md:text-4xl">✝</span>
+                </div>
+              </div>
             </div>
-            <!-- Coat of arms / cross emblem -->
-            <div class="text-center">
-              <p class="text-gold-light text-xs uppercase tracking-widest font-semibold">Parish Priest</p>
-              <p class="text-white/60 text-xs mt-1">St. John of the Cross</p>
-              <p class="text-white/60 text-xs">Catholic Church, Mararaba</p>
+
+            <!-- Photo thumbnails -->
+            <div class="absolute top-4 right-4 flex flex-col gap-2">
+              <button
+                v-for="(photo, i) in priestPhotos"
+                :key="i"
+                @click="activePhoto = i"
+                :class="[
+                  'w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 transition-all duration-300',
+                  activePhoto === i ? 'border-gold scale-110 shadow-lg shadow-gold/40' : 'border-white/30 opacity-60 hover:opacity-100'
+                ]"
+              >
+                <img :src="photo" alt="" class="w-full h-full object-cover object-top" />
+              </button>
             </div>
           </div>
 
-          <!-- Details -->
-          <div class="p-6 md:p-8 flex flex-col justify-center flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-gold-light text-sm">✝</span>
-              <span class="text-xs text-gold font-bold uppercase tracking-widest">Very Reverend</span>
-            </div>
-            <h2 class="font-playfair text-2xl sm:text-3xl font-bold text-navy mb-1">{{ priest.name }}</h2>
-            <p class="text-gold font-semibold text-sm mb-4">{{ priest.title }}</p>
-
-            <div class="catholic-divider mb-4"><span class="text-gold text-xs">✦</span></div>
-
-            <p class="text-gray-600 leading-relaxed text-sm mb-5">{{ priest.bio }}</p>
-
-            <!-- Sacramental duties -->
-            <div>
-              <p class="text-xs font-bold text-navy uppercase tracking-widest mb-3">Pastoral Responsibilities</p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div v-for="d in priest.duties" :key="d" class="flex items-center gap-2 text-xs text-gray-600">
-                  <span class="text-gold-light shrink-0">✝</span>
-                  {{ d }}
+          <!-- Details panel below photo -->
+          <div class="bg-white p-6 md:p-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Bio -->
+              <div>
+                <p class="text-xs font-bold text-navy uppercase tracking-widest mb-3">About the Pastor</p>
+                <p class="text-gray-600 leading-relaxed text-sm">
+                  Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross
+                  Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA),
+                  he shepherds the parish community with zeal, compassion, and a deep devotion to the
+                  Holy Eucharist and the Blessed Virgin Mary. He oversees all sacramental, pastoral,
+                  and administrative life of the parish.
+                </p>
+              </div>
+              <!-- Duties -->
+              <div>
+                <p class="text-xs font-bold text-navy uppercase tracking-widest mb-3">Pastoral Responsibilities</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div v-for="d in priest.duties" :key="d" class="flex items-center gap-2 text-xs text-gray-600">
+                    <span class="text-gold-light shrink-0">✝</span>
+                    {{ d }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,11 +189,14 @@
 <script setup lang="ts">
 useScrollReveal()
 
+const priestPhotos = ['/priest-1.jpg', '/priest-2.jpg', '/priest-3.jpg']
+const activePhoto = ref(0)
+
 const priest = {
-  name: 'Rev. Fr. [Parish Priest Name]',
-  title: 'Parish Priest · St. John of the Cross Catholic Church, Mararaba',
-  photo: '',
-  bio: 'Rev. Fr. [Name] serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba, Nasarawa State. Ordained to the priesthood of Jesus Christ, he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist and the Blessed Virgin Mary. He oversees all sacramental, pastoral, and administrative life of the parish.',
+  name: 'Rev. Frederick Wukari, OSA Esq.',
+  title: 'Parish Priest · St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State',
+  photo: '/priest-1.jpg',
+  bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA), he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist and the Blessed Virgin Mary.',
   duties: [
     'Celebration of Holy Mass',
     'Administration of the Sacraments',

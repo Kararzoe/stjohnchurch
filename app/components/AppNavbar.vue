@@ -23,10 +23,19 @@
           v-for="link in links"
           :key="link.to"
           :to="link.to"
-          class="text-sm text-gray-300 hover:text-gold-light transition-colors relative group whitespace-nowrap"
+          :class="[
+            'text-sm transition-colors relative group whitespace-nowrap',
+            isActive(link.to) ? 'text-gold-light font-semibold' : 'text-gray-300 hover:text-gold-light'
+          ]"
         >
           {{ link.label }}
-          <span class="absolute -bottom-1 left-0 w-0 h-px bg-gold-light group-hover:w-full transition-all duration-300" />
+          <span :class="['absolute -bottom-1 left-0 h-px bg-gold-light transition-all duration-300', isActive(link.to) ? 'w-full' : 'w-0 group-hover:w-full']" />
+        </NuxtLink>
+        <NuxtLink
+          to="/harvest-vote"
+          class="px-4 py-2 rounded-full border border-white/60 text-white text-sm font-semibold hover:bg-white/10 transition-all"
+        >
+          Contest
         </NuxtLink>
         <NuxtLink
           to="/donate"
@@ -58,21 +67,31 @@
             v-for="link in links"
             :key="link.to"
             :to="link.to"
-            class="flex items-center gap-3 py-3 px-3 rounded-xl text-gray-300 hover:bg-white/10 hover:text-gold-light transition-all text-sm"
+            :class="[
+              'flex items-center gap-3 py-3 px-3 rounded-xl transition-all text-sm',
+              isActive(link.to) ? 'bg-gold/20 text-gold-light font-semibold' : 'text-gray-300 hover:bg-white/10 hover:text-gold-light'
+            ]"
             @click="menuOpen = false"
           >
             <span class="text-gold-light text-xs">✝</span>
             {{ link.label }}
           </NuxtLink>
-        </div>
-        <div class="px-4 pb-4 pt-2 border-t border-white/10">
-          <NuxtLink
-            to="/donate"
-            class="block text-center py-3 rounded-full bg-gold text-white text-sm font-semibold hover:bg-gold-light transition-colors"
-            @click="menuOpen = false"
-          >
-            Donate ✝
-          </NuxtLink>
+          <div class="flex flex-col gap-2 pt-2">
+            <NuxtLink
+              to="/harvest-vote"
+              class="block text-center py-3 rounded-full border border-white/60 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
+              @click="menuOpen = false"
+            >
+              Contest
+            </NuxtLink>
+            <NuxtLink
+              to="/donate"
+              class="block text-center py-3 rounded-full bg-gold text-white text-sm font-semibold hover:bg-gold-light transition-colors"
+              @click="menuOpen = false"
+            >
+              Donate ✝
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </Transition>
@@ -84,9 +103,12 @@ const { y: scrollY } = useWindowScroll()
 const scrolled = computed(() => scrollY.value > 50)
 const menuOpen = ref(false)
 
-// Close menu on route change
 const route = useRoute()
 watch(() => route.path, () => { menuOpen.value = false })
+
+function isActive(path: string) {
+  return path === '/' ? route.path === '/' : route.path.startsWith(path)
+}
 
 const links = [
   { to: '/', label: 'Home' },
@@ -96,8 +118,6 @@ const links = [
   { to: '/ministries', label: 'Ministries' },
   { to: '/events', label: 'Events' },
   { to: '/news', label: 'News' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/harvest-vote', label: '🌾 Harvest Vote' },
   { to: '/contact', label: 'Contact' },
 ]
 </script>

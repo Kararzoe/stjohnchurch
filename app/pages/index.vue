@@ -1,7 +1,6 @@
 <template>
   <!-- ── HERO ── -->
   <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- Background image — works on ALL devices -->
     <div class="absolute inset-0">
       <img
         src="/church-interior.jpg"
@@ -9,17 +8,12 @@
         class="w-full h-full object-cover object-center"
       />
     </div>
-    <!-- Multi-layer blend -->
     <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(26,39,68,0.80) 0%, rgba(26,39,68,0.50) 40%, rgba(26,39,68,0.90) 100%)" />
-    <!-- Gold glow from stained glass -->
     <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.22) 0%, transparent 60%)" />
-    <!-- Dot grid -->
     <div class="absolute inset-0 opacity-10"
       style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 40px 40px;" />
 
-    <!-- Content -->
     <div class="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20">
-      <!-- Animated cross -->
       <div class="animate-float inline-block mb-5">
         <div class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-gold/20 border-2 border-gold-light/60 flex items-center justify-center mx-auto shadow-lg shadow-gold/20">
           <span class="text-gold-light text-2xl md:text-4xl">✝</span>
@@ -35,7 +29,6 @@
         Mararaba · Nasarawa State · Nigeria
       </p>
 
-      <!-- Catholic ornamental divider -->
       <div class="catholic-divider animate-fade-in">
         <span class="text-gold-light text-lg">✦</span>
       </div>
@@ -57,7 +50,6 @@
       </div>
     </div>
 
-    <!-- Wave -->
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 80L1440 80L1440 30C1200 80 960 10 720 30C480 50 240 0 0 30L0 80Z" fill="#faf8f3"/>
@@ -91,7 +83,6 @@
           :key="m.day"
           class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:border-gold/30"
         >
-          <!-- Header -->
           <button
             @click="openMass = openMass === i ? null : i"
             class="w-full flex items-center justify-between px-5 py-4 group"
@@ -110,7 +101,6 @@
             </svg>
           </button>
 
-          <!-- Body -->
           <div :class="['mass-accordion', openMass === i ? 'mass-accordion--open' : '']">
             <ul class="px-5 pb-4 space-y-2">
               <li v-for="t in m.times" :key="t" class="flex items-center gap-2 text-gray-600 text-sm">
@@ -137,7 +127,6 @@
       <img src="/church-4.jpg" alt="Parish" class="w-full h-full object-cover object-center" />
     </div>
     <div class="absolute inset-0 bg-navy/85" />
-    <!-- Decorative cross pattern -->
     <div class="absolute inset-0 opacity-5"
       style="background-image: repeating-linear-gradient(0deg, #d4af37 0px, #d4af37 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #d4af37 0px, #d4af37 1px, transparent 1px, transparent 60px);" />
 
@@ -222,12 +211,12 @@
     </div>
   </section>
 
-  <!-- ── MINISTRIES ── -->
+  <!-- ── COMMUNITIES & GROUPS ── -->
   <section class="py-16 md:py-24 px-4 bg-white">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-10 reveal">
         <span class="section-label">Get Involved</span>
-        <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Ministries & Groups</h2>
+        <h2 class="font-playfair text-3xl sm:text-5xl font-bold text-navy">Communities & Groups</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -300,16 +289,16 @@ useScrollReveal()
 const openMass = ref<number | null>(0)
 
 const massTimes = [
-  { day: 'Saturday', times: ['5:00 PM (Vigil)'] },
-  { day: 'Sunday', times: ['7:30 AM', '9:00 AM', '11:00 AM', '5:00 PM'] },
-  { day: 'Weekdays', times: ['7:00 AM', '12:10 PM'] },
-  { day: 'Holy Days', times: ['7:00 AM', '12:10 PM', '7:00 PM'] },
+  { day: 'Sunday', times: ['5:00 AM', '7:00 AM', '9:00 AM', '11:00 AM', '5:00 PM (Benediction)'] },
+  { day: 'Weekdays', times: ['6:00 AM', '6:00 PM (Mon – Fri)'] },
+  { day: 'Saturday', times: ['6:00 AM'] },
+  { day: 'Holy Days', times: ['To be announced — check bulletin'] },
 ]
 
 const stats = [
   { value: '1902', label: 'Founded' },
   { value: '2,400+', label: 'Families' },
-  { value: '30+', label: 'Ministries' },
+  { value: '30+', label: 'Out Stations' },
 ]
 
 const sacraments = [
@@ -347,14 +336,14 @@ const events = [
 ]
 
 const ministries = [
-  { icon: '❤️', label: 'Outreach & Charity' },
-  { icon: '📖', label: 'Faith Formation' },
-  { icon: '🎵', label: 'Music Ministry' },
-  { icon: '🙏', label: 'Prayer Groups' },
-  { icon: '👨‍👩‍👧', label: 'Family & Youth' },
-  { icon: '✝️', label: 'Liturgical Ministry' },
-  { icon: '🤝', label: "Men's & Women's" },
-  { icon: '🕊️', label: 'Bereavement' },
+  { icon: '👩', label: 'Christian Women Organization' },
+  { icon: '👨', label: 'Christian Men Organization' },
+  { icon: '🙌', label: 'Youths' },
+  { icon: '✝️', label: 'Altar Boys' },
+  { icon: '✝️', label: 'Altar Girls' },
+  { icon: '🎵', label: 'Choir' },
+  { icon: '📖', label: 'Lay Readers' },
+  { icon: '🕊️', label: 'Charismatic Renewal' },
 ]
 
 const galleryImages = [

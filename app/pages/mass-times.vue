@@ -98,65 +98,40 @@ useScrollReveal()
 
 const schedule = [
   {
-    category: 'Weekend Masses',
-    subtitle: 'Saturday Vigil & Sunday',
+    category: 'Sunday',
+    subtitle: '5 Masses every Sunday',
     icon: '⛪',
     rows: [
-      { day: 'Saturday', time: '5:00 PM', note: 'Vigil Mass' },
-      { day: 'Sunday', time: '7:30 AM', note: '' },
+      { day: 'Sunday', time: '5:00 AM', note: '' },
+      { day: 'Sunday', time: '7:00 AM', note: '' },
       { day: 'Sunday', time: '9:00 AM', note: '' },
-      { day: 'Sunday', time: '11:00 AM', note: 'Family Mass' },
-      { day: 'Sunday', time: '5:00 PM', note: 'Evening Mass' },
+      { day: 'Sunday', time: '11:00 AM', note: '' },
+      { day: 'Sunday', time: '5:00 PM', note: 'Benediction' },
     ],
   },
   {
-    category: 'Weekday Masses',
-    subtitle: 'Monday through Saturday',
+    category: 'Weekdays',
+    subtitle: 'Monday to Friday',
     icon: '🕐',
     rows: [
-      { day: 'Monday – Friday', time: '7:00 AM', note: '' },
-      { day: 'Monday – Friday', time: '12:10 PM', note: '' },
-      { day: 'Saturday', time: '8:00 AM', note: '' },
+      { day: 'Monday – Friday', time: '6:00 AM', note: '' },
+      { day: 'Monday – Friday', time: '6:00 PM', note: '' },
+    ],
+  },
+  {
+    category: 'Saturday',
+    subtitle: 'Morning Mass',
+    icon: '✝️',
+    rows: [
+      { day: 'Saturday', time: '6:00 AM', note: '' },
     ],
   },
   {
     category: 'Holy Days of Obligation',
     subtitle: 'Solemnities & Feast Days',
-    icon: '✝️',
-    rows: [
-      { day: 'Vigil (Eve)', time: '7:00 PM', note: '' },
-      { day: 'Holy Day', time: '7:00 AM', note: '' },
-      { day: 'Holy Day', time: '12:10 PM', note: '' },
-      { day: 'Holy Day', time: '7:00 PM', note: '' },
-    ],
-  },
-  {
-    category: 'Confession & Reconciliation',
-    subtitle: 'Sacrament of Penance',
-    icon: '🙏',
-    rows: [
-      { day: 'Saturday', time: '3:30 – 4:30 PM', note: 'Before Vigil Mass' },
-      { day: 'Wednesday', time: '6:00 – 7:00 PM', note: '' },
-      { day: 'By appointment', time: 'Call the office', note: 'Any time' },
-    ],
-  },
-  {
-    category: 'Eucharistic Adoration',
-    subtitle: 'Adoration of the Blessed Sacrament',
-    icon: '🕯️',
-    rows: [
-      { day: 'Thursday', time: '6:00 – 7:00 PM', note: 'With Benediction' },
-      { day: 'First Friday', time: 'After 12:10 PM Mass', note: 'All day' },
-    ],
-  },
-  {
-    category: 'Benediction & Rosary',
-    subtitle: 'Marian Devotions',
     icon: '📿',
     rows: [
-      { day: 'Sunday', time: '4:30 PM', note: 'Before Evening Mass' },
-      { day: 'Wednesday', time: '5:30 PM', note: 'Rosary' },
-      { day: 'First Saturday', time: '8:30 AM', note: 'After Morning Mass' },
+      { day: 'To be announced', time: '—', note: 'Check bulletin' },
     ],
   },
 ]
