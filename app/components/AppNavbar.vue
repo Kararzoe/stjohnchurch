@@ -24,12 +24,12 @@
           :key="link.to"
           :to="link.to"
           :class="[
-            'text-sm transition-colors relative group whitespace-nowrap',
+            'text-sm transition-colors relative group whitespace-nowrap pb-1',
             isActive(link.to) ? 'text-gold-light font-semibold' : 'text-gray-300 hover:text-gold-light'
           ]"
         >
           {{ link.label }}
-          <span :class="['absolute -bottom-1 left-0 h-px bg-gold-light transition-all duration-300', isActive(link.to) ? 'w-full' : 'w-0 group-hover:w-full']" />
+          <span :class="['absolute -bottom-0 left-0 h-0.5 rounded-full bg-gold-light transition-all duration-300', isActive(link.to) ? 'w-full' : 'w-0 group-hover:w-full']" />
         </NuxtLink>
         <NuxtLink
           to="/harvest-vote"
@@ -77,7 +77,7 @@
             {{ link.label }}
           </NuxtLink>
         </div>
-        <div class="px-4 pb-5 pt-3 border-t border-white/10 flex flex-col gap-3">
+        <div class="px-4 pt-2 pb-4 flex flex-col gap-3">
           <NuxtLink
             to="/harvest-vote"
             :class="[
@@ -96,6 +96,7 @@
             Donate ✝
           </NuxtLink>
         </div>
+        <div class="border-t border-white/10" />
       </div>
     </Transition>
   </header>

@@ -44,10 +44,10 @@
 
               <!-- Name overlay -->
               <div class="absolute bottom-0 left-0 right-0 p-6">
-                <p class="text-gold text-[10px] uppercase tracking-[0.3em] font-bold mb-1">Parish Priest · Order of Saint Augustine</p>
-                <h3 class="font-playfair text-3xl md:text-4xl font-black text-white leading-tight">Rev. Frederick Wukari</h3>
-                <p class="text-gold/80 text-sm font-semibold mt-1">OSA, Esq.</p>
-                <p class="text-white/50 text-xs mt-2">St. John of the Cross · Mararaba Gurku · Nasarawa State</p>
+                <p class="text-gold text-[10px] uppercase tracking-[0.3em] font-bold mb-1">Order of Saint Augustine</p>
+                <h3 class="font-playfair text-3xl md:text-4xl font-black text-white leading-tight">Rev. Frederick Wukari, OSA Esq.</h3>
+                <p class="text-gold/80 text-sm font-semibold mt-1">Parish Priest</p>
+                <p class="text-white/50 text-xs mt-2">St. John of the Cross, Mararaba Gurku, Nasarawa State</p>
               </div>
 
               <!-- Thumbnail strip -->
@@ -76,9 +76,10 @@
 
             <p class="text-gold text-xs uppercase tracking-[0.3em] font-bold mb-2">Meet Our Pastor</p>
             <h3 class="font-playfair text-2xl md:text-3xl font-black text-navy leading-tight mb-1">
-              Rev. Frederick Wukari
+              Rev. Frederick Wukari, OSA Esq.
             </h3>
-            <p class="text-gold font-semibold text-sm mb-6">OSA, Esq. &nbsp;&middot;&nbsp; Parish Priest</p>
+            <p class="text-gold font-semibold text-sm mb-1">Parish Priest</p>
+            <p class="text-gray-400 text-xs mb-6">St. John of the Cross, Mararaba Gurku, Nasarawa State</p>
 
             <div class="w-12 h-0.5 bg-gold/40 mb-6" />
 

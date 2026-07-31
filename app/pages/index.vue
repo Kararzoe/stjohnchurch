@@ -296,7 +296,7 @@ const massTimes = [
 ]
 
 const stats = [
-  { value: '1902', label: 'Founded' },
+  { value: 'TBA', label: 'Founded' },
   { value: '2,400+', label: 'Families' },
   { value: '30+', label: 'Out Stations' },
 ]
