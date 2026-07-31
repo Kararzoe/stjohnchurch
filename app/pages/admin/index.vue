@@ -1,115 +1,144 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-navy min-h-screen flex flex-col shrink-0">
-      <div class="p-6 border-b border-white/10">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-gold/20 border border-gold-light/40 flex items-center justify-center">
-            <span class="text-gold-light">✝</span>
-          </div>
-          <div>
-            <p class="text-white font-bold text-sm leading-tight">St. John of the Cross</p>
-            <p class="text-gold-light text-xs">Admin Dashboard</p>
-          </div>
+  <div>
+    <div class="mb-6">
+      <h1 class="font-playfair text-2xl font-bold text-navy">Dashboard Overview</h1>
+      <p class="text-gray-400 text-sm mt-1">Welcome back, Admin</p>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div v-for="stat in stats" :key="stat.label"
+        class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-2xl">{{ stat.icon }}</span>
+          <span :class="['text-xs font-bold px-2 py-1 rounded-full', stat.up ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400']">
+            {{ stat.change }}
+          </span>
         </div>
+        <p class="font-playfair text-2xl font-black text-navy">{{ stat.value }}</p>
+        <p class="text-gray-400 text-xs mt-1">{{ stat.label }}</p>
       </div>
-      <nav class="flex-1 p-4 space-y-1">
-        <NuxtLink v-for="item in navItems" :key="item.to" :to="item.to"
-          class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-white/10 hover:text-white transition-all text-sm group">
-          <span class="text-lg">{{ item.icon }}</span>
-          {{ item.label }}
+    </div>
+
+    <!-- Quick actions -->
+    <div class="mb-8">
+      <h2 class="font-playfair text-lg font-bold text-navy mb-4">Quick Actions</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <NuxtLink v-for="action in quickActions" :key="action.to" :to="action.to"
+          class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:border-gold/40 hover:shadow-md hover:-translate-y-0.5 transition-all group text-center">
+          <span class="text-2xl block mb-2">{{ action.icon }}</span>
+          <p class="text-xs font-semibold text-navy group-hover:text-gold transition-colors">{{ action.label }}</p>
         </NuxtLink>
-      </nav>
-      <div class="p-4 border-t border-white/10">
-        <NuxtLink to="/" class="flex items-center gap-2 text-gray-400 hover:text-white text-sm transition-colors">
-          <span>←</span> Back to Website
-        </NuxtLink>
       </div>
-    </aside>
+    </div>
 
-    <!-- Main -->
-    <main class="flex-1 p-8 overflow-auto">
-      <div class="mb-8">
-        <h1 class="font-playfair text-3xl font-bold text-navy">Dashboard</h1>
-        <p class="text-gray-500 text-sm mt-1">Welcome back, Admin. Here's what's happening.</p>
-      </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div v-for="s in stats" :key="s.label"
-          class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-2xl">{{ s.icon }}</span>
-            <span :class="['text-xs font-semibold px-2 py-0.5 rounded-full', s.up ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500']">
-              {{ s.change }}
-            </span>
-          </div>
-          <p class="font-playfair text-3xl font-black text-navy">{{ s.value }}</p>
-          <p class="text-gray-500 text-xs mt-1">{{ s.label }}</p>
+    <!-- Recent activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Top votes -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-playfair font-bold text-navy">Top Voted</h3>
+          <NuxtLink to="/admin/votes" class="text-xs text-gold hover:text-navy font-semibold transition-colors">View all →</NuxtLink>
         </div>
-      </div>
-
-      <!-- Quick actions -->
-      <div class="mb-8">
-        <h2 class="font-semibold text-navy mb-4">Quick Actions</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NuxtLink v-for="a in actions" :key="a.label" :to="a.to"
-            class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-gold/30 transition-all group text-center">
-            <span class="text-3xl block mb-2">{{ a.icon }}</span>
-            <p class="text-sm font-semibold text-navy group-hover:text-gold transition-colors">{{ a.label }}</p>
-          </NuxtLink>
-        </div>
-      </div>
-
-      <!-- Recent activity -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h2 class="font-semibold text-navy mb-4">Recent Activity</h2>
-        <div class="space-y-3">
-          <div v-for="a in activity" :key="a.text" class="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
-            <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-sm shrink-0">{{ a.icon }}</div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm text-gray-700">{{ a.text }}</p>
-              <p class="text-xs text-gray-400">{{ a.time }}</p>
+        <div v-if="loadingVotes" class="text-center py-6 text-gray-400 text-sm">Loading...</div>
+        <div v-else-if="topVotes.length === 0" class="text-center py-6 text-gray-400 text-sm">No votes yet</div>
+        <div v-else class="space-y-3">
+          <div v-for="v in topVotes" :key="v.contestant_id" class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+              <span class="text-gold text-xs font-black">{{ v.rank }}</span>
             </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-navy truncate">{{ v.name }}</p>
+              <p class="text-xs text-gray-400">{{ v.category }}</p>
+            </div>
+            <span class="text-sm font-black text-navy">{{ v.total }}</span>
           </div>
         </div>
       </div>
-    </main>
+
+      <!-- Recent donations -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-playfair font-bold text-navy">Recent Donations</h3>
+          <NuxtLink to="/admin/donations" class="text-xs text-gold hover:text-navy font-semibold transition-colors">View all →</NuxtLink>
+        </div>
+        <div v-if="loadingDonations" class="text-center py-6 text-gray-400 text-sm">Loading...</div>
+        <div v-else-if="recentDonations.length === 0" class="text-center py-6 text-gray-400 text-sm">No donations yet</div>
+        <div v-else class="space-y-3">
+          <div v-for="d in recentDonations" :key="d.id" class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-navy/5 flex items-center justify-center shrink-0 text-sm">💰</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-navy truncate">{{ d.name }}</p>
+              <p class="text-xs text-gray-400">{{ d.designation }}</p>
+            </div>
+            <span class="text-sm font-black text-green-600">{{ d.currency === 'NGN' ? '₦' : '$' }}{{ Number(d.amount).toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: false })
+definePageMeta({ layout: 'admin', middleware: 'admin' })
 
-const navItems = [
-  { to: '/admin', label: 'Dashboard', icon: '📊' },
-  { to: '/admin/content', label: 'Website Content', icon: '📝' },
-  { to: '/admin/elections', label: 'Elections', icon: '🗳️' },
-  { to: '/admin/members', label: 'Members', icon: '👥' },
-  { to: '/admin/gallery', label: 'Photo Gallery', icon: '📷' },
-  { to: '/admin/news', label: 'News & Updates', icon: '📰' },
-  { to: '/admin/mass-times', label: 'Mass Times', icon: '🕐' },
+const supabase = useSupabase()
+const loadingVotes = ref(true)
+const loadingDonations = ref(true)
+const topVotes = ref<any[]>([])
+const recentDonations = ref<any[]>([])
+
+const stats = ref([
+  { icon: '🗳️', label: 'Total Votes', value: '—', change: '', up: false },
+  { icon: '💰', label: 'Total Donations', value: '—', change: '', up: false },
+  { icon: '📰', label: 'News Posts', value: '—', change: '', up: false },
+  { icon: '📅', label: 'Events', value: '—', change: '', up: false },
+])
+
+const quickActions = [
+  { icon: '📰', label: 'New Post', to: '/admin/news' },
+  { icon: '📅', label: 'New Event', to: '/admin/events' },
+  { icon: '👥', label: 'Add Contestant', to: '/admin/contestants' },
+  { icon: '🖼️', label: 'Upload Photo', to: '/admin/gallery' },
 ]
 
-const stats = [
-  { icon: '👥', label: 'Registered Members', value: '240', change: '+12', up: true },
-  { icon: '🗳️', label: 'Votes Cast', value: '187', change: '78%', up: true },
-  { icon: '📅', label: 'Upcoming Events', value: '6', change: '+2', up: true },
-  { icon: '📰', label: 'News Posts', value: '5', change: 'Active', up: false },
-]
+onMounted(async () => {
+  // Load vote counts
+  const { data: votes } = await supabase
+    .from('votes')
+    .select('contestant_id, contestant_name, category')
+  if (votes) {
+    const counts: Record<string, any> = {}
+    votes.forEach((v: any) => {
+      if (!counts[v.contestant_id]) counts[v.contestant_id] = { contestant_id: v.contestant_id, name: v.contestant_name, category: v.category, total: 0 }
+      counts[v.contestant_id].total++
+    })
+    topVotes.value = Object.values(counts)
+      .sort((a: any, b: any) => b.total - a.total)
+      .slice(0, 5)
+      .map((v: any, i: number) => ({ ...v, rank: i + 1 }))
+    stats.value[0].value = String(votes.length)
+  }
+  loadingVotes.value = false
 
-const actions = [
-  { icon: '➕', label: 'Add News Post', to: '/admin/news' },
-  { icon: '🗳️', label: 'Manage Elections', to: '/admin/elections' },
-  { icon: '👤', label: 'Add Member', to: '/admin/members' },
-  { icon: '📷', label: 'Upload Photos', to: '/admin/gallery' },
-]
+  // Load donations
+  const { data: donations } = await supabase
+    .from('donations')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(5)
+  if (donations) {
+    recentDonations.value = donations
+    stats.value[1].value = '₦' + donations.reduce((s: number, d: any) => s + (d.currency === 'NGN' ? Number(d.amount) : 0), 0).toLocaleString()
+  }
+  loadingDonations.value = false
 
-const activity = [
-  { icon: '🗳️', text: 'Member SJC-2026-042 cast their vote', time: '2 minutes ago' },
-  { icon: '👤', text: 'New member added: SJC-2026-241', time: '1 hour ago' },
-  { icon: '📰', text: 'News post published: "Parish Council Elections Coming Soon"', time: '3 hours ago' },
-  { icon: '🗳️', text: 'Election "Parish Council 2026" opened for voting', time: 'Yesterday' },
-  { icon: '📷', text: '5 new photos added to gallery', time: '2 days ago' },
-]
+  // Load news count
+  const { count: newsCount } = await supabase.from('news').select('*', { count: 'exact', head: true })
+  stats.value[2].value = String(newsCount ?? 0)
+
+  // Load events count
+  const { count: eventsCount } = await supabase.from('events').select('*', { count: 'exact', head: true })
+  stats.value[3].value = String(eventsCount ?? 0)
+})
 </script>
