@@ -142,7 +142,7 @@
         in Nasarawa State. We celebrate the sacraments, grow in discipleship, and reach out
         to those in need.
       </p>
-      <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto mb-8 reveal">
+      <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto mb-8 reveal">
         <div v-for="s in stats" :key="s.label" class="glass rounded-2xl p-3 md:p-4">
           <p class="font-playfair text-2xl md:text-4xl font-black gold-text">{{ s.value }}</p>
           <p class="text-gray-400 text-xs mt-1">{{ s.label }}</p>
@@ -298,7 +298,6 @@ const massTimes = [
 const stats = [
   { value: '1988', label: 'Founded' },
   { value: '2,400+', label: 'Families' },
-  { value: '30+', label: 'Out Stations' },
 ]
 
 const sacraments = [
