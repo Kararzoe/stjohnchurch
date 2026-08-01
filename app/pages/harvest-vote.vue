@@ -14,15 +14,15 @@
       <div class="relative z-10 text-center px-4">
         <p class="text-gold text-xs uppercase tracking-[0.4em] font-semibold mb-3">St. John of the Cross Catholic Church</p>
         <h1 class="font-playfair text-5xl sm:text-7xl font-black text-white leading-tight drop-shadow-2xl">
-          Harvest Festival
-          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2026 Voting</span>
+          Harvest/Bazaar
+          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Thanksgiving 2026</span>
         </h1>
         <div class="flex items-center justify-center gap-3 mt-4">
           <div class="h-px w-16 bg-gold/40" />
           <span class="text-gold text-lg">✦</span>
           <div class="h-px w-16 bg-gold/40" />
         </div>
-        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">Cast your vote for your favourite contestants across all five categories</p>
+        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">Cast your vote for your favourite contestants · St. John of the Cross &amp; Order of St. Augustine</p>
       </div>
 
       <div class="absolute bottom-0 left-0 right-0">

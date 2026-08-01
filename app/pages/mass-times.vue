@@ -99,14 +99,16 @@ useScrollReveal()
 const schedule = [
   {
     category: 'Sunday',
-    subtitle: '5 Masses every Sunday',
+    subtitle: '7 Masses every Sunday',
     icon: '⛪',
     rows: [
-      { day: 'Sunday', time: '5:00 AM', note: '' },
-      { day: 'Sunday', time: '7:00 AM', note: '' },
-      { day: 'Sunday', time: '9:00 AM', note: '' },
+      { day: 'Sunday', time: '5:30 AM', note: '' },
+      { day: 'Sunday', time: '7:30 AM', note: '' },
+      { day: 'Sunday', time: '9:30 AM', note: 'Hausa Mass' },
+      { day: 'Sunday', time: '9:30 AM', note: "Children's Mass" },
       { day: 'Sunday', time: '11:00 AM', note: '' },
-      { day: 'Sunday', time: '5:00 PM', note: 'Benediction' },
+      { day: 'Sunday', time: '5:15 PM', note: 'Benediction' },
+      { day: 'Sunday', time: '6:00 PM', note: 'Mass' },
     ],
   },
   {

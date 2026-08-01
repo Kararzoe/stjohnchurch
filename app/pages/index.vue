@@ -289,7 +289,7 @@ useScrollReveal()
 const openMass = ref<number | null>(0)
 
 const massTimes = [
-  { day: 'Sunday', times: ['5:00 AM', '7:00 AM', '9:00 AM', '11:00 AM', '5:00 PM (Benediction)'] },
+  { day: 'Sunday', times: ['5:30 AM', '7:30 AM', '9:30 AM (Hausa Mass)', '9:30 AM (Children\'s Mass)', '11:00 AM', '5:15 PM (Benediction)', '6:00 PM'] },
   { day: 'Weekdays', times: ['6:00 AM', '6:00 PM (Mon – Fri)'] },
   { day: 'Saturday', times: ['6:00 AM'] },
   { day: 'Holy Days', times: ['To be announced — check bulletin'] },
