@@ -1,11 +1,8 @@
 import { Jimp } from 'jimp';
-import { writeFileSync } from 'fs';
+import { renameSync } from 'fs';
 
-for (const n of ['1', '2', '3']) {
-  const img = await Jimp.read(`public/priest-${n}-orig.jpg`);
-  console.log(`priest-${n} read, width: ${img.width}`);
-  img.resize({ w: 900 });
-  await img.write(`public/priest-${n}.jpg`);
-  console.log(`priest-${n}.jpg saved`);
-}
-console.log('All done');
+renameSync('public/poh-joan.jpg', 'public/poh-joan-orig.jpg');
+const img = await Jimp.read('public/poh-joan-orig.jpg');
+img.resize({ w: 900 });
+await img.write('public/poh-joan.jpg');
+console.log('done');
