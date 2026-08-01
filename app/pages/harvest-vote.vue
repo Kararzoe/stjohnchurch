@@ -12,6 +12,11 @@
       <div class="absolute inset-0 opacity-20 grain-texture" />
 
       <div class="relative z-10 text-center px-4">
+        <!-- Logos -->
+        <div class="flex items-center justify-center gap-6 mb-5">
+          <img src="/logo-stjohn.jpg" alt="St. John of the Cross" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-gold/60 shadow-lg" />
+          <img src="/logo-osa.jpg" alt="Order of Saint Augustine" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-gold/60 shadow-lg" />
+        </div>
         <p class="text-gold text-xs uppercase tracking-[0.4em] font-semibold mb-3">St. John of the Cross Catholic Church</p>
         <h1 class="font-playfair text-5xl sm:text-7xl font-black text-white leading-tight drop-shadow-2xl">
           Harvest/Bazaar

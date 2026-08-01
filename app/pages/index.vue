@@ -296,7 +296,7 @@ const massTimes = [
 ]
 
 const stats = [
-  { value: 'TBA', label: 'Founded' },
+  { value: '1988', label: 'Founded' },
   { value: '2,400+', label: 'Families' },
   { value: '30+', label: 'Out Stations' },
 ]
@@ -369,6 +369,6 @@ const galleryImages = [
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .mass-accordion--open {
-  max-height: 200px;
+  max-height: 400px;
 }
 </style>

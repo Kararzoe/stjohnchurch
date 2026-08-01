@@ -8,8 +8,9 @@
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center gap-2 group min-w-0">
-        <div class="w-9 h-9 shrink-0 rounded-full bg-gold/20 border border-gold-light/40 flex items-center justify-center group-hover:bg-gold/40 transition-colors">
-          <span class="text-gold-light text-base">✝</span>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <img src="/logo-stjohn.jpg" alt="St. John" class="w-8 h-8 rounded-full object-cover border border-gold-light/40" />
+          <img src="/logo-osa.jpg" alt="OSA" class="w-8 h-8 rounded-full object-cover border border-gold-light/40" />
         </div>
         <div class="min-w-0">
           <p class="text-white font-playfair font-bold text-sm md:text-base leading-tight truncate">St. John of the Cross</p>
@@ -118,7 +119,7 @@ const links = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
   { to: '/mass-times', label: 'Mass Times' },
-  { to: '/ministries', label: 'Ministries' },
+  { to: '/ministries', label: 'Communities & Groups' },
   { to: '/events', label: 'Events' },
   { to: '/news', label: 'News' },
   { to: '/contact', label: 'Contact' },
