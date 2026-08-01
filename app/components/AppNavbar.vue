@@ -8,12 +8,12 @@
     <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
       <!-- Logo -->
       <NuxtLink to="/" class="flex items-center gap-2 group min-w-0">
-        <img src="/logo-stjohn.jpg" alt="St. John of the Cross" class="w-8 h-8 shrink-0 rounded-full object-cover border border-gold-light/40" />
+        <img src="/logo-osa.jpg" alt="OSA" class="w-8 h-8 shrink-0 rounded-full object-cover border border-gold-light/40" />
         <div class="min-w-0">
           <p class="text-white font-playfair font-bold text-sm md:text-base leading-tight truncate">St. John of the Cross</p>
           <p class="text-gold-light text-[10px] tracking-widest uppercase hidden sm:block">Catholic Church · Mararaba</p>
         </div>
-        <img src="/logo-osa.jpg" alt="Order of Saint Augustine" class="w-8 h-8 shrink-0 rounded-full object-cover border border-gold-light/40" />
+        <img src="/logo-stjohn.jpg" alt="St. John of the Cross" class="w-8 h-8 shrink-0 rounded-full object-cover border border-gold-light/40" />
         <div class="min-w-0">
           <p class="text-white font-playfair font-bold text-sm md:text-base leading-tight truncate">St. John of the Cross</p>
           <p class="text-gold-light text-[10px] tracking-widest uppercase hidden sm:block">Catholic Church · Mararaba</p>
