@@ -117,7 +117,6 @@ function isActive(path: string) {
 const links = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
-  { to: '/clergy', label: 'Clergy' },
   { to: '/mass-times', label: 'Mass Times' },
   { to: '/ministries', label: 'Ministries' },
   { to: '/events', label: 'Events' },

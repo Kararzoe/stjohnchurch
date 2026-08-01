@@ -55,30 +55,57 @@
     </div>
   </section>
 
-  <!-- Pastor -->
-  <section class="py-14 md:py-24 px-4 md:px-6 bg-cream">
-    <div class="max-w-4xl mx-auto">
+  <!-- Parish Priest -->
+  <section class="py-14 md:py-24 px-4 bg-cream">
+    <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10 reveal">
         <span class="section-label">Leadership</span>
         <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Meet Our Pastor</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
       <div class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
-        <div class="md:w-64 shrink-0">
-          <img
-            src="/church-10.jpg"
-            alt="Pastor"
-            class="w-full h-64 md:h-full object-cover"
-          />
+        <div class="md:w-72 shrink-0">
+          <img src="/priest-1.jpg" alt="Rev. Frederick Wukari" class="w-full h-72 md:h-full object-cover object-top" />
         </div>
-        <div class="p-5 md:p-8 flex flex-col justify-center">
-          <span class="section-label">Pastor</span>
-          <h3 class="font-playfair text-2xl sm:text-3xl font-bold text-navy mb-2">Fr. Michael O'Brien</h3>
-          <p class="text-gold font-semibold text-sm mb-4">Ordained 2003 · Parish since 2015</p>
-          <p class="text-gray-600 leading-relaxed">
-            Father Michael is passionate about faith formation, the New Evangelization,
-            and building a welcoming parish family for all. He leads our community with
-            warmth, wisdom, and a deep love for the Eucharist.
+        <div class="p-6 md:p-10 flex flex-col justify-center">
+          <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center mb-4">
+            <span class="text-gold text-lg">✝</span>
+          </div>
+          <h3 class="font-playfair text-2xl sm:text-3xl font-bold text-navy mb-1">Rev. Frederick Wukari, OSA Esq.</h3>
+          <p class="text-gold font-semibold text-sm mb-1">Parish Priest</p>
+          <p class="text-gray-400 text-xs mb-5">St. John of the Cross, Mararaba Gurku, Nasarawa State</p>
+          <div class="w-10 h-0.5 bg-gold/40 mb-5" />
+          <p class="text-gray-600 leading-relaxed text-sm">
+            Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross
+            Catholic Church, Mararaba Gurku, Nasarawa State. A member of the
+            <strong class="text-navy">Order of Saint Augustine (OSA)</strong>, he shepherds the
+            parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.
           </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Assistant Priests -->
+  <section class="py-14 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10 reveal">
+        <span class="section-label">Associate Clergy</span>
+        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Assistant Priests</h2>
+        <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div v-for="(p, i) in associates" :key="p.name" :class="`reveal delay-${(i + 1) * 100}`">
+          <div class="bg-cream rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 transition-all duration-300 group flex gap-5 p-5">
+            <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center shrink-0 border-2 border-gold/30">
+              <span class="text-2xl">✝</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-gold font-bold uppercase tracking-widest mb-0.5">{{ p.role }}</p>
+              <h3 class="font-playfair font-bold text-navy text-lg group-hover:text-gold transition-colors">{{ p.name }}</h3>
+              <p class="text-gray-500 text-xs mt-1 leading-relaxed">{{ p.desc }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -105,7 +132,20 @@ useScrollReveal()
 
 const stats = [
   { value: '2,400+', label: 'Registered Families' },
-  { value: '30+', label: 'Active Ministries' },
+  { value: '30+', label: 'Out Stations' },
   { value: '120+', label: 'Years of Service' },
+]
+
+const associates = [
+  {
+    name: 'Rev. Fr. [Associate Priest]',
+    role: 'Assistant Priest',
+    desc: 'Assists with the celebration of Mass, sacraments, and pastoral care of the faithful.',
+  },
+  {
+    name: 'Rev. Fr. [Associate Priest 2]',
+    role: 'Assistant Priest',
+    desc: 'Supports the parish in liturgical celebrations, hospital chaplaincy, and outreach.',
+  },
 ]
 </script>
