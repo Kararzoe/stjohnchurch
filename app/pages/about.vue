@@ -188,5 +188,11 @@ const associates = [
     photo: '/priest-jude.jpg',
     desc: '',
   },
+  {
+    name: 'Very Rev. Fr. Oliver Onuoha, OSA',
+    role: 'Ave Maria',
+    photo: '/priest-oliver.jpg',
+    desc: '',
+  },
 ]
 </script>
