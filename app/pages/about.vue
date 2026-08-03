@@ -177,9 +177,9 @@ const associates = [
     desc: '',
   },
   {
-    name: 'Rev. Fr. [Associate Priest 2]',
-    role: 'Assistant Priest',
-    photo: '',
+    name: 'Catechist Michael Iorhemba',
+    role: 'Parish Catechist',
+    photo: '/catechist-michael.jpg',
     desc: '',
   },
 ]
