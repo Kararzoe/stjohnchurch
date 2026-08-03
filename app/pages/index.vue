@@ -185,20 +185,20 @@
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div v-for="(e, i) in events" :key="e.title" :class="`reveal delay-${(i + 1) * 100}`">
+        <div v-for="(e, i) in events" :key="e.id" :class="`reveal delay-${(i + 1) * 100}`">
           <div class="group rounded-2xl overflow-hidden border border-gray-100 stained-glow hover:border-gold/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col bg-white">
             <div class="relative h-44 overflow-hidden">
-              <img :src="e.image" :alt="e.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <img :src="e.image_url || '/church-3.jpg'" :alt="e.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <div class="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
               <div class="absolute top-3 left-3 bg-navy/90 text-white rounded-xl px-3 py-1.5 text-center min-w-[52px]">
-                <p class="text-gold-light text-xs font-bold tracking-widest">{{ e.date.month }}</p>
-                <p class="font-playfair text-2xl font-black leading-none">{{ e.date.day }}</p>
+                <p class="text-gold-light text-xs font-bold tracking-widest">{{ eventDate(e.event_date).month }}</p>
+                <p class="font-playfair text-2xl font-black leading-none">{{ eventDate(e.event_date).day }}</p>
               </div>
             </div>
             <div class="p-5 flex-1 flex flex-col">
               <h3 class="font-playfair font-bold text-navy text-lg mb-1 group-hover:text-gold transition-colors">{{ e.title }}</h3>
-              <p class="text-xs text-gold font-semibold mb-2">{{ e.time }}</p>
-              <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ e.desc }}</p>
+              <p class="text-xs text-gold font-semibold mb-2">{{ e.event_time }}</p>
+              <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ e.description }}</p>
             </div>
           </div>
         </div>
@@ -235,10 +235,7 @@
   <!-- ── GALLERY STRIP ── -->
   <section class="py-3 overflow-hidden bg-navy">
     <div class="flex gap-3 animate-[scroll_30s_linear_infinite] w-max">
-      <img
-        v-for="(img, i) in [...galleryImages, ...galleryImages]"
-        :key="i"
-        :src="img"
+      <img v-for="(img, i) in [...galleryImages, ...galleryImages]" :key="i" :src="img"
         class="h-32 md:h-48 w-48 md:w-72 object-cover rounded-xl shrink-0 opacity-80 hover:opacity-100 transition-opacity"
       />
     </div>
@@ -286,6 +283,7 @@
 <script setup lang="ts">
 useScrollReveal()
 
+const supabase = useSupabase()
 const openMass = ref<number | null>(0)
 
 const massTimes = [
@@ -310,51 +308,34 @@ const sacraments = [
   { icon: '💍', name: 'Matrimony' },
 ]
 
-const events = [
-  {
-    date: { month: 'JUL', day: '20' },
-    title: 'Parish Picnic',
-    time: 'After 11:00 AM Mass',
-    desc: 'Bring the whole family for food, games, and fellowship after the 11 AM Mass.',
-    image: '/church-3.jpg',
-  },
-  {
-    date: { month: 'JUL', day: '27' },
-    title: 'Youth Group Retreat',
-    time: 'Friday 6 PM – Sunday 2 PM',
-    desc: 'A weekend of prayer, community, and fun for high school students.',
-    image: '/church-5.jpg',
-  },
-  {
-    date: { month: 'AUG', day: '3' },
-    title: 'Back-to-School Blessing',
-    time: 'All Sunday Masses',
-    desc: 'Students and teachers will receive a special blessing at all Masses.',
-    image: '/church-6.jpg',
-  },
-]
+const events = ref<any[]>([
+  { id: 1, event_date: '2026-07-20', title: 'Parish Picnic', event_time: 'After 11:00 AM Mass', description: 'Bring the whole family for food, games, and fellowship after the 11 AM Mass.', image_url: '/church-3.jpg' },
+  { id: 2, event_date: '2026-07-27', title: 'Youth Group Retreat', event_time: 'Friday 6 PM – Sunday 2 PM', description: 'A weekend of prayer, community, and fun for high school students.', image_url: '/church-5.jpg' },
+  { id: 3, event_date: '2026-08-03', title: 'Back-to-School Blessing', event_time: 'All Sunday Masses', description: 'Students and teachers will receive a special blessing at all Masses.', image_url: '/church-6.jpg' },
+])
 
-const ministries = [
-  { icon: '👩', label: 'Christian Women Organization' },
-  { icon: '👨', label: 'Christian Men Organization' },
-  { icon: '🙌', label: 'Youths' },
-  { icon: '✝️', label: 'Altar Boys' },
-  { icon: '✝️', label: 'Altar Girls' },
-  { icon: '🎵', label: 'Choir' },
-  { icon: '📖', label: 'Lay Readers' },
-  { icon: '🕊️', label: 'Charismatic Renewal' },
-]
+const galleryImages = ref([
+  '/church-interior.jpg', '/church-1.jpg', '/church-2.jpg', '/church-3.jpg',
+  '/church-4.jpg', '/church-5.jpg', '/church-6.jpg', '/church-7.jpg',
+])
 
-const galleryImages = [
-  '/church-interior.jpg',
-  '/church-1.jpg',
-  '/church-2.jpg',
-  '/church-3.jpg',
-  '/church-4.jpg',
-  '/church-5.jpg',
-  '/church-6.jpg',
-  '/church-7.jpg',
-]
+function eventDate(d: string) {
+  if (!d) return { month: '—', day: '—' }
+  const dt = new Date(d)
+  return { month: dt.toLocaleString('en', { month: 'short' }).toUpperCase(), day: String(dt.getDate()).padStart(2, '0') }
+}
+  if (!d) return { month: '—', day: '—' }
+  const dt = new Date(d)
+  return { month: dt.toLocaleString('en', { month: 'short' }).toUpperCase(), day: String(dt.getDate()).padStart(2, '0') }
+}
+
+onMounted(async () => {
+  const { data: evData } = await supabase.from('events').select('*').eq('published', true).order('event_date').limit(3)
+  if (evData && evData.length > 0) events.value = evData
+
+  const { data: galData } = await supabase.from('gallery').select('image_url').order('created_at', { ascending: false }).limit(12)
+  if (galData && galData.length > 0) galleryImages.value = galData.map((g: any) => g.image_url)
+})
 </script>
 
 <style>

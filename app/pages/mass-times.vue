@@ -96,49 +96,47 @@
 <script setup lang="ts">
 useScrollReveal()
 
-const schedule = [
-  {
-    category: 'Sunday',
-    subtitle: '7 Masses every Sunday',
-    icon: '⛪',
-    rows: [
-      { day: 'Sunday', time: '5:30 AM', note: '' },
-      { day: 'Sunday', time: '7:30 AM', note: '' },
-      { day: 'Sunday', time: '9:30 AM', note: 'Hausa Mass' },
-      { day: 'Sunday', time: '9:30 AM', note: "Children's Mass" },
-      { day: 'Sunday', time: '11:00 AM', note: '' },
-      { day: 'Sunday', time: '5:15 PM', note: 'Benediction' },
-      { day: 'Sunday', time: '6:00 PM', note: 'Mass' },
-    ],
-  },
-  {
-    category: 'Weekdays',
-    subtitle: 'Monday to Friday',
-    icon: '🕐',
-    rows: [
-      { day: 'Monday – Friday', time: '6:00 AM', note: '' },
-      { day: 'Monday – Friday', time: '6:00 PM', note: '' },
-    ],
-  },
-  {
-    category: 'Saturday',
-    subtitle: 'Morning Mass',
-    icon: '✝️',
-    rows: [
-      { day: 'Saturday', time: '6:00 AM', note: '' },
-    ],
-  },
-  {
-    category: 'Holy Days of Obligation',
-    subtitle: 'Solemnities & Feast Days',
-    icon: '📿',
-    rows: [
-      { day: 'To be announced', time: '—', note: 'Check bulletin' },
-    ],
-  },
+const supabase = useSupabase()
+
+const defaultSchedule = [
+  { category: 'Sunday', subtitle: '7 Masses every Sunday', icon: '⛪', rows: [
+    { day: 'Sunday', time: '5:30 AM', note: '' },
+    { day: 'Sunday', time: '7:30 AM', note: '' },
+    { day: 'Sunday', time: '9:30 AM', note: 'Hausa Mass' },
+    { day: 'Sunday', time: '9:30 AM', note: "Children's Mass" },
+    { day: 'Sunday', time: '11:00 AM', note: '' },
+    { day: 'Sunday', time: '5:15 PM', note: 'Benediction' },
+    { day: 'Sunday', time: '6:00 PM', note: 'Mass' },
+  ]},
+  { category: 'Weekdays', subtitle: 'Monday to Friday', icon: '🕐', rows: [
+    { day: 'Monday – Friday', time: '6:00 AM', note: '' },
+    { day: 'Monday – Friday', time: '6:00 PM', note: '' },
+  ]},
+  { category: 'Saturday', subtitle: 'Morning Mass', icon: '✝️', rows: [
+    { day: 'Saturday', time: '6:00 AM', note: '' },
+  ]},
+  { category: 'Holy Days of Obligation', subtitle: 'Solemnities & Feast Days', icon: '📿', rows: [
+    { day: 'To be announced', time: '—', note: 'Check bulletin' },
+  ]},
 ]
 
-const open = ref<boolean[]>(schedule.map((_, i) => i === 0))
+const schedule = ref(defaultSchedule)
+const open = ref<boolean[]>(defaultSchedule.map((_, i) => i === 0))
+
+onMounted(async () => {
+  const { data } = await supabase.from('mass_times').select('*').order('id')
+  if (data && data.length > 0) {
+    const grouped: Record<string, any[]> = {}
+    data.forEach((r: any) => {
+      if (!grouped[r.day]) grouped[r.day] = []
+      grouped[r.day].push({ day: r.day, time: r.time, note: r.note ?? '' })
+    })
+    schedule.value = schedule.value.map(s => ({
+      ...s,
+      rows: grouped[s.category] ?? s.rows,
+    }))
+  }
+})
 
 const allOpen = computed(() => open.value.every(Boolean))
 

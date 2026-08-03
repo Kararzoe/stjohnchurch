@@ -95,24 +95,19 @@
         <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Meet Our Pastor</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
+      <div v-if="pastor" class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
         <div class="md:w-72 shrink-0">
-          <img src="/priest-1.jpg" alt="Rev. Frederick Wukari" class="w-full h-72 md:h-full object-cover object-top" />
+          <img :src="pastor.photo || '/priest-1.jpg'" :alt="pastor.name" class="w-full h-72 md:h-full object-cover object-top" />
         </div>
         <div class="p-6 md:p-10 flex flex-col justify-center">
           <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center mb-4">
             <span class="text-gold text-lg">✝</span>
           </div>
-          <h3 class="font-playfair text-2xl sm:text-3xl font-bold text-navy mb-1">Rev. Frederick Wukari, OSA Esq.</h3>
-          <p class="text-gold font-semibold text-sm mb-1">Parish Priest</p>
+          <h3 class="font-playfair text-2xl sm:text-3xl font-bold text-navy mb-1">{{ pastor.name }}</h3>
+          <p class="text-gold font-semibold text-sm mb-1">{{ pastor.role }}</p>
           <p class="text-gray-400 text-xs mb-5">St. John of the Cross, Mararaba Gurku, Nasarawa State</p>
           <div class="w-10 h-0.5 bg-gold/40 mb-5" />
-          <p class="text-gray-600 leading-relaxed text-sm">
-            Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross
-            Catholic Church, Mararaba Gurku, Nasarawa State. A member of the
-            <strong class="text-navy">Order of Saint Augustine (OSA)</strong>, he shepherds the
-            parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.
-          </p>
+          <p class="text-gray-600 leading-relaxed text-sm">{{ pastor.bio }}</p>
         </div>
       </div>
     </div>
@@ -169,30 +164,30 @@ const stats = [
   { value: '37+', label: 'Years of Faith' },
 ]
 
-const associates = [
-  {
-    name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA',
-    role: 'Bursar / School Administrator',
-    photo: '/priest-jiwok.jpg',
-    desc: '',
-  },
-  {
-    name: 'Catechist Michael Iorhemba',
-    role: 'Parish Catechist',
-    photo: '/catechist-michael.jpg',
-    desc: '',
-  },
-  {
-    name: 'Rev. Fr. Jude Aniobodom Ossai, OSA',
-    role: 'Papal Nunciature',
-    photo: '/priest-jude.jpg',
-    desc: '',
-  },
-  {
-    name: 'Very Rev. Fr. Oliver Onuoha, OSA',
-    role: 'Ave Maria',
-    photo: '/priest-oliver.jpg',
-    desc: '',
-  },
+const supabase = useSupabase()
+const pastor = ref<any>(null)
+const associates = ref<any[]>([])
+
+const defaultAssociates = [
+  { name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA', role: 'Bursar / School Administrator', photo: '/priest-jiwok.jpg', desc: '' },
+  { name: 'Catechist Michael Iorhemba', role: 'Parish Catechist', photo: '/catechist-michael.jpg', desc: '' },
+  { name: 'Rev. Fr. Jude Aniobodom Ossai, OSA', role: 'Papal Nunciature', photo: '/priest-jude.jpg', desc: '' },
+  { name: 'Very Rev. Fr. Oliver Onuoha, OSA', role: 'Ave Maria', photo: '/priest-oliver.jpg', desc: '' },
 ]
+
+onMounted(async () => {
+  const { data } = await supabase.from('clergy').select('*').order('sort_order')
+  if (data && data.length > 0) {
+    pastor.value = data.find((p: any) => p.sort_order === 1) ?? data[0]
+    associates.value = data.filter((p: any) => p.id !== pastor.value?.id)
+  } else {
+    pastor.value = {
+      name: 'Rev. Frederick Wukari, OSA Esq.',
+      role: 'Parish Priest',
+      photo: '/priest-1.jpg',
+      bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA), he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.',
+    }
+    associates.value = defaultAssociates
+  }
+})
 </script>
