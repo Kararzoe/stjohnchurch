@@ -81,7 +81,7 @@ useScrollReveal()
 const contactInfo = [
   { icon: '📍', label: 'Address', value: '123 Church Street\nYour City, ST 00000' },
   { icon: '📞', label: 'Phone', value: '(555) 123-4567' },
-  { icon: '✉️', label: 'Email', value: 'info@stjohncatholic.org' },
+  { icon: '✉️', label: 'Email', value: 'ochuicaroline@gmail.com' },
   { icon: '🕐', label: 'Office Hours', value: 'Mon–Fri: 9 AM – 5 PM\nSat: 9 AM – 1 PM' },
 ]
 </script>

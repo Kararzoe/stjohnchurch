@@ -112,7 +112,12 @@
                   />
                   <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
 
-                  <!-- Selected overlay -->
+                  <!-- Number badge -->
+                  <div class="absolute top-2 left-2 w-7 h-7 rounded-full text-white text-xs font-black flex items-center justify-center" style="background: rgba(26,39,68,0.85)">
+                    {{ contestant.number }}
+                  </div>
+
+
                   <transition name="fade">
                     <div v-if="votes[categories[activeTab].id] === contestant.id"
                       class="absolute inset-0 flex items-center justify-center"
@@ -355,7 +360,7 @@ const categories = [
       { id: 'f3', number: 3, name: 'Mr. Sebastian Felix', tagline: 'Face of Harvest', photo: '/foh-sebastian.jpg' },
       { id: 'f4', number: 4, name: 'Master John Agim', tagline: 'Face of Harvest', photo: '/foh-john.jpg' },
       { id: 'f5', number: 5, name: 'Master Iyeakachukwu Ugochukwu', tagline: 'Face of Harvest', photo: '/foh-iyeaka.jpg' },
-      { id: 'f6', number: 6, name: 'Ashinatiang C. Perpetual', tagline: '📞 08114277256', photo: '/foh-perpetual.jpg' },
+      { id: 'f6', number: 6, name: 'Ashinatiang C. Perpetual', tagline: 'Face of Harvest', photo: '/foh-perpetual.jpg' },
       { id: 'f7', number: 7, name: 'Onwumelu Omerebere Clare', tagline: 'CYON', photo: '/foh-clare.jpg' },
       { id: 'f8', number: 8, name: 'Mrs. Blessing Obiora', tagline: 'Face of Harvest', photo: '/foh-blessing.jpg' },
       { id: 'f9', number: 9, name: 'Uzuegbuna Felicity Chidinma', tagline: '📞 09045411265 · Voice of Saints Choir', photo: '/foh-felicity.jpg' },
