@@ -393,7 +393,7 @@ const categories = [
     icon: '🫅',
     contestants: [
       { id: 'p1', number: 1, name: 'Peter Yohanna Akpajeshi', tagline: 'Prince of Harvest', photo: '/proh-peter.jpg' },
-      { id: 'p2', number: 2, name: 'Andrew Kelechi', tagline: 'Prince of Harvest', photo: '/proh-andrew.jpg' },
+      { id: 'p2', number: 2, name: 'Andrew Kelechi Kenechukwu', tagline: 'Prince of Harvest', photo: '/proh-andrew.jpg' },
       { id: 'p3', number: 3, name: 'Okpara Franklin', tagline: '📞 07061668284 · Holy Trinity Igbo Youth', photo: '/proh-franklin.jpg' },
       { id: 'p4', number: 4, name: 'Sunday Wisdom', tagline: 'Blessed Iwene Tansi', photo: '/proh-sunday.jpg' },
       { id: 'p5', number: 5, name: 'Ukam Emmanuel Chukwuemeka', tagline: 'Prince of Harvest', photo: '/proh-ukam.jpg' },
