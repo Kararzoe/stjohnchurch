@@ -123,7 +123,7 @@
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10 reveal">
         <span class="section-label">Associate Clergy</span>
-        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Our Clergy</h2>
+        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Associate Priests</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
