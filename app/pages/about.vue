@@ -123,14 +123,15 @@
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10 reveal">
         <span class="section-label">Associate Clergy</span>
-        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Assistant Priests</h2>
+        <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Our Clergy</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div v-for="(p, i) in associates" :key="p.name" :class="`reveal delay-${(i + 1) * 100}`">
           <div class="bg-cream rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 transition-all duration-300 group flex gap-5 p-5">
-            <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center shrink-0 border-2 border-gold/30">
-              <span class="text-2xl">✝</span>
+            <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center shrink-0 border-2 border-gold/30 overflow-hidden">
+              <img v-if="p.photo" :src="p.photo" :alt="p.name" class="w-full h-full object-cover object-top" />
+              <span v-else class="text-2xl">✝</span>
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-xs text-gold font-bold uppercase tracking-widest mb-0.5">{{ p.role }}</p>
@@ -170,14 +171,16 @@ const stats = [
 
 const associates = [
   {
-    name: 'Rev. Fr. [Associate Priest]',
-    role: 'Assistant Priest',
-    desc: 'Assists with the celebration of Mass, sacraments, and pastoral care of the faithful.',
+    name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA',
+    role: 'Bursar / School Administrator',
+    photo: '/priest-jiwok.jpg',
+    desc: '',
   },
   {
     name: 'Rev. Fr. [Associate Priest 2]',
     role: 'Assistant Priest',
-    desc: 'Supports the parish in liturgical celebrations, hospital chaplaincy, and outreach.',
+    photo: '',
+    desc: '',
   },
 ]
 </script>
