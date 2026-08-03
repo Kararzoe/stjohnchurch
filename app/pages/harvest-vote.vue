@@ -112,11 +112,6 @@
                   />
                   <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
 
-                  <!-- Number badge -->
-                  <div class="absolute top-2 left-2 w-7 h-7 rounded-full text-white text-xs font-black flex items-center justify-center" style="background: rgba(26,39,68,0.85)">
-                    {{ contestant.number }}
-                  </div>
-
                   <!-- Selected overlay -->
                   <transition name="fade">
                     <div v-if="votes[categories[activeTab].id] === contestant.id"
