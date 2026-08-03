@@ -182,5 +182,11 @@ const associates = [
     photo: '/catechist-michael.jpg',
     desc: '',
   },
+  {
+    name: 'Rev. Fr. Jude Aniobodom Ossai, OSA',
+    role: 'Papal Nunciature',
+    photo: '/priest-jude.jpg',
+    desc: '',
+  },
 ]
 </script>
