@@ -11,7 +11,10 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'St. John Catholic Church',
+      title: 'St. John of the Cross Catholic Church - Mararaba',
+      meta: [
+        { name: 'description', content: 'St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. Mass times, events, and parish information.' }
+      ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
