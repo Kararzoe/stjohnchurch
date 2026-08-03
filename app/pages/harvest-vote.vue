@@ -217,7 +217,7 @@
             <div class="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
               <span class="text-gold text-sm">✦</span>
             </div>
-            <p class="text-xs text-gray-600 leading-relaxed">Each vote costs <strong class="text-navy">₦500</strong>. You can vote multiple times to boost your contestant.</p>
+            <p class="text-xs text-gray-600 leading-relaxed">Each vote costs <strong class="text-navy">₦200</strong>. You can vote multiple times to boost your contestant.</p>
           </div>
         </div>
 
@@ -234,7 +234,7 @@
                 <span class="flex-1 text-center font-playfair font-black text-2xl text-navy">{{ voteQty }}</span>
                 <button @click="voteQty++" class="w-10 h-10 rounded-xl border-2 border-gray-200 text-navy font-black text-lg hover:border-gold transition-all">+</button>
               </div>
-              <p class="text-center text-xs text-gold font-semibold mt-2">Total: ₦{{ (voteQty * 500).toLocaleString() }}</p>
+              <p class="text-center text-xs text-gold font-semibold mt-2">Total: ₦{{ (voteQty * 200).toLocaleString() }}</p>
             </div>
 
             <div>
@@ -248,7 +248,7 @@
             <button @click="confirmPayment"
               class="w-full py-5 rounded-2xl text-white font-black text-xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 tracking-wide"
               style="background: linear-gradient(90deg, #b8860b, #d4af37)">
-              Pay ₦{{ (voteQty * 500).toLocaleString() }} to Vote
+              Pay ₦{{ (voteQty * 200).toLocaleString() }} to Vote
             </button>
             <button @click="step = 'vote'" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">
               ← Back to Contestants
