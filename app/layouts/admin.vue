@@ -74,12 +74,14 @@ const router = useRouter()
 const navItems = [
   { to: '/admin', icon: '📊', label: 'Overview' },
   { to: '/admin/votes', icon: '🗳️', label: 'Harvest Votes' },
+  { to: '/admin/contestants', icon: '🏆', label: 'Contestants' },
   { to: '/admin/donations', icon: '💰', label: 'Donations' },
   { to: '/admin/news', icon: '📰', label: 'News' },
   { to: '/admin/events', icon: '📅', label: 'Events' },
-  { to: '/admin/contestants', icon: '👥', label: 'Contestants' },
   { to: '/admin/mass-times', icon: '⛪', label: 'Mass Times' },
   { to: '/admin/clergy', icon: '✝️', label: 'Clergy' },
+  { to: '/admin/members', icon: '👥', label: 'Members' },
+  { to: '/admin/elections', icon: '🗳️', label: 'Elections' },
   { to: '/admin/gallery', icon: '🖼️', label: 'Gallery' },
 ]
 
