@@ -286,12 +286,12 @@ useScrollReveal()
 const supabase = useSupabase()
 const openMass = ref<number | null>(0)
 
-const massTimes = [
-  { day: 'Sunday', times: ['5:30 AM', '7:30 AM', '9:30 AM (Hausa Mass)', '9:30 AM (Children\'s Mass)', '11:00 AM', '5:15 PM (Benediction)', '6:00 PM'] },
+const massTimes = ref([
+  { day: 'Sunday', times: ['5:30 AM', '7:30 AM', '9:30 AM (Hausa Mass)', "9:30 AM (Children's Mass)", '11:00 AM', '5:15 PM (Benediction)', '6:00 PM'] },
   { day: 'Weekdays', times: ['6:00 AM', '6:00 PM (Mon – Fri)'] },
   { day: 'Saturday', times: ['6:00 AM'] },
   { day: 'Holy Days', times: ['To be announced — check bulletin'] },
-]
+])
 
 const stats = [
   { value: '1988', label: 'Founded' },
@@ -324,10 +324,6 @@ function eventDate(d: string) {
   const dt = new Date(d)
   return { month: dt.toLocaleString('en', { month: 'short' }).toUpperCase(), day: String(dt.getDate()).padStart(2, '0') }
 }
-  if (!d) return { month: '—', day: '—' }
-  const dt = new Date(d)
-  return { month: dt.toLocaleString('en', { month: 'short' }).toUpperCase(), day: String(dt.getDate()).padStart(2, '0') }
-}
 
 onMounted(async () => {
   const { data: evData } = await supabase.from('events').select('*').eq('published', true).order('event_date').limit(3)
@@ -335,6 +331,19 @@ onMounted(async () => {
 
   const { data: galData } = await supabase.from('gallery').select('image_url').order('created_at', { ascending: false }).limit(12)
   if (galData && galData.length > 0) galleryImages.value = galData.map((g: any) => g.image_url)
+
+  const { data: mtData } = await supabase.from('mass_times').select('*').order('id')
+  if (mtData && mtData.length > 0) {
+    const grouped: Record<string, string[]> = {}
+    mtData.forEach((r: any) => {
+      if (!grouped[r.day]) grouped[r.day] = []
+      grouped[r.day].push(r.note ? `${r.time} (${r.note})` : r.time)
+    })
+    massTimes.value = massTimes.value.map(m => ({
+      ...m,
+      times: grouped[m.day] ?? m.times,
+    }))
+  }
 })
 </script>
 
