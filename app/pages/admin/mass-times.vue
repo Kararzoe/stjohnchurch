@@ -113,7 +113,11 @@ async function save() {
   saved.value = false
 
   // Delete all existing and re-insert
-  await supabase.from('mass_times').delete().neq('id', 0)
+  const { data: existing } = await supabase.from('mass_times').select('id')
+  if (existing && existing.length > 0) {
+    const ids = existing.map((r: any) => r.id)
+    await supabase.from('mass_times').delete().in('id', ids)
+  }
 
   const rows: any[] = []
   schedule.value.forEach(day => {
