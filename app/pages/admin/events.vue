@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div>
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -27,7 +27,7 @@
             <td class="px-5 py-4">
               <div class="flex items-center gap-3">
                 <img v-if="ev.image_url" :src="ev.image_url" class="w-10 h-10 rounded-lg object-cover shrink-0" />
-                <div v-else class="w-10 h-10 rounded-lg bg-navy/5 flex items-center justify-center shrink-0 text-lg">ðŸ“…</div>
+                <div v-else class="w-10 h-10 rounded-lg bg-navy/5 flex items-center justify-center shrink-0 text-lg">📅</div>
                 <p class="font-semibold text-navy truncate max-w-xs">{{ ev.title }}</p>
               </div>
             </td>
@@ -38,7 +38,10 @@
               </span>
             </td>
             <td class="px-5 py-4">
-              <div class="flex items-center gap-2 justify-end">
+              <div class="flex items-center gap-3 justify-end">
+                <button @click="togglePublish(ev)" class="text-xs text-blue-400 hover:text-blue-600 font-bold transition-colors">
+                  {{ ev.published ? 'Unpublish' : 'Publish' }}
+                </button>
                 <button @click="openForm(ev)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
                 <button @click="deleteEvent(ev.id)" class="text-xs text-red-400 hover:text-red-600 font-bold transition-colors">Delete</button>
               </div>
@@ -53,11 +56,11 @@
       <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 class="font-playfair text-xl font-bold text-navy">{{ editing ? 'Edit Event' : 'New Event' }}</h2>
-          <button @click="showForm = false" class="text-gray-400 hover:text-navy text-xl">âœ•</button>
+          <button @click="showForm = false" class="text-gray-400 hover:text-navy text-2xl leading-none">&times;</button>
         </div>
         <div class="p-6 space-y-4">
           <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Title</label>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Title *</label>
             <input v-model="form.title" type="text" placeholder="Event title"
               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
           </div>
@@ -72,6 +75,11 @@
               <input v-model="form.event_time" type="text" placeholder="e.g. 10:00 AM"
                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
             </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Location</label>
+            <input v-model="form.location" type="text" placeholder="e.g. Main Church, Parish Hall"
+              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
@@ -89,6 +97,7 @@
             <input v-model="form.published" type="checkbox" id="pub" class="w-4 h-4 accent-gold" />
             <label for="pub" class="text-sm font-semibold text-navy">Publish immediately</label>
           </div>
+          <p v-if="formError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ formError }}</p>
           <div class="flex gap-3 pt-2">
             <button @click="showForm = false" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy transition-all">Cancel</button>
             <button @click="saveEvent" :disabled="saving" class="flex-1 py-3 rounded-xl text-white font-bold text-sm shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-60" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
@@ -111,8 +120,9 @@ const showForm = ref(false)
 const editing = ref<any>(null)
 const saving = ref(false)
 const uploading = ref(false)
+const formError = ref('')
 
-const form = reactive({ title: '', description: '', event_date: '', event_time: '', image_url: '', published: false })
+const form = reactive({ title: '', description: '', event_date: '', event_time: '', location: '', image_url: '', published: false })
 
 onMounted(loadEvents)
 
@@ -125,8 +135,9 @@ async function loadEvents() {
 
 function openForm(ev?: any) {
   editing.value = ev ?? null
-  if (ev) Object.assign(form, { title: ev.title, description: ev.description ?? '', event_date: ev.event_date ?? '', event_time: ev.event_time ?? '', image_url: ev.image_url ?? '', published: ev.published })
-  else Object.assign(form, { title: '', description: '', event_date: '', event_time: '', image_url: '', published: false })
+  formError.value = ''
+  if (ev) Object.assign(form, { title: ev.title, description: ev.description ?? '', event_date: ev.event_date ?? '', event_time: ev.event_time ?? '', location: ev.location ?? '', image_url: ev.image_url ?? '', published: ev.published })
+  else Object.assign(form, { title: '', description: '', event_date: '', event_time: '', location: '', image_url: '', published: false })
   showForm.value = true
 }
 
@@ -144,19 +155,30 @@ async function handleImageUpload(e: Event) {
 }
 
 async function saveEvent() {
-  if (!form.title) return
+  if (!form.title) { formError.value = 'Title is required.'; return }
   saving.value = true
-  if (editing.value) await supabase.from('events').update({ ...form }).eq('id', editing.value.id)
-  else await supabase.from('events').insert({ ...form })
+  let err
+  if (editing.value) {
+    const res = await supabase.from('events').update({ ...form }).eq('id', editing.value.id)
+    err = res.error
+  } else {
+    const res = await supabase.from('events').insert({ ...form })
+    err = res.error
+  }
   saving.value = false
+  if (err) { formError.value = err.message; return }
   showForm.value = false
   loadEvents()
 }
 
+async function togglePublish(ev: any) {
+  await supabase.from('events').update({ published: !ev.published }).eq('id', ev.id)
+  loadEvents()
+}
+
 async function deleteEvent(id: string) {
-  if (!confirm('Delete this event?')) return
+  if (!confirm('Delete this event? This cannot be undone.')) return
   await supabase.from('events').delete().eq('id', id)
   loadEvents()
 }
 </script>
-
