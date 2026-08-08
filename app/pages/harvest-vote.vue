@@ -13,7 +13,7 @@
     </div>
 
     <!-- ── HERO ── -->
-    <section v-if="harvestActive" class="relative h-[55vh] flex items-center justify-center overflow-hidden">
+    <section v-if="harvestActive && step === 'vote'" class="relative h-[55vh] flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0">
         <img src="/church-interior.jpg" alt="Harvest" class="w-full h-full object-cover object-center scale-105" />
       </div>
