@@ -35,6 +35,17 @@
           <div class="h-px w-16 bg-gold/40" />
         </div>
         <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">{{ contestSubtitle }}</p>
+
+        <!-- Countdown -->
+        <div class="mt-6 flex items-center justify-center gap-3">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mr-1">Voting ends in</p>
+          <div v-for="unit in countdown" :key="unit.label" class="flex flex-col items-center">
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center font-playfair font-black text-2xl text-white shadow-lg" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(212,175,55,0.4)">
+              <span class="tabular-nums transition-all duration-300">{{ unit.value }}</span>
+            </div>
+            <p class="text-gold text-[9px] uppercase tracking-widest mt-1 font-bold">{{ unit.label }}</p>
+          </div>
+        </div>
       </div>
       <div class="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 80" fill="none"><path d="M0 80L1440 80L1440 30C1200 80 960 10 720 30C480 50 240 0 0 30L0 80Z" fill="#faf8f3"/></svg>
@@ -279,8 +290,8 @@
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
-          <p class="text-amber-800 text-sm font-bold mb-1">⏳ What happens next?</p>
-          <p class="text-amber-700 text-xs leading-relaxed">Our admin team will verify your payment reference against the bank records. Once confirmed, your vote will be approved and counted. This usually takes a few hours.</p>
+          <p class="text-amber-800 text-sm font-bold mb-1">⏳ Pending Admin Approval</p>
+          <p class="text-amber-700 text-xs leading-relaxed">Your vote has been submitted and is awaiting approval. Our admin team will verify your payment against bank records and approve your vote. This usually takes a few hours.</p>
         </div>
 
         <div class="space-y-2 mb-8">
@@ -317,7 +328,27 @@ const contestSubtitle = ref('Cast your vote for your favourite contestants · St
 const categories = ref<any[]>([])
 const harvestActive = ref(true)
 
+// Countdown to Nov 1
+const countdown = ref([{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }])
+let timer: any
+function updateCountdown() {
+  const end = new Date('2025-11-01T00:00:00').getTime()
+  const diff = end - Date.now()
+  if (diff <= 0) { countdown.value = [{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }]; return }
+  const d = Math.floor(diff / 86400000)
+  const h = Math.floor((diff % 86400000) / 3600000)
+  const m = Math.floor((diff % 3600000) / 60000)
+  const s = Math.floor((diff % 60000) / 1000)
+  countdown.value = [
+    { label: 'Days', value: String(d).padStart(2, '0') },
+    { label: 'Hours', value: String(h).padStart(2, '0') },
+    { label: 'Mins', value: String(m).padStart(2, '0') },
+    { label: 'Secs', value: String(s).padStart(2, '0') },
+  ]
+}
 onMounted(async () => {
+  updateCountdown()
+  timer = setInterval(updateCountdown, 1000)
   const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
     supabase.from('contest_categories').select('*').order('sort_order'),
@@ -340,6 +371,8 @@ onMounted(async () => {
     .filter((cat: any) => grouped[cat.id]?.length)
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 })
+
+onUnmounted(() => clearInterval(timer))
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
