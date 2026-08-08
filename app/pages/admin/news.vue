@@ -146,9 +146,10 @@ async function handleImageUpload(e: Event) {
   if (!file) return
   uploading.value = true
   const path = `news/${Date.now()}.${file.name.split('.').pop()}`
-  const { data, error } = await supabase.storage.from('parish media').upload(path, file, { upsert: true })
-  if (!error && data) {
-    const { data: url } = supabase.storage.from('parish media').getPublicUrl(path)
+  const { data, error } = await supabase.storage.from('parish-media').upload(path, file, { upsert: true })
+  if (error) { formError.value = 'Image upload failed: ' + error.message; uploading.value = false; return }
+  if (data) {
+    const { data: url } = supabase.storage.from('parish-media').getPublicUrl(path)
     form.image_url = url.publicUrl
   }
   uploading.value = false
