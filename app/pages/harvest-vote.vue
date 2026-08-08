@@ -322,7 +322,7 @@ const harvestActive = ref(true)
 const countdown = ref([{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }])
 let timer: any
 function updateCountdown() {
-  const end = new Date('2025-11-01T00:00:00').getTime()
+  const end = new Date('2026-11-01T00:00:00+01:00').getTime()
   const diff = end - Date.now()
   if (diff <= 0) { countdown.value = [{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }]; return }
   const d = Math.floor(diff / 86400000)
