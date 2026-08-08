@@ -179,7 +179,7 @@
 
         <!-- Reference form -->
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <h3 class="font-playfair text-lg font-bold text-navy">Confirm Your Payment</h3>
+          <h3 class="font-playfair text-lg font-bold text-navy">Your Details</h3>
 
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
@@ -193,30 +193,14 @@
               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Bank Paid To *</label>
-            <select v-model="payForm.bank" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all">
-              <option value="">Select bank</option>
-              <option value="Access Bank">Access Bank</option>
-              <option value="Zenith Bank">Zenith Bank</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Transaction Reference / Receipt No. *</label>
-            <input v-model="payForm.reference" type="text" placeholder="e.g. FT25ABC123456"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-            <p class="text-xs text-gray-400 mt-1">Find this on your bank app or SMS receipt after transfer.</p>
-          </div>
-
           <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
 
           <button @click="submitVotes" :disabled="submitting"
-            class="w-full py-4 rounded-2xl text-white font-black text-base transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
-            style="background: linear-gradient(90deg, #b8860b, #d4af37)">
-            {{ submitting ? 'Submitting...' : 'Submit Vote for Verification' }}
+            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            {{ submitting ? 'Submitting...' : '✅ I Have Paid' }}
           </button>
-          <button @click="step = 'vote'" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back to Selections</button>
+          <button @click="step = 'vote'" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
         </div>
 
       </div>
@@ -264,7 +248,7 @@ const votes = reactive<Record<string, string>>({})
 const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
-const payForm = reactive({ name: '', phone: '', bank: '', reference: '' })
+const payForm = reactive({ name: '', phone: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -320,8 +304,6 @@ function goToPayment() {
 async function submitVotes() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
   if (!payForm.phone) { payError.value = 'Please enter your phone number.'; return }
-  if (!payForm.bank) { payError.value = 'Please select the bank you paid to.'; return }
-  if (!payForm.reference) { payError.value = 'Please enter your transaction reference.'; return }
 
   submitting.value = true
   payError.value = ''
@@ -329,8 +311,8 @@ async function submitVotes() {
   const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
-    bank: payForm.bank,
-    reference: payForm.reference,
+    bank: '',
+    reference: 'self-declared',
     qty: voteQty.value,
     amount: voteQty.value * 200,
     status: 'pending',
