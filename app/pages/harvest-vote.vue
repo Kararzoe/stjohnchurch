@@ -218,14 +218,37 @@
 
         <!-- Reference form -->
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <h3 class="font-playfair text-lg font-bold text-navy">Your Details</h3>
+          <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
+          <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
+            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            ✅ I Have Paid
+          </button>
+          <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
+        </div>
 
+      </div>
+    </div>
+
+    <!-- ── STEP: DETAILS ── -->
+    <div v-if="harvestActive && step === 'details'" class="py-12 px-4">
+      <div class="max-w-lg mx-auto space-y-5">
+
+        <div class="text-center mb-2">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Almost Done</p>
+          <h2 class="font-playfair text-3xl font-black text-navy">Your Details</h2>
+          <div class="flex items-center justify-center gap-3 mt-3">
+            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+          </div>
+          <p class="text-gray-400 text-sm mt-3">So we can match your payment to your vote.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
             <input v-model="payForm.name" type="text" placeholder="Your full name"
               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
           </div>
-
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
             <input v-model="payForm.phone" type="tel" placeholder="08012345678"
@@ -237,9 +260,9 @@
           <button @click="submitVotes" :disabled="submitting"
             class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
             style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            {{ submitting ? 'Submitting...' : '✅ I Have Paid' }}
+            {{ submitting ? 'Submitting...' : '✅ Submit My Vote' }}
           </button>
-          <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
+          <button @click="step = 'payment'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
         </div>
 
       </div>
@@ -280,7 +303,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'confirm' | 'payment' | 'done'>('vote')
+const step = ref<'vote' | 'confirm' | 'payment' | 'details' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
