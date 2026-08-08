@@ -68,7 +68,7 @@
               activeTab === i ? 'text-white border-transparent shadow-lg' : votes[cat.id] ? 'bg-gold/10 text-gold border-gold/40' : 'bg-white text-gray-500 border-gray-200 hover:border-navy hover:text-navy']"
             :style="activeTab === i ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''"
           >
-            {{ cat.label }}<span v-if="votes[cat.id]" class="ml-1 text-green-500 font-black">✓</span>
+            {{ cat.label }}
           </button>
         </div>
 
@@ -93,26 +93,19 @@
             <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               <div v-for="contestant in categories[activeTab]?.contestants ?? []" :key="contestant.id"
                 @click="selectContestant(categories[activeTab].id, contestant)"
-                :class="['relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex flex-col cursor-pointer',
-                  votes[categories[activeTab].id] === contestant.id ? 'ring-2 ring-gold shadow-xl shadow-gold/20' : 'shadow-sm border border-gray-100 hover:shadow-md hover:border-gold/30']"
+                :class="['relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex flex-col cursor-pointer shadow-sm border border-gray-100 hover:shadow-md hover:border-gold/30']"
               >
                 <div class="relative w-full aspect-[3/4] overflow-hidden">
                   <img v-if="contestant.photo" :src="contestant.photo" :alt="contestant.name" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
                   <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
                   <div class="absolute top-2 left-2 w-7 h-7 rounded-full text-white text-xs font-black flex items-center justify-center" style="background: rgba(26,39,68,0.85)">{{ contestant.number }}</div>
-                  <transition name="fade">
-                    <div v-if="votes[categories[activeTab].id] === contestant.id" class="absolute inset-0 flex items-center justify-center" style="background: rgba(212,175,55,0.3)">
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: #d4af37"><span class="text-white text-lg font-black">✓</span></div>
-                    </div>
-                  </transition>
                   <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                   <div class="absolute bottom-0 left-0 right-0 p-3">
                     <p class="font-playfair font-black text-white text-sm leading-tight">{{ contestant.name }}</p>
                   </div>
                 </div>
-                <div class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
-                  :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'">
-                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Selected' : 'Vote' }}
+                <div class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest" style="background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white">
+                  Vote
                 </div>
               </div>
             </div>
@@ -319,22 +312,25 @@ const categories = ref<any[]>([])
 const harvestActive = ref(true)
 
 // Countdown to Nov 1
-const countdown = ref([{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }])
-let timer: any
-function updateCountdown() {
+function calcCountdown() {
   const end = new Date('2026-11-01T00:00:00+01:00').getTime()
   const diff = end - Date.now()
-  if (diff <= 0) { countdown.value = [{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }]; return }
+  if (diff <= 0) return [{ label: 'Days', value: '00' }, { label: 'Hours', value: '00' }, { label: 'Mins', value: '00' }, { label: 'Secs', value: '00' }]
   const d = Math.floor(diff / 86400000)
   const h = Math.floor((diff % 86400000) / 3600000)
   const m = Math.floor((diff % 3600000) / 60000)
   const s = Math.floor((diff % 60000) / 1000)
-  countdown.value = [
+  return [
     { label: 'Days', value: String(d).padStart(2, '0') },
     { label: 'Hours', value: String(h).padStart(2, '0') },
     { label: 'Mins', value: String(m).padStart(2, '0') },
     { label: 'Secs', value: String(s).padStart(2, '0') },
   ]
+}
+const countdown = ref(calcCountdown())
+let timer: any
+function updateCountdown() {
+  countdown.value = calcCountdown()
 }
 onMounted(async () => {
   updateCountdown()
