@@ -39,16 +39,17 @@
 useScrollReveal()
 
 const supabase = useSupabase()
-const news = ref<any[]>([])
 
-onMounted(async () => {
+const { data: newsData } = await useAsyncData('news', async () => {
   const { data } = await supabase
     .from('news')
     .select('*')
     .eq('published', true)
     .order('created_at', { ascending: false })
-  news.value = data ?? []
+  return data ?? []
 })
+
+const news = computed(() => newsData.value ?? [])
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
