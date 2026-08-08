@@ -11,6 +11,18 @@
       </div>
     </div>
 
+    <!-- Confirm Modal -->
+    <div v-if="modal.show" class="fixed inset-0 z-50 flex items-center justify-center px-4" style="background: rgba(0,0,0,0.5)">
+      <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full">
+        <p class="font-playfair font-black text-navy text-lg mb-1">{{ modal.title }}</p>
+        <p class="text-gray-500 text-sm mb-6">{{ modal.message }}</p>
+        <div class="flex gap-3">
+          <button @click="modal.show = false" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy transition-all">Cancel</button>
+          <button @click="modal.onConfirm(); modal.show = false" :class="['flex-1 py-3 rounded-xl text-white font-black text-sm transition-all', modal.danger ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600']">{{ modal.confirmLabel }}</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Harvest Toggle -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 flex items-center justify-between">
       <div>
@@ -91,8 +103,8 @@
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
-                    <button @click="approveRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve</button>
-                    <button @click="rejectRow(row)" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Reject</button>
+                    <button @click="confirm({ title: 'Approve Vote', message: `Approve vote from ${row.voter_name} for ${row.contestant_name}?`, confirmLabel: 'Yes, Approve', danger: false, onConfirm: () => approveRow(row) })" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve</button>
+                    <button @click="confirm({ title: 'Reject Vote', message: `Reject vote from ${row.voter_name} for ${row.contestant_name}?`, confirmLabel: 'Yes, Reject', danger: true, onConfirm: () => rejectRow(row) })" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Reject</button>
                   </div>
                 </td>
               </tr>
@@ -140,7 +152,7 @@
                 <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
                 <td class="px-4 py-3">
-                  <button @click="rejectRow(row)" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Undo</button>
+                  <button @click="confirm({ title: 'Undo Approval', message: `Move vote from ${row.voter_name} back to pending?`, confirmLabel: 'Yes, Undo', danger: true, onConfirm: () => rejectRow(row) })" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Undo</button>
                 </td>
               </tr>
             </tbody>
@@ -188,8 +200,8 @@
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
-                    <button @click="restoreRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
-                    <button @click="deleteRow(row)" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">🗑 Delete</button>
+                    <button @click="confirm({ title: 'Restore Vote', message: `Move vote from ${row.voter_name} back to pending?`, confirmLabel: 'Yes, Restore', danger: false, onConfirm: () => restoreRow(row) })" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
+                    <button @click="confirm({ title: 'Delete Vote', message: `Permanently delete vote from ${row.voter_name} for ${row.contestant_name}? This cannot be undone.`, confirmLabel: 'Yes, Delete', danger: true, onConfirm: () => deleteRow(row) })" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">🗑 Delete</button>
                   </div>
                 </td>
               </tr>
@@ -280,6 +292,11 @@ async function load() {
 
 // Pending: group rows by reference so one approval covers all categories
 const pending = computed(() => voteData.value.filter(v => v.status === 'pending'))
+
+const modal = reactive({ show: false, title: '', message: '', confirmLabel: '', danger: false, onConfirm: () => {} })
+function confirm(opts: { title: string, message: string, confirmLabel: string, danger: boolean, onConfirm: () => void }) {
+  Object.assign(modal, { ...opts, show: true })
+}
 
 async function approveRow(row: any) {
   await supabase.from('votes').update({ status: 'approved' }).eq('id', row.id)
