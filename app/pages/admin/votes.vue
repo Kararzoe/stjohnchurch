@@ -187,7 +187,10 @@
                 <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
                 <td class="px-4 py-3">
-                  <button @click="restoreRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
+                  <div class="flex gap-2">
+                    <button @click="restoreRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
+                    <button @click="deleteRow(row)" class="px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">🗑 Delete</button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -291,6 +294,12 @@ async function rejectRow(row: any) {
 
 async function restoreRow(row: any) {
   await supabase.from('votes').update({ status: 'pending' }).eq('id', row.id)
+  load()
+}
+
+async function deleteRow(row: any) {
+  if (!confirm(`Permanently delete vote from ${row.voter_name} for ${row.contestant_name}?`)) return
+  await supabase.from('votes').delete().eq('id', row.id)
   load()
 }
 
