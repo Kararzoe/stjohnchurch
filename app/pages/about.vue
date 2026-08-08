@@ -148,19 +148,22 @@ const history = ref([
 ])
 
 onMounted(async () => {
-  const [{ data: content }, { data: clergyData }] = await Promise.all([
-    supabase.from('site_content').select('key, value').in('key', ['about_stats', 'about_mission', 'about_history']),
-    supabase.from('clergy').select('*').order('sort_order'),
-  ])
-  if (content) {
-    for (const row of content) {
-      try {
-        if (row.key === 'about_stats') stats.value = JSON.parse(row.value)
-        if (row.key === 'about_mission') mission.value = row.value
-        if (row.key === 'about_history') history.value = JSON.parse(row.value)
-      } catch {}
+  // Load editable content (non-critical — fails gracefully if table doesn't exist)
+  try {
+    const { data: content } = await supabase.from('site_content').select('key, value').in('key', ['about_stats', 'about_mission', 'about_history'])
+    if (content) {
+      for (const row of content) {
+        try {
+          if (row.key === 'about_stats') stats.value = JSON.parse(row.value)
+          if (row.key === 'about_mission') mission.value = row.value
+          if (row.key === 'about_history') history.value = JSON.parse(row.value)
+        } catch {}
+      }
     }
-  }
+  } catch {}
+
+  // Load clergy (always)
+  const { data: clergyData } = await supabase.from('clergy').select('*').order('sort_order')
   if (clergyData && clergyData.length > 0) {
     pastor.value = clergyData.find((p: any) => p.sort_order === 1) ?? clergyData[0]
     associates.value = clergyData.filter((p: any) => p.id !== pastor.value?.id)
