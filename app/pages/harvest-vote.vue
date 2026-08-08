@@ -224,7 +224,7 @@
         <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          ✅ I Have Paid
+          Continue →
         </button>
         <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
 
