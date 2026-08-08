@@ -22,7 +22,7 @@
         </div>
         <h3 class="font-playfair font-bold text-navy text-base mb-1">{{ m.name }}</h3>
         <p class="text-xs text-gold font-semibold mb-2">{{ m.years }} of service</p>
-        <p class="text-gray-500 text-xs leading-relaxed">{{ m.desc }}</p>
+        <p class="text-gray-500 text-xs leading-relaxed">{{ m.description }}</p>
       </div>
       <div v-if="groups.length === 0" class="col-span-3 text-center py-12 text-gray-400 text-sm">No groups yet.</div>
     </div>
@@ -94,7 +94,7 @@ function openForm(m?: any) {
   editing.value = m ?? null
   formError.value = ''
   if (m) {
-    Object.assign(form, { icon: m.icon, name: m.name, years: m.years, desc: m.desc, sort_order: m.sort_order })
+    Object.assign(form, { icon: m.icon, name: m.name, years: m.years, desc: m.description, sort_order: m.sort_order })
   } else {
     Object.assign(form, { icon: '', name: '', years: '20+ years', desc: '', sort_order: groups.value.length + 1 })
   }
@@ -104,7 +104,7 @@ function openForm(m?: any) {
 async function save() {
   if (!form.name) { formError.value = 'Name is required.'; return }
   saving.value = true
-  const payload = { icon: form.icon, name: form.name, years: form.years, desc: form.desc, sort_order: form.sort_order }
+  const payload = { icon: form.icon, name: form.name, years: form.years, description: form.desc, sort_order: form.sort_order }
   const { error } = editing.value
     ? await supabase.from('ministries').update(payload).eq('id', editing.value.id)
     : await supabase.from('ministries').insert(payload)

@@ -27,7 +27,7 @@
           </div>
           <h3 class="font-playfair font-bold text-navy text-xl mb-1 group-hover:text-gold transition-colors">{{ m.name }}</h3>
           <p class="text-xs text-gold font-semibold mb-3">{{ m.years }} of service</p>
-          <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ m.desc }}</p>
+          <p class="text-gray-500 text-sm leading-relaxed flex-1">{{ m.description }}</p>
           <div class="mt-5 pt-5 border-t border-gray-100">
             <NuxtLink to="/contact" class="text-xs text-gold font-semibold hover:text-navy transition-colors flex items-center gap-1 group/link">
               Get involved <span class="group-hover/link:translate-x-1 transition-transform">→</span>
