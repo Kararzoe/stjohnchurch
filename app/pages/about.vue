@@ -68,7 +68,7 @@
         <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Meet Our Pastor</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div v-if="pastor" class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
+      <div class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
         <div class="md:w-72 shrink-0">
           <img :src="pastor.photo && pastor.photo.trim() ? pastor.photo : '/priest-1.jpg'" :alt="pastor.name" class="w-full h-72 md:h-full object-cover object-top" />
         </div>
@@ -164,28 +164,20 @@ onMounted(async () => {
 
   // Load clergy (always)
   const { data: clergyData } = await supabase.from('clergy').select('*').order('sort_order')
+  const hardcodedClergy = [
+    { sort_order: 1, name: 'Rev. Frederick Wukari, OSA Esq.', role: 'Parish Priest', photo: '/priest-1.jpg', bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA), he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.' },
+    { sort_order: 2, name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA', role: 'Bursar / School Administrator', photo: '/priest-jiwok.jpg', bio: '' },
+    { sort_order: 3, name: 'Catechist Michael Iorhemba', role: 'Parish Catechist', photo: '/catechist-michael.jpg', bio: '' },
+    { sort_order: 4, name: 'Rev. Fr. Jude Aniobodom Ossai, OSA', role: 'Papal Nunciature', photo: '/priest-jude.jpg', bio: '' },
+    { sort_order: 5, name: 'Very Rev. Fr. Oliver Onuoha, OSA', role: 'Ave Maria', photo: '/priest-oliver.jpg', bio: '' },
+  ]
   const fallbackPhotos: Record<number, string> = {
-    1: '/priest-1.jpg',
-    2: '/priest-jiwok.jpg',
-    3: '/catechist-michael.jpg',
-    4: '/priest-jude.jpg',
-    5: '/priest-oliver.jpg',
+    1: '/priest-1.jpg', 2: '/priest-jiwok.jpg', 3: '/catechist-michael.jpg', 4: '/priest-jude.jpg', 5: '/priest-oliver.jpg',
   }
-  if (clergyData && clergyData.length > 0) {
-    const enriched = clergyData.map((p: any, i: number) => ({
-      ...p,
-      photo: fallbackPhotos[p.sort_order] ?? fallbackPhotos[i + 1] ?? '/priest-1.jpg'
-    }))
-    pastor.value = enriched.find((p: any) => p.sort_order === 1) ?? enriched[0]
-    associates.value = enriched.filter((p: any) => p.id !== pastor.value?.id)
-  } else {
-    pastor.value = { name: 'Rev. Frederick Wukari, OSA Esq.', role: 'Parish Priest', photo: '/priest-1.jpg', bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA), he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.' }
-    associates.value = [
-      { name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA', role: 'Bursar / School Administrator', photo: '/priest-jiwok.jpg' },
-      { name: 'Catechist Michael Iorhemba', role: 'Parish Catechist', photo: '/catechist-michael.jpg' },
-      { name: 'Rev. Fr. Jude Aniobodom Ossai, OSA', role: 'Papal Nunciature', photo: '/priest-jude.jpg' },
-      { name: 'Very Rev. Fr. Oliver Onuoha, OSA', role: 'Ave Maria', photo: '/priest-oliver.jpg' },
-    ]
-  }
+  const source = (clergyData && clergyData.length > 0)
+    ? clergyData.map((p: any) => ({ ...p, photo: fallbackPhotos[p.sort_order] ?? p.photo }))
+    : hardcodedClergy
+  pastor.value = source.find((p: any) => p.sort_order === 1) ?? source[0]
+  associates.value = source.filter((p: any) => p.sort_order !== 1)
 })
 </script>
