@@ -287,7 +287,6 @@ async function approveRow(row: any) {
 }
 
 async function rejectRow(row: any) {
-  if (!confirm(`Reject vote from ${row.voter_name} for ${row.contestant_name}?`)) return
   await supabase.from('votes').update({ status: 'rejected' }).eq('id', row.id)
   load()
 }
@@ -298,7 +297,6 @@ async function restoreRow(row: any) {
 }
 
 async function deleteRow(row: any) {
-  if (!confirm(`Permanently delete vote from ${row.voter_name} for ${row.contestant_name}?`)) return
   await supabase.from('votes').delete().eq('id', row.id)
   load()
 }
