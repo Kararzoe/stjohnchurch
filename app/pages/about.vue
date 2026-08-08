@@ -70,7 +70,7 @@
       </div>
       <div v-if="pastor" class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
         <div class="md:w-72 shrink-0">
-          <img :src="pastor.photo || '/priest-1.jpg'" :alt="pastor.name" class="w-full h-72 md:h-full object-cover object-top" />
+          <img :src="pastor.photo && pastor.photo.trim() ? pastor.photo : '/priest-1.jpg'" :alt="pastor.name" class="w-full h-72 md:h-full object-cover object-top" />
         </div>
         <div class="p-6 md:p-10 flex flex-col justify-center">
           <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center mb-4">
@@ -98,7 +98,7 @@
         <div v-for="(p, i) in associates" :key="p.name" :class="`reveal delay-${(i + 1) * 100}`">
           <div class="bg-cream rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 transition-all duration-300 group flex gap-5 p-5">
             <div class="w-16 h-16 rounded-full bg-navy flex items-center justify-center shrink-0 border-2 border-gold/30 overflow-hidden">
-              <img v-if="p.photo" :src="p.photo" :alt="p.name" class="w-full h-full object-cover object-top" />
+              <img v-if="p.photo && p.photo.trim()" :src="p.photo" :alt="p.name" class="w-full h-full object-cover object-top" />
               <span v-else class="text-2xl">✝</span>
             </div>
             <div class="flex-1 min-w-0">

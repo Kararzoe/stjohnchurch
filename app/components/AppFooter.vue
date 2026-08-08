@@ -66,7 +66,6 @@
 <script setup lang="ts">
 const links = [
   { to: '/about', label: 'About Us' },
-  { to: '/clergy', label: 'Clergy' },
   { to: '/mass-times', label: 'Mass Times' },
   { to: '/ministries', label: 'Ministries' },
   { to: '/events', label: 'Events' },
