@@ -83,17 +83,13 @@ const voteData = ref<any[]>([])
 const allContestants = ref<any[]>([])
 const harvestActive = ref(true)
 
-const CATEGORIES = [
-  { id: 'face', label: 'Face of Harvest', icon: '👑' },
-  { id: 'king', label: 'King of Harvest', icon: '🤴' },
-  { id: 'queen', label: 'Queen of Harvest', icon: '👸' },
-  { id: 'prince', label: 'Prince of Harvest', icon: '🫅' },
-  { id: 'princess', label: 'Princess of Harvest', icon: '🌸' },
-]
+const CATEGORIES = ref<any[]>([])
 
-onMounted(() => {
+onMounted(async () => {
   const stored = localStorage.getItem('harvestActive')
   harvestActive.value = stored === null ? true : stored === 'true'
+  const { data: cats } = await supabase.from('contest_categories').select('*').order('sort_order')
+  CATEGORIES.value = cats ?? []
   load()
 })
 

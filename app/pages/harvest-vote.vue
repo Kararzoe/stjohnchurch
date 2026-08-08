@@ -19,15 +19,14 @@
         </div>
         <p class="text-gold text-xs uppercase tracking-[0.4em] font-semibold mb-3">St. John of the Cross Catholic Church</p>
         <h1 class="font-playfair text-5xl sm:text-7xl font-black text-white leading-tight drop-shadow-2xl">
-          Harvest/Bazaar
-          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Thanksgiving 2026</span>
+          <span class="block" style="background: linear-gradient(90deg, #d4af37, #f5e27a, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ contestTitle }}</span>
         </h1>
         <div class="flex items-center justify-center gap-3 mt-4">
           <div class="h-px w-16 bg-gold/40" />
           <span class="text-gold text-lg">✦</span>
           <div class="h-px w-16 bg-gold/40" />
         </div>
-        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">Cast your vote for your favourite contestants · St. John of the Cross &amp; Order of St. Augustine</p>
+        <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">{{ contestSubtitle }}</p>
       </div>
 
       <div class="absolute bottom-0 left-0 right-0">
@@ -352,26 +351,30 @@ const voteQty = ref(1)
 const paymentError = ref('')
 const paymentForm = reactive({ name: '' })
 
-const CATEGORY_META: Record<string, { label: string; icon: string }> = {
-  face:     { label: 'Face of Harvest',     icon: '👑' },
-  king:     { label: 'King of Harvest',     icon: '🤴' },
-  queen:    { label: 'Queen of Harvest',    icon: '👸' },
-  prince:   { label: 'Prince of Harvest',   icon: '🫅' },
-  princess: { label: 'Princess of Harvest', icon: '🌸' },
-}
-
+const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
+const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
 const categories = ref<any[]>([])
 
 onMounted(async () => {
-  const { data } = await supabase.from('contestants').select('*').order('number')
+  const [{ data: contestants }, { data: cats }, { data: titleData }] = await Promise.all([
+    supabase.from('contestants').select('*').order('number'),
+    supabase.from('contest_categories').select('*').order('sort_order'),
+    supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
+  ])
+  if (titleData) {
+    titleData.forEach((r: any) => {
+      if (r.key === 'contest_title') contestTitle.value = r.value
+      if (r.key === 'contest_subtitle') contestSubtitle.value = r.value
+    })
+  }
   const grouped: Record<string, any[]> = {}
-  for (const c of data ?? []) {
+  for (const c of contestants ?? []) {
     if (!grouped[c.category]) grouped[c.category] = []
     grouped[c.category].push(c)
   }
-  categories.value = Object.entries(CATEGORY_META)
-    .filter(([id]) => grouped[id]?.length)
-    .map(([id, meta]) => ({ id, ...meta, contestants: grouped[id] }))
+  categories.value = (cats ?? [])
+    .filter((cat: any) => grouped[cat.id]?.length)
+    .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 })
 
 const totalVoted = computed(() => Object.keys(votes).length)
