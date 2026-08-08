@@ -164,17 +164,17 @@ onMounted(async () => {
 
   // Load clergy (always)
   const { data: clergyData } = await supabase.from('clergy').select('*').order('sort_order')
+  const fallbackPhotos: Record<number, string> = {
+    1: '/priest-1.jpg',
+    2: '/priest-jiwok.jpg',
+    3: '/catechist-michael.jpg',
+    4: '/priest-jude.jpg',
+    5: '/priest-oliver.jpg',
+  }
   if (clergyData && clergyData.length > 0) {
-    const fallbackPhotos: Record<number, string> = {
-      1: '/priest-1.jpg',
-      2: '/priest-jiwok.jpg',
-      3: '/catechist-michael.jpg',
-      4: '/priest-jude.jpg',
-      5: '/priest-oliver.jpg',
-    }
-    const enriched = clergyData.map((p: any) => ({
+    const enriched = clergyData.map((p: any, i: number) => ({
       ...p,
-      photo: (p.photo && p.photo.trim()) ? p.photo : (fallbackPhotos[p.sort_order] ?? '')
+      photo: fallbackPhotos[p.sort_order] ?? fallbackPhotos[i + 1] ?? '/priest-1.jpg'
     }))
     pastor.value = enriched.find((p: any) => p.sort_order === 1) ?? enriched[0]
     associates.value = enriched.filter((p: any) => p.id !== pastor.value?.id)
