@@ -87,21 +87,30 @@
           <span class="text-gold text-sm font-black">{{ catTotal(cat.id) }} votes</span>
         </div>
         <div class="p-4 space-y-3">
-          <div v-for="c in sortedContestants(cat.id)" :key="c.id" class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-navy/5 flex items-center justify-center shrink-0 text-xs font-black text-navy">{{ c.rank }}</div>
-            <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-gray-100">
-              <img v-if="c.photo" :src="c.photo" :alt="c.name" class="w-full h-full object-cover object-top" />
-              <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
+          <div v-for="c in sortedContestants(cat.id)" :key="c.id">
+            <div class="flex items-center gap-4 mb-1">
+              <div class="w-8 h-8 rounded-full bg-navy/5 flex items-center justify-center shrink-0 text-xs font-black text-navy">{{ c.rank }}</div>
+              <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-gray-100">
+                <img v-if="c.photo" :src="c.photo" :alt="c.name" class="w-full h-full object-cover object-top" />
+                <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <p class="text-sm font-semibold text-navy truncate">{{ c.name }}</p>
+                  <span class="text-sm font-black text-navy ml-2 shrink-0">{{ c.votes }} vote{{ c.votes !== 1 ? 's' : '' }}</span>
+                </div>
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-700"
+                    :style="`width: ${catTotal(cat.id) ? (c.votes / catTotal(cat.id)) * 100 : 0}%; background: linear-gradient(90deg, #b8860b, #d4af37)`" />
+                </div>
+              </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-1">
-                <p class="text-sm font-semibold text-navy truncate">{{ c.name }}</p>
-                <span class="text-sm font-black text-navy ml-2 shrink-0">{{ c.votes }}</span>
-              </div>
-              <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full transition-all duration-700"
-                  :style="`width: ${catTotal(cat.id) ? (c.votes / catTotal(cat.id)) * 100 : 0}%; background: linear-gradient(90deg, #b8860b, #d4af37)`" />
-              </div>
+            <!-- Voter names -->
+            <div v-if="getVoters(cat.id, c.id).length" class="ml-16 flex flex-wrap gap-1 mb-3">
+              <span v-for="v in getVoters(cat.id, c.id)" :key="v.id"
+                class="text-[10px] bg-gray-50 border border-gray-200 rounded-full px-2 py-0.5 text-gray-500 font-semibold">
+                {{ v.voter_name }} <span class="text-gray-300">·</span> {{ v.voter_phone }} <span class="text-gold font-bold">×{{ v.qty }}</span>
+              </span>
             </div>
           </div>
           <p v-if="sortedContestants(cat.id).length === 0" class="text-gray-400 text-sm text-center py-4">No votes yet</p>
@@ -193,6 +202,10 @@ function sortedContestants(catId: string) {
     }))
     .sort((a, b) => b.votes - a.votes)
     .map((c, i) => ({ ...c, rank: i + 1 }))
+}
+
+function getVoters(catId: string, contestantId: string) {
+  return approved.value.filter(v => v.category === catId && v.contestant_id === contestantId)
 }
 
 function getContestant(id: string) {
