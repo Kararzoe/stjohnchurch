@@ -187,7 +187,7 @@
                 <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
                 <td class="px-4 py-3">
-                  <button @click="approveRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
+                  <button @click="restoreRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Restore</button>
                 </td>
               </tr>
             </tbody>
@@ -286,6 +286,11 @@ async function approveRow(row: any) {
 async function rejectRow(row: any) {
   if (!confirm(`Reject vote from ${row.voter_name} for ${row.contestant_name}?`)) return
   await supabase.from('votes').update({ status: 'rejected' }).eq('id', row.id)
+  load()
+}
+
+async function restoreRow(row: any) {
+  await supabase.from('votes').update({ status: 'pending' }).eq('id', row.id)
   load()
 }
 

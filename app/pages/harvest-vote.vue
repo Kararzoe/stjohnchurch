@@ -385,7 +385,7 @@ function goToPayment() {
 
 async function submitVotes() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
-  if (!payForm.phone) { payError.value = 'Please enter your phone number.'; return }
+  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
 
   submitting.value = true
   payError.value = ''
