@@ -18,6 +18,7 @@
         <div v-if="news.length === 0" class="text-center py-20 text-gray-400 text-sm">No news posts yet.</div>
       <div v-for="(n, i) in news" :key="n.id" :class="`reveal delay-${(i % 3 + 1) * 100}`">
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 transition-all duration-300 overflow-hidden group">
+          <img v-if="n.image_url" :src="n.image_url" class="w-full h-56 object-cover" />
           <div class="flex flex-col sm:flex-row">
             <div class="sm:w-2 shrink-0 bg-gold group-hover:bg-gold-light transition-colors" />
             <div class="p-6 flex-1">
