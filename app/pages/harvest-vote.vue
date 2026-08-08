@@ -133,6 +133,45 @@
       </div>
     </div>
 
+    <!-- ── STEP: CONFIRM ── -->
+    <div v-if="harvestActive && step === 'confirm'" class="py-12 px-4">
+      <div class="max-w-lg mx-auto space-y-5">
+
+        <div class="text-center mb-2">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Your Selection</p>
+          <h2 class="font-playfair text-3xl font-black text-navy">Confirm Your Vote</h2>
+          <div class="flex items-center justify-center gap-3 mt-3">
+            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+          </div>
+        </div>
+
+        <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-3 border-b border-gray-100" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ cat.label }}</p>
+          </div>
+          <div class="flex items-center gap-4 p-4">
+            <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-gray-100">
+              <img v-if="getVotedContestant(cat)?.photo" :src="getVotedContestant(cat).photo" class="w-full h-full object-cover object-top" />
+              <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xl">✝</div>
+            </div>
+            <div>
+              <p class="font-playfair font-black text-navy text-lg">{{ getVotedContestant(cat)?.name }}</p>
+              <p class="text-xs text-gray-400 mt-0.5">Contestant #{{ getVotedContestant(cat)?.number }}</p>
+            </div>
+          </div>
+        </div>
+
+        <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Change Selection</button>
+
+        <button @click="step = 'payment'; window.scrollTo({ top: 0, behavior: 'smooth' })"
+          class="w-full py-5 rounded-2xl text-white font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+          style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          Continue to Payment →
+        </button>
+
+      </div>
+    </div>
+
     <!-- ── STEP: PAYMENT ── -->
     <div v-if="harvestActive && step === 'payment'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
@@ -200,7 +239,7 @@
             style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
             {{ submitting ? 'Submitting...' : '✅ I Have Paid' }}
           </button>
-          <button @click="step = 'vote'" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
+          <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
         </div>
 
       </div>
@@ -241,7 +280,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'payment' | 'done'>('vote')
+const step = ref<'vote' | 'confirm' | 'payment' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -283,7 +322,7 @@ const totalVoted = computed(() => Object.keys(votes).length)
 
 function selectContestant(categoryId: string, contestant: any) {
   votes[categoryId] = contestant.id
-  step.value = 'payment'
+  step.value = 'confirm'
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -297,7 +336,7 @@ function goToPayment() {
     return
   }
   submitError.value = ''
-  step.value = 'payment'
+  step.value = 'confirm'
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
