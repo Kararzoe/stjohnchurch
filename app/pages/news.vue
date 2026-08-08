@@ -14,21 +14,38 @@
   </section>
 
   <section class="py-24 px-6 bg-cream">
-    <div class="max-w-4xl mx-auto space-y-6">
-        <div v-if="news.length === 0" class="text-center py-20 text-gray-400 text-sm">No news posts yet.</div>
-      <div v-for="(n, i) in news" :key="n.id" :class="`reveal delay-${(i % 3 + 1) * 100}`">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 transition-all duration-300 overflow-hidden group">
-          <img v-if="n.image_url" :src="n.image_url" class="w-full h-56 object-cover" />
-          <div class="flex flex-col sm:flex-row">
-            <div class="sm:w-2 shrink-0 bg-gold group-hover:bg-gold-light transition-colors" />
-            <div class="p-6 flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-xs bg-gold/10 text-gold font-bold px-3 py-1 rounded-full uppercase tracking-widest">{{ n.category ?? 'News' }}</span>
-                <span class="text-xs text-gray-400">{{ formatDate(n.created_at) }}</span>
+    <div class="max-w-6xl mx-auto">
+      <div v-if="news.length === 0" class="text-center py-20 text-gray-400 text-sm">No news posts yet.</div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="(n, i) in news" :key="n.id" :class="`reveal delay-${(i % 3 + 1) * 100}`">
+          <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gold/30 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full">
+
+            <!-- Image -->
+            <div class="relative h-48 overflow-hidden bg-navy/5">
+              <img v-if="n.image_url" :src="n.image_url" :alt="n.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div v-else class="w-full h-full flex items-center justify-center">
+                <span class="text-5xl opacity-20">📰</span>
               </div>
-              <h3 class="font-playfair font-bold text-navy text-xl mb-2 group-hover:text-gold transition-colors">{{ n.title }}</h3>
-              <p class="text-gray-500 text-sm leading-relaxed">{{ n.excerpt ?? n.content }}</p>
+              <div class="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent" />
+              <span class="absolute top-3 left-3 text-xs bg-gold text-white font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                {{ n.category ?? 'News' }}
+              </span>
             </div>
+
+            <!-- Content -->
+            <div class="p-5 flex flex-col flex-1">
+              <p class="text-xs text-gray-400 mb-2">{{ formatDate(n.created_at) }}</p>
+              <h3 class="font-playfair font-bold text-navy text-lg leading-snug mb-2 group-hover:text-gold transition-colors">
+                {{ n.title }}
+              </h3>
+              <p class="text-gray-500 text-sm leading-relaxed flex-1 line-clamp-3">{{ n.excerpt || n.content }}</p>
+              <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-1 text-gold text-xs font-bold group-hover:gap-2 transition-all">
+                <span>Read more</span>
+                <span>→</span>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
