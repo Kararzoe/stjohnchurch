@@ -307,9 +307,9 @@ async function handlePhoto(e: Event) {
   if (!file) return
   uploading.value = true
   const path = `contestants/${Date.now()}.${file.name.split('.').pop()}`
-  const { data, error } = await supabase.storage.from('parish media').upload(path, file, { upsert: true })
+  const { data, error } = await supabase.storage.from('parish-media').upload(path, file, { upsert: true })
   if (!error && data) {
-    const { data: url } = supabase.storage.from('parish media').getPublicUrl(path)
+    const { data: url } = supabase.storage.from('parish-media').getPublicUrl(path)
     cForm.photo = url.publicUrl
   }
   uploading.value = false
