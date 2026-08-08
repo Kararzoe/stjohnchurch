@@ -28,8 +28,14 @@
       <button @click="tab = 'pending'"
         :class="['px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2', tab === 'pending' ? 'text-white border-transparent shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-navy']"
         :style="tab === 'pending' ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''">
-        Pending Approvals
+        Pending
         <span v-if="pending.length" class="ml-2 bg-red-500 text-white text-xs font-black px-2 py-0.5 rounded-full">{{ pending.length }}</span>
+      </button>
+      <button @click="tab = 'approved'"
+        :class="['px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2', tab === 'approved' ? 'text-white border-transparent shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-navy']"
+        :style="tab === 'approved' ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''">
+        Approved
+        <span v-if="approved.length" class="ml-2 bg-green-500 text-white text-xs font-black px-2 py-0.5 rounded-full">{{ approved.length }}</span>
       </button>
       <button @click="tab = 'leaderboard'"
         :class="['px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2', tab === 'leaderboard' ? 'text-white border-transparent shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-navy']"
@@ -90,6 +96,53 @@
       </div>
     </div>
 
+    <!-- ── APPROVED TAB ── -->
+    <div v-else-if="tab === 'approved'">
+      <div v-if="approved.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
+        No approved votes yet
+      </div>
+      <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Category</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Contestant</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Qty</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Amount</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in approved" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
+                <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ row.voter_phone }}</td>
+                <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-gray-200">
+                      <img v-if="getContestant(row.contestant_id)?.photo" :src="getContestant(row.contestant_id).photo" class="w-full h-full object-cover object-top" />
+                      <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
+                    </div>
+                    <span class="font-semibold text-navy whitespace-nowrap">{{ row.contestant_name }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
+                <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
+                <td class="px-4 py-3">
+                  <button @click="rejectRow(row)" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Undo</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ── LEADERBOARD TAB ── -->
     <div v-else-if="tab === 'leaderboard'" class="space-y-6">
       <div v-for="cat in CATEGORIES" :key="cat.id" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -137,7 +190,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const supabase = useSupabase()
 const loading = ref(true)
-const tab = ref<'pending' | 'leaderboard'>('pending')
+const tab = ref<'pending' | 'approved' | 'leaderboard'>('pending')
 const voteData = ref<any[]>([])
 const allContestants = ref<any[]>([])
 const harvestActive = useState('harvestActive', () => true)
