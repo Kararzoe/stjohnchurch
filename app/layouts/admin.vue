@@ -17,7 +17,7 @@
       <!-- Nav links -->
       <nav class="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
         <NuxtLink
-          v-for="item in navItems"
+          v-for="item in visibleNavItems"
           :key="item.to"
           :to="item.to"
           :class="[
@@ -70,11 +70,17 @@
 <script setup lang="ts">
 const sidebarOpen = ref(true)
 const router = useRouter()
+const harvestActive = ref(true)
+
+onMounted(() => {
+  const stored = localStorage.getItem('harvestActive')
+  harvestActive.value = stored === null ? true : stored === 'true'
+})
 
 const navItems = [
   { to: '/admin', icon: '📊', label: 'Overview' },
-  { to: '/admin/votes', icon: '🗳️', label: 'Harvest Votes' },
-  { to: '/admin/contestants', icon: '🏆', label: 'Contestants' },
+  { to: '/admin/votes', icon: '🗳️', label: 'Harvest Votes', harvestOnly: true },
+  { to: '/admin/contestants', icon: '🏆', label: 'Contestants', harvestOnly: true },
   { to: '/admin/donations', icon: '💰', label: 'Donations' },
   { to: '/admin/news', icon: '📰', label: 'News' },
   { to: '/admin/events', icon: '📅', label: 'Events' },
@@ -84,6 +90,8 @@ const navItems = [
   { to: '/admin/elections', icon: '🗳️', label: 'Elections' },
   { to: '/admin/gallery', icon: '🖼️', label: 'Gallery' },
 ]
+
+const visibleNavItems = computed(() => navItems.filter((i: any) => !i.harvestOnly || harvestActive.value))
 
 async function logout() {
   const supabase = useSupabase()

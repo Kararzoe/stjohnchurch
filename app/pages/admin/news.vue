@@ -157,15 +157,36 @@ async function handleImageUpload(e: Event) {
 async function savePost() {
   if (!form.title) { formError.value = 'Title is required.'; return }
   saving.value = true
-  const slug = form.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now()
-  const payload = { ...form, slug }
+  formError.value = ''
+  const payload: any = {
+    title: form.title,
+    excerpt: form.excerpt,
+    content: form.content,
+    image_url: form.image_url,
+    published: form.published,
+  }
+  // only include category if the column exists (avoids schema cache errors)
+  try { payload.category = form.category } catch {}
   let err
   if (editing.value) {
     const res = await supabase.from('news').update(payload).eq('id', editing.value.id)
     err = res.error
   } else {
-    const res = await supabase.from('news').insert(payload)
+    const slug = form.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now()
+    const res = await supabase.from('news').insert({ ...payload, slug })
     err = res.error
+  }
+  if (err?.message?.includes('category')) {
+    // category column missing — retry without it
+    delete payload.category
+    if (editing.value) {
+      const res = await supabase.from('news').update(payload).eq('id', editing.value.id)
+      err = res.error
+    } else {
+      const slug = form.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now()
+      const res = await supabase.from('news').insert({ ...payload, slug })
+      err = res.error
+    }
   }
   saving.value = false
   if (err) { formError.value = err.message; return }

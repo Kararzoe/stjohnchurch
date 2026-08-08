@@ -11,6 +11,36 @@
       </div>
     </div>
 
+    <!-- Harvest Active Toggle -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 flex items-center justify-between">
+      <div>
+        <p class="font-semibold text-navy text-sm">Harvest Season Active</p>
+        <p class="text-xs text-gray-400 mt-0.5">When OFF, the Harvest Votes &amp; Contestants links are hidden from the sidebar and the public voting page is disabled.</p>
+      </div>
+      <button
+        @click="toggleHarvest"
+        :class="[
+          'relative inline-flex h-7 w-14 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none',
+          harvestActive ? 'bg-green-500' : 'bg-gray-300'
+        ]"
+      >
+        <span
+          :class="[
+            'pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-lg transform transition-transform duration-200',
+            harvestActive ? 'translate-x-7' : 'translate-x-0'
+          ]"
+        />
+      </button>
+    </div>
+
+    <div v-if="!harvestActive" class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6 flex items-center gap-3">
+      <span class="text-2xl">🌾</span>
+      <div>
+        <p class="font-semibold text-amber-800 text-sm">Harvest season is currently OFF</p>
+        <p class="text-xs text-amber-600 mt-0.5">Harvest Votes and Contestants are hidden from the sidebar. Toggle ON above to re-enable.</p>
+      </div>
+    </div>
+
     <div v-if="loading" class="text-center py-20 text-gray-400">Loading votes...</div>
 
     <div v-else class="space-y-6">
@@ -50,6 +80,18 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 const supabase = useSupabase()
 const loading = ref(true)
 const voteData = ref<any[]>([])
+const harvestActive = ref(true)
+
+onMounted(() => {
+  const stored = localStorage.getItem('harvestActive')
+  harvestActive.value = stored === null ? true : stored === 'true'
+  load()
+})
+
+function toggleHarvest() {
+  harvestActive.value = !harvestActive.value
+  localStorage.setItem('harvestActive', String(harvestActive.value))
+}
 
 const categories = [
   { id: 'face', label: 'Face of Harvest', icon: '👑', contestants: [
@@ -105,8 +147,6 @@ async function load() {
   voteData.value = data ?? []
   loading.value = false
 }
-
-onMounted(load)
 
 function catTotal(catId: string) {
   return voteData.value.filter(v => v.category === catId).reduce((s, v) => s + (v.qty || 1), 0)
