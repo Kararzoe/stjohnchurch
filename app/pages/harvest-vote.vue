@@ -224,19 +224,15 @@
               <p class="text-gray-300 text-xs mt-0.5">St John Of The Cross Cath Church Mararaba</p>
             </div>
           </div>
-          <p class="text-gray-400 text-xs mt-4 leading-relaxed">Transfer exactly <strong class="text-gold">₦{{ (voteQty * 200).toLocaleString() }}</strong> and use your name as the transfer narration. Then fill in the form below.</p>
+          <p class="text-gray-400 text-xs mt-4 leading-relaxed">Transfer exactly <strong class="text-gold">₦{{ (voteQty * 200).toLocaleString() }}</strong> and use your name as the transfer narration. Once done, click the button below.</p>
         </div>
 
-        <!-- Reference form -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
-          <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
-            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
-            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            ✅ I Have Paid
-          </button>
-          <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">← Back</button>
-        </div>
+        <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
+          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+          ✅ I Have Paid
+        </button>
+        <button @click="step = 'confirm'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
 
       </div>
     </div>
