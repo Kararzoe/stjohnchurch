@@ -107,7 +107,7 @@
                 </div>
                 <div class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
                   :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'">
-                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote' }}
+                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Selected' : 'Vote' }}
                 </div>
               </div>
             </div>
@@ -283,9 +283,8 @@ const totalVoted = computed(() => Object.keys(votes).length)
 
 function selectContestant(categoryId: string, contestant: any) {
   votes[categoryId] = contestant.id
-  setTimeout(() => {
-    step.value = 'payment'
-  }, 400)
+  step.value = 'payment'
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function getVotedContestant(cat: any) {
@@ -299,6 +298,7 @@ function goToPayment() {
   }
   submitError.value = ''
   step.value = 'payment'
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 async function submitVotes() {
