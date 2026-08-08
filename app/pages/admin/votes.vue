@@ -314,8 +314,9 @@ async function restoreRow(row: any) {
 }
 
 async function deleteRow(row: any) {
-  await supabase.from('votes').delete().eq('id', row.id)
-  load()
+  const { error } = await supabase.from('votes').delete().eq('id', row.id)
+  if (error) { alert('Delete failed: ' + error.message); return }
+  voteData.value = voteData.value.filter(v => v.id !== row.id)
 }
 
 // Leaderboard: only approved votes
