@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="font-playfair text-2xl font-bold text-navy">Contestants</h1>
-        <p class="text-gray-400 text-sm mt-1">Manage contest title, categories and contestants</p>
+        <h1 class="font-playfair text-2xl font-bold text-navy">{{ contestTitle || 'Contestants' }}</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ contestSubtitle || 'Manage contest title, categories and contestants' }}</p>
       </div>
       <button @click="openContestantForm()" class="px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
         + Add Contestant
