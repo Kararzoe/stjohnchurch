@@ -80,8 +80,8 @@
               <div class="relative flex items-center justify-between px-6 py-4">
                 <div>
                   <p class="text-gold text-xs uppercase tracking-[0.3em] font-bold">Category {{ activeTab + 1 }} of {{ categories.length }}</p>
-                  <h2 class="font-playfair font-black text-white text-xl leading-tight">{{ categories[activeTab].label }}</h2>
-                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab].contestants.length }} contestants &mdash; tap a card to cast your vote</p>
+                  <h2 class="font-playfair font-black text-white text-xl leading-tight">{{ categories[activeTab]?.label }}</h2>
+                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap a card to cast your vote</p>
                 </div>
                 <div v-if="votes[categories[activeTab].id]" class="text-right">
                   <p class="text-green-400 text-xs font-bold uppercase tracking-widest">✓ Vote Cast</p>
@@ -92,7 +92,7 @@
             <!-- Contestant cards -->
             <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               <div
-                v-for="contestant in categories[activeTab].contestants"
+                v-for="contestant in categories[activeTab]?.contestants ?? []"
                 :key="contestant.id"
                 @click="castVote(categories[activeTab].id, contestant)"
                 :class="[
@@ -208,7 +208,7 @@
             <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
             <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/30 to-transparent" />
             <div class="absolute bottom-0 left-0 right-0 p-4">
-              <p class="text-gold text-[10px] uppercase tracking-widest font-bold">{{ categories.find(c => c.id === pendingVote!.categoryId)?.label }}</p>
+              <p class="text-gold text-[10px] uppercase tracking-widest font-bold">{{ categories.find((c: any) => c.id === pendingVote!.categoryId)?.label }}</p>
               <p class="font-playfair font-black text-white text-xl">{{ pendingVote.contestant.name }}</p>
               <p class="text-white/60 text-xs">{{ pendingVote.contestant.tagline }}</p>
             </div>
@@ -286,7 +286,7 @@
               </div>
               <div class="flex items-center gap-2 shrink-0">
                 <div class="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-black">✓</div>
-                <button @click="step = 'vote'; activeTab = categories.findIndex(c => c.id === cat.id)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
+                <button @click="step = 'vote'; activeTab = categories.findIndex((c: any) => c.id === cat.id)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
               </div>
             </div>
           </div>
@@ -342,83 +342,37 @@
 definePageMeta({ layout: 'default' })
 useScrollReveal()
 
+const supabase = useSupabase()
 const step = ref<'vote' | 'payment' | 'confirm' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
-
 const pendingVote = ref<{ categoryId: string; contestant: any } | null>(null)
+const voteQty = ref(1)
+const paymentError = ref('')
+const paymentForm = reactive({ name: '' })
 
-const categories = [
-  {
-    id: 'face',
-    label: 'Face of Harvest',
-    icon: '👑',
-    contestants: [
-      { id: 'f1', number: 1, name: 'Miss Chimamanda Lawrence', tagline: '📞 08087350321', photo: '/foh-chimamanda.jpg' },
-      { id: 'f2', number: 2, name: 'Miss Emmanuelle Moses', tagline: '📞 07039730834', photo: '/foh-emmanuelle.jpg' },
-      { id: 'f3', number: 3, name: 'Mr. Sebastian Felix', tagline: 'Face of Harvest', photo: '/foh-sebastian.jpg' },
-      { id: 'f4', number: 4, name: 'Master John Agim', tagline: 'Face of Harvest', photo: '/foh-john.jpg' },
-      { id: 'f5', number: 5, name: 'Master Iyeakachukwu Ugochukwu', tagline: 'Face of Harvest', photo: '/foh-iyeaka.jpg' },
-      { id: 'f6', number: 6, name: 'Ashinatiang C. Perpetual', tagline: '📞 08114277256', photo: '/foh-perpetual.jpg' },
-      { id: 'f7', number: 7, name: 'Onwumelu Omerebere Clare', tagline: 'CYON', photo: '/foh-clare.jpg' },
-      { id: 'f8', number: 8, name: 'Mrs. Blessing Obiora', tagline: 'Face of Harvest', photo: '/foh-blessing.jpg' },
-      { id: 'f9', number: 9, name: 'Uzuegbuna Felicity Chidinma', tagline: '📞 09045411265 · Voice of Saints Choir', photo: '/foh-felicity.jpg' },
-    ],
-  },
-  {
-    id: 'king',
-    label: 'King of Harvest',
-    icon: '🤴',
-    contestants: [
-      { id: 'k1', number: 1, name: 'Mr. Jonathan Dodo', tagline: 'King of Harvest', photo: '/koh-jonathan.jpg' },
-      { id: 'k2', number: 2, name: 'Paul Djukpan', tagline: 'St. Patrick Edo/Delta', photo: '/koh-paul.jpg' },
-    ],
-  },
-  {
-    id: 'queen',
-    label: 'Queen of Harvest',
-    icon: '👸',
-    contestants: [
-      { id: 'q1', number: 1, name: 'Mrs. Queen Ogbodo', tagline: 'Queen of Harvest', photo: '/qoh-queen.jpg' },
-      { id: 'q2', number: 2, name: 'Mrs. Veronica Aboi', tagline: 'Queen of Harvest', photo: '/qoh-veronica.jpg' },
-      { id: 'q3', number: 3, name: 'Mrs. Elizabeth Akuezue', tagline: '📞 08053258408', photo: '/qoh-elizabeth.jpg' },
-      { id: 'q4', number: 4, name: 'Mrs. Gladys Origbo Onome', tagline: 'Queen of Harvest', photo: '/qoh-gladys.jpg' },
-      { id: 'q5', number: 5, name: 'Oghenekevwe Patience Godwin', tagline: 'St. Patrick Edo/Delta', photo: '/qoh-patience.jpg' },
-    ],
-  },
-  {
-    id: 'prince',
-    label: 'Prince of Harvest',
-    icon: '🫅',
-    contestants: [
-      { id: 'p1', number: 1, name: 'Peter Yohanna Akpajeshi', tagline: 'Prince of Harvest', photo: '/proh-peter.jpg' },
-      { id: 'p2', number: 2, name: 'Andrew Kelechi Kenechukwu', tagline: 'Prince of Harvest', photo: '/proh-andrew.jpg' },
-      { id: 'p3', number: 3, name: 'Okpara Franklin', tagline: '📞 07061668284 · Holy Trinity Igbo Youth', photo: '/proh-franklin.jpg' },
-      { id: 'p4', number: 4, name: 'Sunday Wisdom', tagline: 'Blessed Iwene Tansi', photo: '/proh-sunday.jpg' },
-      { id: 'p5', number: 5, name: 'Ukam Emmanuel Chukwuemeka', tagline: 'Prince of Harvest', photo: '/proh-ukam.jpg' },
-    ],
-  },
-  {
-    id: 'princess',
-    label: 'Princess of Harvest',
-    icon: '🌸',
-    contestants: [
-      { id: 'pr1', number: 1, name: 'Miss Joyce Gomerep', tagline: 'Princess of Harvest', photo: '/poh-joyce.jpg' },
-      { id: 'pr2', number: 2, name: 'Miss Joan Okwuchi', tagline: 'Princess of Harvest', photo: '/poh-joan.jpg' },
-      { id: 'pr3', number: 3, name: 'Miss Chioma Aniagboso', tagline: 'Princess of Harvest', photo: '/poh-chioma.jpg' },
-      { id: 'pr4', number: 4, name: 'Grace Enyo-Ojo Okpanachi', tagline: 'Princess of Harvest', photo: '/poh-grace.jpg' },
-      { id: 'pr5', number: 5, name: 'Eleme Lilian Chidera', tagline: 'Princess of Harvest', photo: '/poh-eleme.jpg' },
-      { id: 'pr6', number: 6, name: 'Jaelynn Ebeyin Ikwen', tagline: 'Princess of Harvest', photo: '/poh-jaelynn.jpg' },
-      { id: 'pr7', number: 7, name: 'Chukwunonso Anthonia Chidimma', tagline: 'Princess of Harvest', photo: '/poh-chukwunonso.jpg' },
-      { id: 'pr8', number: 8, name: 'Omeje Chinecherem', tagline: '📞 08147566658 · Holy Trinity Igbo Youth', photo: '/poh-omeje.jpg' },
-      { id: 'pr9', number: 9, name: 'Obayi Emmanuella Somtochukwu', tagline: 'Blessed Iwene Tansi', photo: '/poh-emmanuella.jpg' },
-      { id: 'pr10', number: 10, name: 'Princess Oluwasindara Lucy Adodo', tagline: 'St. Michael Yoruba Catholic Community', photo: '/poh-oluwasindara.jpg' },
-      { id: 'pr11', number: 11, name: 'Josephine Bonet', tagline: 'Princess of Harvest', photo: '/poh-josephine.jpg' },
-      { id: 'pr12', number: 12, name: 'Maia Kosisochukwu', tagline: 'Princess of Harvest', photo: '/poh-maia.jpg' },
-    ],
-  },
-]
+const CATEGORY_META: Record<string, { label: string; icon: string }> = {
+  face:     { label: 'Face of Harvest',     icon: '👑' },
+  king:     { label: 'King of Harvest',     icon: '🤴' },
+  queen:    { label: 'Queen of Harvest',    icon: '👸' },
+  prince:   { label: 'Prince of Harvest',   icon: '🫅' },
+  princess: { label: 'Princess of Harvest', icon: '🌸' },
+}
+
+const categories = ref<any[]>([])
+
+onMounted(async () => {
+  const { data } = await supabase.from('contestants').select('*').order('number')
+  const grouped: Record<string, any[]> = {}
+  for (const c of data ?? []) {
+    if (!grouped[c.category]) grouped[c.category] = []
+    grouped[c.category].push(c)
+  }
+  categories.value = Object.entries(CATEGORY_META)
+    .filter(([id]) => grouped[id]?.length)
+    .map(([id, meta]) => ({ id, ...meta, contestants: grouped[id] }))
+})
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
@@ -427,24 +381,17 @@ function castVote(categoryId: string, contestant: any) {
   step.value = 'payment'
 }
 
-const voteQty = ref(1)
-const paymentError = ref('')
-const paymentForm = reactive({ name: '' })
-
 function confirmPayment() {
   if (!paymentForm.name) {
     paymentError.value = 'Please enter your name to continue.'
     return
   }
   paymentError.value = ''
-  // TODO: trigger Paystack payment here
-  // On success callback:
   votes[pendingVote.value!.categoryId] = pendingVote.value!.contestant.id
   pendingVote.value = null
   voteQty.value = 1
   paymentForm.name = ''
-  // Move to next unvoted category or confirm
-  const nextUnvoted = categories.findIndex(c => !votes[c.id])
+  const nextUnvoted = categories.value.findIndex(c => !votes[c.id])
   if (nextUnvoted !== -1) {
     activeTab.value = nextUnvoted
     step.value = 'vote'
@@ -453,20 +400,28 @@ function confirmPayment() {
   }
 }
 
-function getVotedContestant(cat: typeof categories[0]) {
-  return cat.contestants.find(c => c.id === votes[cat.id])
+function getVotedContestant(cat: any) {
+  return cat.contestants.find((c: any) => c.id === votes[cat.id])
 }
 
 function goToConfirm() {
-  if (totalVoted.value < categories.length) {
-    submitError.value = 'Please vote in all 5 categories before submitting.'
+  if (totalVoted.value < categories.value.length) {
+    submitError.value = 'Please vote in all categories before submitting.'
     return
   }
   submitError.value = ''
   step.value = 'confirm'
 }
 
-function submitVotes() {
+async function submitVotes() {
+  const rows = categories.value.map(cat => ({
+    category: cat.id,
+    contestant_id: votes[cat.id],
+    contestant_name: getVotedContestant(cat)?.name ?? '',
+    qty: voteQty.value,
+    voter_name: paymentForm.name,
+  }))
+  await supabase.from('votes').insert(rows)
   step.value = 'done'
 }
 </script>
