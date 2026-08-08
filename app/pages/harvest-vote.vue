@@ -76,7 +76,7 @@
                 <div>
                   <p class="text-gold text-xs uppercase tracking-[0.3em] font-bold">Category {{ activeTab + 1 }} of {{ categories.length }}</p>
                   <h2 class="font-playfair font-black text-white text-xl leading-tight">{{ categories[activeTab]?.label }}</h2>
-                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap a card to select</p>
+                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap a card to vote</p>
                 </div>
                 <div v-if="votes[categories[activeTab]?.id]" class="text-right">
                   <p class="text-green-400 text-xs font-bold uppercase tracking-widest">✓ Selected</p>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest transition-all duration-300"
                   :style="votes[categories[activeTab].id] === contestant.id ? 'background: linear-gradient(90deg, #b8860b, #d4af37); color: white' : 'background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white'">
-                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Voted' : 'Vote' }}
+                  {{ votes[categories[activeTab].id] === contestant.id ? '✓ Selected' : 'Select' }}
                 </div>
               </div>
             </div>
