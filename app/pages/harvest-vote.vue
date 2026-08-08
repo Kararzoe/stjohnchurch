@@ -122,9 +122,8 @@
                 Next Category →
               </button>
               <button v-else @click="goToPayment"
-                :class="['flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all', totalVoted === categories.length ? 'text-white shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed']"
-                :style="totalVoted === categories.length ? 'background: linear-gradient(90deg, #b8860b, #d4af37)' : ''"
-                :disabled="totalVoted < categories.length">
+                class="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all text-white shadow-lg"
+                style="background: linear-gradient(90deg, #b8860b, #d4af37)">
                 Proceed to Payment →
               </button>
             </div>
@@ -142,7 +141,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h2 class="font-playfair text-xl font-bold text-navy mb-4">Your Selections</h2>
           <div class="space-y-2">
-            <div v-for="cat in categories" :key="cat.id" class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+            <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
               <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ cat.label }}</p>
               <p class="font-playfair font-bold text-navy text-sm">{{ getVotedContestant(cat)?.name }}</p>
             </div>
@@ -239,7 +238,7 @@
         </div>
 
         <div class="space-y-2 mb-8">
-          <div v-for="cat in categories" :key="cat.id" class="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
+          <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
             <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ cat.label }}</p>
             <p class="font-playfair font-bold text-navy text-sm">{{ getVotedContestant(cat)?.name }}</p>
           </div>
@@ -301,11 +300,7 @@ const totalVoted = computed(() => Object.keys(votes).length)
 function selectContestant(categoryId: string, contestant: any) {
   votes[categoryId] = contestant.id
   setTimeout(() => {
-    if (activeTab.value < categories.value.length - 1) {
-      activeTab.value++
-    } else if (totalVoted.value === categories.value.length) {
-      step.value = 'payment'
-    }
+    step.value = 'payment'
   }, 400)
 }
 
@@ -314,8 +309,8 @@ function getVotedContestant(cat: any) {
 }
 
 function goToPayment() {
-  if (totalVoted.value < categories.value.length) {
-    submitError.value = 'Please select a contestant in every category before proceeding.'
+  if (totalVoted.value === 0) {
+    submitError.value = 'Please vote for at least one contestant before proceeding.'
     return
   }
   submitError.value = ''
@@ -331,7 +326,7 @@ async function submitVotes() {
   submitting.value = true
   payError.value = ''
 
-  const rows = categories.value.map(cat => ({
+  const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
     bank: payForm.bank,
