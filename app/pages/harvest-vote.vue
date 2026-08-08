@@ -36,16 +36,6 @@
         </div>
         <p class="text-gray-300 text-sm mt-3 max-w-md mx-auto leading-relaxed">{{ contestSubtitle }}</p>
 
-        <!-- Countdown -->
-        <div class="mt-6 flex items-center justify-center gap-3">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mr-1">Voting ends in</p>
-          <div v-for="unit in countdown" :key="unit.label" class="flex flex-col items-center">
-            <div class="w-14 h-14 rounded-xl flex items-center justify-center font-playfair font-black text-2xl text-white shadow-lg" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(212,175,55,0.4)">
-              <span class="tabular-nums transition-all duration-300">{{ unit.value }}</span>
-            </div>
-            <p class="text-gold text-[9px] uppercase tracking-widest mt-1 font-bold">{{ unit.label }}</p>
-          </div>
-        </div>
       </div>
       <div class="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 80" fill="none"><path d="M0 80L1440 80L1440 30C1200 80 960 10 720 30C480 50 240 0 0 30L0 80Z" fill="#faf8f3"/></svg>
@@ -57,6 +47,7 @@
       <div class="max-w-5xl mx-auto">
 
         <!-- Countdown -->
+        <ClientOnly>
         <div class="mb-8 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <p class="text-xs text-gray-400 font-semibold uppercase tracking-widest text-center mb-4">Voting ends in</p>
           <div class="flex items-center justify-center gap-3">
@@ -68,6 +59,7 @@
             </div>
           </div>
         </div>
+        </ClientOnly>
 
         <!-- Category tabs -->
         <div class="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
