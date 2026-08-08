@@ -99,7 +99,6 @@ const navItems = [
 const visibleNavItems = computed(() => navItems.filter((i: any) => !i.harvestOnly || harvestActive.value))
 
 async function logout() {
-  const supabase = useSupabase()
   await supabase.auth.signOut()
   router.push('/admin/login')
 }
