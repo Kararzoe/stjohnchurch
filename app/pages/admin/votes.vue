@@ -81,7 +81,7 @@ const supabase = useSupabase()
 const loading = ref(true)
 const voteData = ref<any[]>([])
 const allContestants = ref<any[]>([])
-const harvestActive = ref(true)
+const harvestActive = useState('harvestActive', () => true)
 
 const CATEGORIES = ref<any[]>([])
 
