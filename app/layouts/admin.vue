@@ -79,6 +79,7 @@ onMounted(() => {
 
 const navItems = [
   { to: '/admin', icon: '📊', label: 'Overview' },
+  { to: '/admin/homepage', icon: '🏠', label: 'Homepage' },
   { to: '/admin/votes', icon: '🗳️', label: 'Harvest Votes', harvestOnly: true },
   { to: '/admin/contestants', icon: '🏆', label: 'Contestants', harvestOnly: true },
   { to: '/admin/donations', icon: '💰', label: 'Donations' },

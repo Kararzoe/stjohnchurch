@@ -34,8 +34,8 @@
       </div>
 
       <p class="text-gray-200 text-base md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-in italic">
-        "Come to me, all you who are weary and burdened, and I will give you rest."
-        <span class="block text-gold-light/70 text-xs mt-1 not-italic">— Matthew 11:28</span>
+        {{ heroQuote }}
+        <span class="block text-gold-light/70 text-xs mt-1 not-italic">— {{ heroQuoteRef }}</span>
       </p>
 
       <div class="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in">
@@ -61,10 +61,8 @@
   <section class="py-10 px-4 bg-cream rosary-border">
     <div class="max-w-3xl mx-auto text-center reveal">
       <p class="text-gold text-xs uppercase tracking-widest font-semibold mb-2">Daily Scripture</p>
-      <p class="font-playfair text-lg md:text-2xl text-navy italic leading-relaxed">
-        "I can do all things through Christ who strengthens me."
-      </p>
-      <p class="text-gray-400 text-xs mt-2">— Philippians 4:13</p>
+      <p class="font-playfair text-lg md:text-2xl text-navy italic leading-relaxed">{{ dailyVerse }}</p>
+      <p class="text-gray-400 text-xs mt-2">— {{ dailyVerseRef }}</p>
     </div>
   </section>
 
@@ -137,11 +135,7 @@
         <span class="gold-text">Called to Serve</span>
       </h2>
       <div class="catholic-divider reveal"><span class="text-gold-light text-base">✦</span></div>
-      <p class="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-8 reveal">
-        St. John of the Cross Catholic Church, Mararaba has been a spiritual home for families
-        in Nasarawa State. We celebrate the sacraments, grow in discipleship, and reach out
-        to those in need.
-      </p>
+      <p class="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-8 reveal">{{ aboutBannerText }}</p>
       <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto mb-8 reveal">
         <div v-for="s in stats" :key="s.label" class="glass rounded-2xl p-3 md:p-4">
           <p class="font-playfair text-2xl md:text-4xl font-black gold-text">{{ s.value }}</p>
@@ -248,13 +242,9 @@
         <span class="text-gold-light text-2xl">🙏</span>
       </div>
       <span class="section-label">Prayer of the Month</span>
-      <h2 class="font-playfair text-2xl md:text-3xl font-bold text-navy mb-4">Act of Contrition</h2>
+      <h2 class="font-playfair text-2xl md:text-3xl font-bold text-navy mb-4">{{ prayerTitle }}</h2>
       <div class="catholic-divider"><span class="text-gold text-base">✦</span></div>
-      <p class="text-gray-600 leading-relaxed italic text-sm md:text-base mt-4 max-w-xl mx-auto">
-        "O my God, I am heartily sorry for having offended Thee, and I detest all my sins
-        because of Thy just punishments, but most of all because they offend Thee, my God,
-        who art all good and deserving of all my love..."
-      </p>
+      <p class="text-gray-600 leading-relaxed italic text-sm md:text-base mt-4 max-w-xl mx-auto">{{ prayerText }}</p>
     </div>
   </section>
 
@@ -266,12 +256,9 @@
     <div class="absolute inset-0 bg-navy/88" />
     <div class="relative z-10 max-w-2xl mx-auto text-center text-white reveal">
       <span class="section-label">Support Us</span>
-      <h2 class="font-playfair text-3xl sm:text-4xl font-bold mb-3">Support Our Parish</h2>
+      <h2 class="font-playfair text-3xl sm:text-4xl font-bold mb-3">{{ donateHeading }}</h2>
       <div class="catholic-divider"><span class="text-gold-light text-base">✦</span></div>
-      <p class="text-gray-300 text-sm md:text-base mb-8 leading-relaxed mt-4">
-        Your generosity helps us maintain our church, support our ministries,
-        and serve those in need in our community.
-      </p>
+      <p class="text-gray-300 text-sm md:text-base mb-8 leading-relaxed mt-4">{{ donateText }}</p>
       <NuxtLink to="/donate"
         class="inline-block px-10 py-4 rounded-full bg-gold text-white font-semibold hover:bg-gold-light transition-all hover:shadow-xl hover:shadow-gold/40">
         Make a Gift ✝
@@ -285,6 +272,16 @@ useScrollReveal()
 
 const supabase = useSupabase()
 const openMass = ref<number | null>(0)
+
+const heroQuote = ref('"Come to me, all you who are weary and burdened, and I will give you rest."')
+const heroQuoteRef = ref('Matthew 11:28')
+const dailyVerse = ref('"I can do all things through Christ who strengthens me."')
+const dailyVerseRef = ref('Philippians 4:13')
+const aboutBannerText = ref('St. John of the Cross Catholic Church, Mararaba has been a spiritual home for families in Nasarawa State. We celebrate the sacraments, grow in discipleship, and reach out to those in need.')
+const prayerTitle = ref('Act of Contrition')
+const prayerText = ref('"O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, who art all good and deserving of all my love..."')
+const donateHeading = ref('Support Our Parish')
+const donateText = ref('Your generosity helps us maintain our church, support our ministries, and serve those in need in our community.')
 
 const massTimes = ref([
   { day: 'Sunday', times: ['5:30 AM', '7:30 AM', '9:30 AM (Hausa Mass)', "9:30 AM (Children's Mass)", '11:00 AM', '5:15 PM (Benediction)', '6:00 PM'] },
@@ -326,6 +323,21 @@ function eventDate(d: string) {
 }
 
 onMounted(async () => {
+  const contentKeys = ['hero_quote','hero_quote_ref','daily_verse','daily_verse_ref','about_banner_text','prayer_title','prayer_text','donate_heading','donate_text']
+  const { data: siteData } = await supabase.from('site_content').select('key,value').in('key', contentKeys)
+  if (siteData) {
+    const map: Record<string, string> = {}
+    siteData.forEach((r: any) => { map[r.key] = r.value })
+    if (map.hero_quote) heroQuote.value = map.hero_quote
+    if (map.hero_quote_ref) heroQuoteRef.value = map.hero_quote_ref
+    if (map.daily_verse) dailyVerse.value = map.daily_verse
+    if (map.daily_verse_ref) dailyVerseRef.value = map.daily_verse_ref
+    if (map.about_banner_text) aboutBannerText.value = map.about_banner_text
+    if (map.prayer_title) prayerTitle.value = map.prayer_title
+    if (map.prayer_text) prayerText.value = map.prayer_text
+    if (map.donate_heading) donateHeading.value = map.donate_heading
+    if (map.donate_text) donateText.value = map.donate_text
+  }
   const { data: evData } = await supabase.from('events').select('*').eq('published', true).order('event_date').limit(3)
   if (evData && evData.length > 0) events.value = evData
 
