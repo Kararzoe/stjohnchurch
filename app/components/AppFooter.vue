@@ -42,15 +42,15 @@
         <ul class="space-y-3 text-sm">
           <li class="flex items-start gap-2">
             <span class="text-gold-light mt-0.5">📍</span>
-            <span>Mararaba, Nasarawa State<br>Nigeria</span>
+            <span>{{ address }}</span>
           </li>
           <li class="flex items-center gap-2">
             <span class="text-gold-light">📞</span>
-            +234 000 000 0000
+            {{ phone }}
           </li>
           <li class="flex items-center gap-2">
             <span class="text-gold-light">✉️</span>
-            info@stjohnofthecross.org
+            {{ email }}
           </li>
         </ul>
       </div>
@@ -64,6 +64,34 @@
 </template>
 
 <script setup lang="ts">
+const supabase = useSupabase()
+
+const phone = ref('+234 814 205 3461')
+const email = ref('stjohncatholicchurchmararaba@gmail.com')
+const address = ref('Mararaba, Nasarawa State\nNigeria')
+const socials = ref([
+  { label: 'Facebook', href: '#', icon: 'f' },
+  { label: 'Instagram', href: '#', icon: '📷' },
+  { label: 'YouTube', href: '#', icon: '▶' },
+])
+
+onMounted(async () => {
+  const { data } = await supabase.from('site_content').select('key, value')
+    .in('key', ['contact_address', 'contact_phone', 'contact_email', 'social_facebook', 'social_instagram', 'social_youtube'])
+  if (data) {
+    const map: Record<string, string> = {}
+    data.forEach((r: any) => { map[r.key] = r.value })
+    if (map.contact_phone) phone.value = map.contact_phone
+    if (map.contact_email) email.value = map.contact_email
+    if (map.contact_address) address.value = map.contact_address
+    socials.value = [
+      { label: 'Facebook', href: map.social_facebook || '#', icon: 'f' },
+      { label: 'Instagram', href: map.social_instagram || '#', icon: '📷' },
+      { label: 'YouTube', href: map.social_youtube || '#', icon: '▶' },
+    ]
+  }
+})
+
 const links = [
   { to: '/about', label: 'About Us' },
   { to: '/mass-times', label: 'Mass Times' },

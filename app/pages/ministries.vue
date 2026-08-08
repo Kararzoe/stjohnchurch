@@ -42,54 +42,20 @@
 <script setup lang="ts">
 useScrollReveal()
 
-const groups = [
-  {
-    icon: '👩',
-    name: 'Christian Women Organization',
-    years: '20+ years',
-    desc: 'A vibrant association of Catholic women dedicated to prayer, charity, and the spiritual growth of families in the parish.',
-  },
-  {
-    icon: '👨',
-    name: 'Christian Men Organization',
-    years: '20+ years',
-    desc: 'Catholic men committed to faith, fellowship, and service — supporting the parish and leading families in the way of Christ.',
-  },
-  {
-    icon: '🙌',
-    name: 'Youths',
-    years: '20+ years',
-    desc: 'A dynamic group of young Catholics growing in faith through prayer, retreats, outreach, and community activities.',
-  },
-  {
-    icon: '✝️',
-    name: 'Altar Boys',
-    years: '20+ years',
-    desc: 'Young men who serve at the altar during Holy Mass, learning reverence, discipline, and a deep love for the Eucharist.',
-  },
-  {
-    icon: '✝️',
-    name: 'Altar Girls',
-    years: '20+ years',
-    desc: 'Young women who serve at the altar during Holy Mass, growing in faith and devotion through liturgical service.',
-  },
-  {
-    icon: '🎵',
-    name: 'Choir',
-    years: '20+ years',
-    desc: 'Our dedicated choir leads the congregation in worship through sacred music, hymns, and praise at all parish Masses.',
-  },
-  {
-    icon: '📖',
-    name: 'Lay Readers',
-    years: '20+ years',
-    desc: 'Trained parishioners who proclaim the Word of God at Mass, bringing the Scriptures to life for the entire congregation.',
-  },
-  {
-    icon: '🕊️',
-    name: 'Charismatic Renewal',
-    years: '20+ years',
-    desc: 'A Spirit-filled community that gathers for praise, worship, healing prayers, and deepening the gifts of the Holy Spirit.',
-  },
-]
+const supabase = useSupabase()
+const groups = ref([
+  { id: 1, icon: '👩', name: 'Christian Women Organization', years: '20+ years', desc: 'A vibrant association of Catholic women dedicated to prayer, charity, and the spiritual growth of families in the parish.' },
+  { id: 2, icon: '👨', name: 'Christian Men Organization', years: '20+ years', desc: 'Catholic men committed to faith, fellowship, and service — supporting the parish and leading families in the way of Christ.' },
+  { id: 3, icon: '🙌', name: 'Youths', years: '20+ years', desc: 'A dynamic group of young Catholics growing in faith through prayer, retreats, outreach, and community activities.' },
+  { id: 4, icon: '✝️', name: 'Altar Boys', years: '20+ years', desc: 'Young men who serve at the altar during Holy Mass, learning reverence, discipline, and a deep love for the Eucharist.' },
+  { id: 5, icon: '✝️', name: 'Altar Girls', years: '20+ years', desc: 'Young women who serve at the altar during Holy Mass, growing in faith and devotion through liturgical service.' },
+  { id: 6, icon: '🎵', name: 'Choir', years: '20+ years', desc: 'Our dedicated choir leads the congregation in worship through sacred music, hymns, and praise at all parish Masses.' },
+  { id: 7, icon: '📖', name: 'Lay Readers', years: '20+ years', desc: 'Trained parishioners who proclaim the Word of God at Mass, bringing the Scriptures to life for the entire congregation.' },
+  { id: 8, icon: '🕊️', name: 'Charismatic Renewal', years: '20+ years', desc: 'A Spirit-filled community that gathers for praise, worship, healing prayers, and deepening the gifts of the Holy Spirit.' },
+])
+
+onMounted(async () => {
+  const { data } = await supabase.from('ministries').select('*').order('sort_order')
+  if (data && data.length > 0) groups.value = data
+})
 </script>

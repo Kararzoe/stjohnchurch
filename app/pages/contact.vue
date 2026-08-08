@@ -78,10 +78,26 @@
 <script setup lang="ts">
 useScrollReveal()
 
-const contactInfo = [
+const supabase = useSupabase()
+const contactInfo = ref([
   { icon: '📍', label: 'Address', value: 'St. John of the Cross Catholic Church,\nBehind Nasarawa State High Court, Mararaba' },
   { icon: '📞', label: 'Phone', value: '08142053461' },
   { icon: '✉️', label: 'Email', value: 'stjohncatholicchurchmararaba@gmail.com' },
   { icon: '🕐', label: 'Office Hours', value: 'Mon–Fri: 9 AM – 5 PM\nSat: 9 AM – 1 PM' },
-]
+])
+
+onMounted(async () => {
+  const { data } = await supabase.from('site_content').select('key, value')
+    .in('key', ['contact_address', 'contact_phone', 'contact_email', 'contact_hours'])
+  if (data) {
+    const map: Record<string, string> = {}
+    data.forEach((r: any) => { map[r.key] = r.value })
+    contactInfo.value = [
+      { icon: '📍', label: 'Address', value: map.contact_address ?? contactInfo.value[0].value },
+      { icon: '📞', label: 'Phone', value: map.contact_phone ?? contactInfo.value[1].value },
+      { icon: '✉️', label: 'Email', value: map.contact_email ?? contactInfo.value[2].value },
+      { icon: '🕐', label: 'Office Hours', value: map.contact_hours ?? contactInfo.value[3].value },
+    ]
+  }
+})
 </script>
