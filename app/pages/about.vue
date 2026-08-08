@@ -23,40 +23,13 @@
       </div>
       <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
         <div class="space-y-5 reveal-left">
-          <div class="flex gap-4">
+          <div v-for="(h, i) in history" :key="i" class="flex gap-4">
             <div class="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0 mt-1">
-              <span class="text-gold text-sm font-black">1</span>
+              <span class="text-gold text-sm font-black">{{ i + 1 }}</span>
             </div>
             <div>
-              <p class="font-playfair font-bold text-navy mb-1">12th May, 1988 — The Beginning</p>
-              <p class="text-gray-600 text-sm leading-relaxed">What is now known as St. John of the Cross Catholic Church Mararaba was founded on the 12th May, 1988 on the feast of Ascension. Before this time, the popular mango tree where the Church started was a Block Rosary Centre. People around Mararaba were attending either SS. Peter &amp; Paul Nyanya or St. Mary's Karu Abuja.</p>
-            </div>
-          </div>
-          <div class="flex gap-4">
-            <div class="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0 mt-1">
-              <span class="text-gold text-sm font-black">2</span>
-            </div>
-            <div>
-              <p class="font-playfair font-bold text-navy mb-1">Catechist John Awori</p>
-              <p class="text-gray-600 text-sm leading-relaxed">On the 12th of May 1988, Catechist John Awori mobilised people for a Church Service numbering about seven (7) — that marked the beginning of St. John Catholic Church Mararaba. The newly founded Church automatically became an outstation of St. Peter's Keffi under the then Makurdi Diocese.</p>
-            </div>
-          </div>
-          <div class="flex gap-4">
-            <div class="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0 mt-1">
-              <span class="text-gold text-sm font-black">3</span>
-            </div>
-            <div>
-              <p class="font-playfair font-bold text-navy mb-1">First Priests</p>
-              <p class="text-gray-600 text-sm leading-relaxed">Rev. Fr. Donald Fennessy started coming from St. Peter's Keffi to say Masses in Mararaba. Father Donald Fennessy and Father Oliver Akaatenger were the first priests coming from Keffi at the time.</p>
-            </div>
-          </div>
-          <div class="flex gap-4">
-            <div class="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0 mt-1">
-              <span class="text-gold text-sm font-black">4</span>
-            </div>
-            <div>
-              <p class="font-playfair font-bold text-navy mb-1">January 1997 — The Augustinians Arrive</p>
-              <p class="text-gray-600 text-sm leading-relaxed">The Church grew very quickly and in less than ten years it was considered an independent Mission and handed over to the Augustinians by Bishop A. A. Usuh of Makurdi Diocese in January 1997, with Rev. Fr. Richard Hughes OSA as the first priest in charge. The arrival of the Augustinians marked a big turnaround for the new parish.</p>
+              <p class="font-playfair font-bold text-navy mb-1">{{ h.title }}</p>
+              <p class="text-gray-600 text-sm leading-relaxed">{{ h.text }}</p>
             </div>
           </div>
         </div>
@@ -147,10 +120,7 @@
     <div class="relative z-10 max-w-3xl mx-auto text-center text-white reveal">
       <span class="section-label">Our Mission</span>
       <h2 class="font-playfair text-2xl sm:text-4xl font-bold mb-6">What We Believe</h2>
-      <p class="text-gray-300 text-base sm:text-xl leading-relaxed italic">
-        "To know Christ, to make Christ known, and to serve all people in His name —
-        through worship, community, and compassionate outreach."
-      </p>
+      <p class="text-gray-300 text-base sm:text-xl leading-relaxed italic">"{{ mission }}"</p>
     </div>
   </section>
 </template>
@@ -158,36 +128,50 @@
 <script setup lang="ts">
 useScrollReveal()
 
-const stats = [
-  { value: '1988', label: 'Year Founded' },
-  { value: '2,400+', label: 'Registered Families' },
-  { value: '37+', label: 'Years of Faith' },
-]
-
 const supabase = useSupabase()
 const pastor = ref<any>(null)
 const associates = ref<any[]>([])
 
-const defaultAssociates = [
-  { name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA', role: 'Bursar / School Administrator', photo: '/priest-jiwok.jpg', desc: '' },
-  { name: 'Catechist Michael Iorhemba', role: 'Parish Catechist', photo: '/catechist-michael.jpg', desc: '' },
-  { name: 'Rev. Fr. Jude Aniobodom Ossai, OSA', role: 'Papal Nunciature', photo: '/priest-jude.jpg', desc: '' },
-  { name: 'Very Rev. Fr. Oliver Onuoha, OSA', role: 'Ave Maria', photo: '/priest-oliver.jpg', desc: '' },
-]
+const stats = ref([
+  { value: '1988', label: 'Year Founded' },
+  { value: '2,400+', label: 'Registered Families' },
+  { value: '37+', label: 'Years of Faith' },
+])
+
+const mission = ref('To know Christ, to make Christ known, and to serve all people in His name — through worship, community, and compassionate outreach.')
+
+const history = ref([
+  { title: '12th May, 1988 — The Beginning', text: 'What is now known as St. John of the Cross Catholic Church Mararaba was founded on the 12th May, 1988 on the feast of Ascension. Before this time, the popular mango tree where the Church started was a Block Rosary Centre. People around Mararaba were attending either SS. Peter & Paul Nyanya or St. Mary\'s Karu Abuja.' },
+  { title: 'Catechist John Awori', text: 'On the 12th of May 1988, Catechist John Awori mobilised people for a Church Service numbering about seven (7) — that marked the beginning of St. John Catholic Church Mararaba. The newly founded Church automatically became an outstation of St. Peter\'s Keffi under the then Makurdi Diocese.' },
+  { title: 'First Priests', text: 'Rev. Fr. Donald Fennessy started coming from St. Peter\'s Keffi to say Masses in Mararaba. Father Donald Fennessy and Father Oliver Akaatenger were the first priests coming from Keffi at the time.' },
+  { title: 'January 1997 — The Augustinians Arrive', text: 'The Church grew very quickly and in less than ten years it was considered an independent Mission and handed over to the Augustinians by Bishop A. A. Usuh of Makurdi Diocese in January 1997, with Rev. Fr. Richard Hughes OSA as the first priest in charge.' },
+])
 
 onMounted(async () => {
-  const { data } = await supabase.from('clergy').select('*').order('sort_order')
-  if (data && data.length > 0) {
-    pastor.value = data.find((p: any) => p.sort_order === 1) ?? data[0]
-    associates.value = data.filter((p: any) => p.id !== pastor.value?.id)
-  } else {
-    pastor.value = {
-      name: 'Rev. Frederick Wukari, OSA Esq.',
-      role: 'Parish Priest',
-      photo: '/priest-1.jpg',
-      bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State. A member of the Order of Saint Augustine (OSA), he shepherds the parish community with zeal, compassion, and a deep devotion to the Holy Eucharist.',
+  const [{ data: content }, { data: clergyData }] = await Promise.all([
+    supabase.from('site_content').select('key, value').in('key', ['about_stats', 'about_mission', 'about_history']),
+    supabase.from('clergy').select('*').order('sort_order'),
+  ])
+  if (content) {
+    for (const row of content) {
+      try {
+        if (row.key === 'about_stats') stats.value = JSON.parse(row.value)
+        if (row.key === 'about_mission') mission.value = row.value
+        if (row.key === 'about_history') history.value = JSON.parse(row.value)
+      } catch {}
     }
-    associates.value = defaultAssociates
+  }
+  if (clergyData && clergyData.length > 0) {
+    pastor.value = clergyData.find((p: any) => p.sort_order === 1) ?? clergyData[0]
+    associates.value = clergyData.filter((p: any) => p.id !== pastor.value?.id)
+  } else {
+    pastor.value = { name: 'Rev. Frederick Wukari, OSA Esq.', role: 'Parish Priest', photo: '/priest-1.jpg', bio: 'Rev. Frederick Wukari, OSA Esq. serves as the Parish Priest of St. John of the Cross Catholic Church, Mararaba Gurku, Nasarawa State.' }
+    associates.value = [
+      { name: 'Rev. Fr. Jiwok Joseph Nentawe, OSA', role: 'Bursar / School Administrator', photo: '/priest-jiwok.jpg' },
+      { name: 'Catechist Michael Iorhemba', role: 'Parish Catechist', photo: '/catechist-michael.jpg' },
+      { name: 'Rev. Fr. Jude Aniobodom Ossai, OSA', role: 'Papal Nunciature', photo: '/priest-jude.jpg' },
+      { name: 'Very Rev. Fr. Oliver Onuoha, OSA', role: 'Ave Maria', photo: '/priest-oliver.jpg' },
+    ]
   }
 })
 </script>

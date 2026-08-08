@@ -86,6 +86,7 @@ const navItems = [
   { to: '/admin/events', icon: '📅', label: 'Events' },
   { to: '/admin/mass-times', icon: '⛪', label: 'Mass Times' },
   { to: '/admin/clergy', icon: '✝️', label: 'Clergy' },
+  { to: '/admin/about', icon: '🏛️', label: 'About Page' },
   { to: '/admin/members', icon: '👥', label: 'Members' },
   { to: '/admin/elections', icon: '🗳️', label: 'Elections' },
   { to: '/admin/gallery', icon: '🖼️', label: 'Gallery' },
