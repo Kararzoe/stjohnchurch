@@ -56,14 +56,16 @@
     <div v-if="harvestActive && step === 'vote'" class="py-10 px-4">
       <div class="max-w-5xl mx-auto">
 
-        <!-- Progress -->
+        <!-- Countdown -->
         <div class="mb-8 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-          <div class="flex items-center justify-between mb-3">
-            <p class="text-xs text-gray-400 font-semibold uppercase tracking-widest">Your Progress</p>
-            <p class="text-xs font-black text-gold">{{ totalVoted }} of {{ categories.length }} categories voted</p>
-          </div>
-          <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-all duration-700" :style="`width: ${categories.length ? (totalVoted / categories.length) * 100 : 0}%; background: linear-gradient(90deg, #b8860b, #d4af37)`" />
+          <p class="text-xs text-gray-400 font-semibold uppercase tracking-widest text-center mb-4">Voting ends in</p>
+          <div class="flex items-center justify-center gap-3">
+            <div v-for="unit in countdown" :key="unit.label" class="flex flex-col items-center flex-1">
+              <div class="w-full py-3 rounded-xl flex items-center justify-center font-playfair font-black text-3xl text-white shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <span class="tabular-nums">{{ unit.value }}</span>
+              </div>
+              <p class="text-gold text-[10px] uppercase tracking-widest mt-1.5 font-bold">{{ unit.label }}</p>
+            </div>
           </div>
         </div>
 
