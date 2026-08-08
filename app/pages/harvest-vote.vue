@@ -83,9 +83,6 @@
                   <h2 class="font-playfair font-black text-white text-xl leading-tight">{{ categories[activeTab]?.label }}</h2>
                   <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap a card to vote</p>
                 </div>
-                <div v-if="votes[categories[activeTab]?.id]" class="text-right">
-                  <p class="text-green-400 text-xs font-bold uppercase tracking-widest">✓ Selected</p>
-                </div>
               </div>
             </div>
 
