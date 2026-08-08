@@ -76,7 +76,7 @@
               <tr v-for="row in pending" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
-                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ row.voter_phone }}</td>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
                 <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
@@ -126,7 +126,7 @@
               <tr v-for="row in approved" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
-                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ row.voter_phone }}</td>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
                 <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
@@ -173,7 +173,7 @@
               <tr v-for="row in rejected" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
-                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ row.voter_phone }}</td>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
                 <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
@@ -321,6 +321,9 @@ function getCategoryLabel(id: string) {
   return CATEGORIES.value.find(c => c.id === id)?.label ?? id
 }
 
+function formatPhone(val: string) {
+  return /\d/.test(val) ? val : ''
+}
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }

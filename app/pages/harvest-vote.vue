@@ -245,7 +245,8 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
-            <input v-model="payForm.phone" type="tel" placeholder="08012345678"
+            <input v-model="payForm.phone" type="tel" placeholder="08012345678" inputmode="numeric" pattern="[0-9]*"
+              @input="payForm.phone = payForm.phone.replace(/[^0-9]/g, '')"
               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
           </div>
 
