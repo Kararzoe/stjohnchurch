@@ -68,7 +68,7 @@
         <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-navy">Meet Our Pastor</h2>
         <div class="catholic-divider mt-3"><span class="text-gold text-base">✦</span></div>
       </div>
-      <div v-if="pastor" class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row reveal">
+      <div v-if="pastor" class="bg-white rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row">
         <div class="md:w-72 shrink-0">
           <img :src="pastor.photo && pastor.photo.trim() ? pastor.photo : '/priest-1.jpg'" :alt="pastor.name" class="w-full h-72 md:h-full object-cover object-top" />
         </div>
