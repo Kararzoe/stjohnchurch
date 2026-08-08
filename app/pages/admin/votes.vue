@@ -45,36 +45,47 @@
       <div v-if="pending.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
         No pending submissions 🎉
       </div>
-
-      <!-- Group by reference -->
-      <div v-for="group in pendingGroups" :key="group.reference" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-4">
-        <div class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="background: linear-gradient(135deg, #faf8f3, #fff)">
-          <div>
-            <p class="font-bold text-navy text-sm">{{ group.voter_name }} <span class="text-gray-400 font-normal">· {{ group.voter_phone }}</span></p>
-            <p class="text-xs text-gray-500 mt-0.5">
-              <span class="font-semibold text-navy">{{ group.bank }}</span>
-              · Ref: <span class="font-mono font-bold text-navy">{{ group.reference }}</span>
-              · <span class="text-gold font-bold">₦{{ group.amount.toLocaleString() }}</span>
-              · {{ group.qty }} vote{{ group.qty > 1 ? 's' : '' }}
-              · <span class="text-gray-400">{{ formatDate(group.created_at) }}</span>
-            </p>
-          </div>
-          <div class="flex gap-2 shrink-0">
-            <button @click="approveGroup(group)" class="px-4 py-2 rounded-xl bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all shadow-sm">✓ Approve</button>
-            <button @click="rejectGroup(group)" class="px-4 py-2 rounded-xl bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Reject</button>
-          </div>
-        </div>
-        <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div v-for="row in group.rows" :key="row.id" class="flex items-center gap-3 bg-gray-50 rounded-xl px-3 py-2">
-            <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-              <img v-if="getContestant(row.contestant_id)?.photo" :src="getContestant(row.contestant_id).photo" class="w-full h-full object-cover object-top" />
-              <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
-            </div>
-            <div class="min-w-0">
-              <p class="text-[10px] text-gold uppercase tracking-widest font-bold truncate">{{ getCategoryLabel(row.category) }}</p>
-              <p class="text-sm font-semibold text-navy truncate">{{ row.contestant_name }}</p>
-            </div>
-          </div>
+      <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Category</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Contestant</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Qty</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Amount</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in pending" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
+                <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
+                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ row.voter_phone }}</td>
+                <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-gray-200">
+                      <img v-if="getContestant(row.contestant_id)?.photo" :src="getContestant(row.contestant_id).photo" class="w-full h-full object-cover object-top" />
+                      <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
+                    </div>
+                    <span class="font-semibold text-navy whitespace-nowrap">{{ row.contestant_name }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
+                <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <button @click="approveRow(row)" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve</button>
+                    <button @click="rejectRow(row)" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Reject</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -161,27 +172,14 @@ async function load() {
 // Pending: group rows by reference so one approval covers all categories
 const pending = computed(() => voteData.value.filter(v => v.status === 'pending'))
 
-const pendingGroups = computed(() => {
-  const map: Record<string, any> = {}
-  for (const row of pending.value) {
-    if (!map[row.reference]) {
-      map[row.reference] = { reference: row.reference, voter_name: row.voter_name, voter_phone: row.voter_phone, bank: row.bank, qty: row.qty, amount: row.amount, created_at: row.created_at, rows: [] }
-    }
-    map[row.reference].rows.push(row)
-  }
-  return Object.values(map)
-})
-
-async function approveGroup(group: any) {
-  const ids = group.rows.map((r: any) => r.id)
-  await supabase.from('votes').update({ status: 'approved' }).in('id', ids)
+async function approveRow(row: any) {
+  await supabase.from('votes').update({ status: 'approved' }).eq('id', row.id)
   load()
 }
 
-async function rejectGroup(group: any) {
-  if (!confirm(`Reject all votes from ${group.voter_name} (ref: ${group.reference})?`)) return
-  const ids = group.rows.map((r: any) => r.id)
-  await supabase.from('votes').update({ status: 'rejected' }).in('id', ids)
+async function rejectRow(row: any) {
+  if (!confirm(`Reject vote from ${row.voter_name} for ${row.contestant_name}?`)) return
+  await supabase.from('votes').update({ status: 'rejected' }).eq('id', row.id)
   load()
 }
 
