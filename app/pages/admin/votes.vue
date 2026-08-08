@@ -86,16 +86,18 @@ const harvestActive = ref(true)
 const CATEGORIES = ref<any[]>([])
 
 onMounted(async () => {
-  const stored = localStorage.getItem('harvestActive')
-  harvestActive.value = stored === null ? true : stored === 'true'
-  const { data: cats } = await supabase.from('contest_categories').select('*').order('sort_order')
+  const [{ data: cats }, { data: hd }] = await Promise.all([
+    supabase.from('contest_categories').select('*').order('sort_order'),
+    supabase.from('site_content').select('value').eq('key', 'harvest_active').single(),
+  ])
   CATEGORIES.value = cats ?? []
+  harvestActive.value = hd ? hd.value === 'true' : true
   load()
 })
 
-function toggleHarvest() {
+async function toggleHarvest() {
   harvestActive.value = !harvestActive.value
-  localStorage.setItem('harvestActive', String(harvestActive.value))
+  await supabase.from('site_content').upsert({ key: 'harvest_active', value: String(harvestActive.value) }, { onConflict: 'key' })
 }
 
 const grandTotal = computed(() => voteData.value.reduce((s, v) => s + (v.qty || 1), 0))

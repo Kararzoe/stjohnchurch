@@ -103,9 +103,4 @@ const links = [
   { to: '/contact', label: 'Contact' },
   { to: '/donate', label: 'Donate' },
 ]
-const socials = [
-  { label: 'Facebook', href: '#', icon: 'f' },
-  { label: 'Instagram', href: '#', icon: '📷' },
-  { label: 'YouTube', href: '#', icon: '▶' },
-]
 </script>

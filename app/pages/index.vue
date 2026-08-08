@@ -248,6 +248,38 @@
     </div>
   </section>
 
+  <!-- ── HARVEST CONTEST BANNER ── -->
+  <section v-if="harvestActive" class="py-16 md:py-24 px-4 bg-cream">
+    <div class="max-w-4xl mx-auto">
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl" style="background: linear-gradient(135deg, #1a2744 0%, #2d4a8a 60%, #8b5a00 100%)">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 28px 28px;" />
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse at 80% 50%, rgba(212,175,55,0.25) 0%, transparent 60%)" />
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
+          <div class="flex-1 text-center md:text-left">
+            <p class="text-gold text-xs uppercase tracking-[0.4em] font-bold mb-3">Now Live · Cast Your Vote</p>
+            <h2 class="font-playfair text-3xl sm:text-5xl font-black text-white leading-tight mb-3">{{ contestTitle }}</h2>
+            <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
+              <div class="h-px w-12 bg-gold/40" />
+              <span class="text-gold text-base">✦</span>
+              <div class="h-px w-12 bg-gold/40" />
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed max-w-md">{{ contestSubtitle }}</p>
+          </div>
+          <div class="shrink-0 text-center">
+            <div class="text-6xl mb-4 animate-float">🏆</div>
+            <NuxtLink
+              to="/harvest-vote"
+              class="inline-block px-8 py-4 rounded-2xl text-navy font-black text-base hover:-translate-y-1 transition-all shadow-xl hover:shadow-2xl"
+              style="background: linear-gradient(90deg, #d4af37, #f5e27a)"
+            >
+              Vote Now →
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── DONATE CTA ── -->
   <section class="relative py-16 md:py-24 px-4 overflow-hidden">
     <div class="absolute inset-0">
@@ -282,6 +314,9 @@ const prayerTitle = ref('Act of Contrition')
 const prayerText = ref('"O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, who art all good and deserving of all my love..."')
 const donateHeading = ref('Support Our Parish')
 const donateText = ref('Your generosity helps us maintain our church, support our ministries, and serve those in need in our community.')
+const harvestActive = ref(false)
+const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
+const contestSubtitle = ref('Cast your vote for your favourite contestants')
 
 const massTimes = ref([
   { day: 'Sunday', times: ['5:30 AM', '7:30 AM', '9:30 AM (Hausa Mass)', "9:30 AM (Children's Mass)", '11:00 AM', '5:15 PM (Benediction)', '6:00 PM'] },
@@ -323,7 +358,7 @@ function eventDate(d: string) {
 }
 
 onMounted(async () => {
-  const contentKeys = ['hero_quote','hero_quote_ref','daily_verse','daily_verse_ref','about_banner_text','prayer_title','prayer_text','donate_heading','donate_text']
+  const contentKeys = ['hero_quote','hero_quote_ref','daily_verse','daily_verse_ref','about_banner_text','prayer_title','prayer_text','donate_heading','donate_text','contest_title','contest_subtitle','harvest_active']
   const { data: siteData } = await supabase.from('site_content').select('key,value').in('key', contentKeys)
   if (siteData) {
     const map: Record<string, string> = {}
@@ -337,6 +372,9 @@ onMounted(async () => {
     if (map.prayer_text) prayerText.value = map.prayer_text
     if (map.donate_heading) donateHeading.value = map.donate_heading
     if (map.donate_text) donateText.value = map.donate_text
+    if (map.contest_title) contestTitle.value = map.contest_title
+    if (map.contest_subtitle) contestSubtitle.value = map.contest_subtitle
+    harvestActive.value = map.harvest_active === 'true'
   }
   const { data: evData } = await supabase.from('events').select('*').eq('published', true).order('event_date').limit(3)
   if (evData && evData.length > 0) events.value = evData

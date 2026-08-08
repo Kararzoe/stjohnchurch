@@ -72,9 +72,9 @@ const sidebarOpen = ref(true)
 const router = useRouter()
 const harvestActive = ref(true)
 
-onMounted(() => {
-  const stored = localStorage.getItem('harvestActive')
-  harvestActive.value = stored === null ? true : stored === 'true'
+onMounted(async () => {
+  const { data } = await supabase.from('site_content').select('value').eq('key', 'harvest_active').single()
+  harvestActive.value = data ? data.value === 'true' : true
 })
 
 const navItems = [

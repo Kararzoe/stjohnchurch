@@ -1,8 +1,19 @@
 <template>
   <div class="min-h-screen bg-cream">
 
+    <!-- ── CLOSED ── -->
+    <div v-if="!harvestActive" class="py-32 px-4 text-center">
+      <div class="max-w-md mx-auto">
+        <div class="text-6xl mb-6">🌾</div>
+        <h1 class="font-playfair text-4xl font-black text-navy mb-3">Voting is Closed</h1>
+        <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
+        <p class="text-gray-500 text-sm leading-relaxed mb-8">The Harvest voting season is not currently active. Please check back later or contact the parish for more information.</p>
+        <NuxtLink to="/" class="inline-block px-8 py-4 rounded-xl text-white font-black shadow-lg" style="background: linear-gradient(90deg, #b8860b, #d4af37)">Back to Home</NuxtLink>
+      </div>
+    </div>
+
     <!-- ── HERO ── -->
-    <section class="relative h-[55vh] flex items-center justify-center overflow-hidden">
+    <section v-if="harvestActive" class="relative h-[55vh] flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0">
         <img src="/church-interior.jpg" alt="Harvest" class="w-full h-full object-cover object-center scale-105" />
       </div>
@@ -35,7 +46,7 @@
     </section>
 
     <!-- ── VOTING AREA ── -->
-    <div v-if="step === 'vote'" class="py-10 px-4">
+    <div v-if="harvestActive && step === 'vote'" class="py-10 px-4">
       <div class="max-w-5xl mx-auto">
 
         <!-- Progress bar -->
@@ -192,7 +203,7 @@
     </div>
 
     <!-- ── PAYMENT STEP ── -->
-    <div v-if="step === 'payment' && pendingVote" class="py-12 px-4">
+    <div v-if="harvestActive && step === 'payment' && pendingVote" class="py-12 px-4">
       <div class="max-w-md mx-auto">
 
         <!-- Selected contestant summary -->
@@ -258,7 +269,7 @@
     </div>
 
     <!-- ── REVIEW STEP ── -->
-    <div v-if="step === 'confirm'" class="py-12 px-4">
+    <div v-if="harvestActive && step === 'confirm'" class="py-12 px-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
           <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
@@ -306,7 +317,7 @@
     </div>
 
     <!-- ── SUCCESS STEP ── -->
-    <div v-if="step === 'done'" class="py-20 px-4 text-center">
+    <div v-if="harvestActive && step === 'done'" class="py-20 px-4 text-center">
       <div class="max-w-md mx-auto">
         <div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl animate-float" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           <svg class="w-12 h-12 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
@@ -354,13 +365,16 @@ const paymentForm = reactive({ name: '' })
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
 const categories = ref<any[]>([])
+const harvestActive = ref(true)
 
 onMounted(async () => {
-  const [{ data: contestants }, { data: cats }, { data: titleData }] = await Promise.all([
+  const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
     supabase.from('contest_categories').select('*').order('sort_order'),
     supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
+    supabase.from('site_content').select('value').eq('key', 'harvest_active').single(),
   ])
+  harvestActive.value = hd ? hd.value === 'true' : true
   if (titleData) {
     titleData.forEach((r: any) => {
       if (r.key === 'contest_title') contestTitle.value = r.value
