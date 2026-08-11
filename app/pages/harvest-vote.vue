@@ -202,11 +202,6 @@
               <p class="text-white font-playfair font-black text-lg">0044170761</p>
               <p class="text-gray-300 text-xs mt-0.5">St Johns Catholic Church</p>
             </div>
-            <div class="bg-white/10 rounded-xl p-4">
-              <p class="text-gold text-[10px] uppercase tracking-widest font-bold mb-1">Zenith Bank</p>
-              <p class="text-white font-playfair font-black text-lg">1228639690</p>
-              <p class="text-gray-300 text-xs mt-0.5">St John Of The Cross Cath Church Mararaba</p>
-            </div>
           </div>
           <p class="text-gray-400 text-xs mt-4 leading-relaxed">Transfer exactly <strong class="text-gold">₦{{ (voteQty * 200).toLocaleString() }}</strong> and use your name as the transfer narration. Once done, click the button below.</p>
         </div>
