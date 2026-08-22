@@ -442,13 +442,16 @@ async function initPayment() {
     if (link) {
       window.location.href = link
     } else {
-      payError.value = 'Could not get payment link. Please try again.'
-      submitting.value = false
+      // TagPay didn't return a link — fall back to bank transfer silently
+      step.value = 'payment'
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   } catch (e: any) {
-    payError.value = e?.data?.message || e?.message || 'Payment initialization failed.'
-    submitting.value = false
+    // TagPay failed — fall back to bank transfer silently
+    step.value = 'payment'
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+  submitting.value = false
 }
 
 async function submitVotes() {
