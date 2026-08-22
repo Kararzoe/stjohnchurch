@@ -66,6 +66,21 @@
 
     <!-- ── PENDING TAB ── -->
     <div v-else-if="tab === 'pending'">
+      <!-- Bulk Approve by Date Range -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4 flex flex-wrap items-end gap-3">
+        <div>
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1">From</label>
+          <input type="date" v-model="bulkFrom" class="border border-gray-200 rounded-xl px-3 py-2 text-sm text-navy focus:outline-none focus:border-navy" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1">To</label>
+          <input type="date" v-model="bulkTo" class="border border-gray-200 rounded-xl px-3 py-2 text-sm text-navy focus:outline-none focus:border-navy" />
+        </div>
+        <button @click="bulkApproveRange" :disabled="!bulkFrom || !bulkTo || bulkLoading"
+          class="px-5 py-2 rounded-xl bg-green-500 text-white text-sm font-black hover:bg-green-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+          {{ bulkLoading ? 'Approving…' : `✓ Approve All in Range (${pendingInRange.length})` }}
+        </button>
+      </div>
       <div v-if="pending.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
         No pending submissions 🎉
       </div>
@@ -292,6 +307,30 @@ async function load() {
 
 // Pending: group rows by reference so one approval covers all categories
 const pending = computed(() => voteData.value.filter(v => v.status === 'pending'))
+
+const bulkFrom = ref('2025-08-09')
+const bulkTo = ref('2025-08-20')
+const bulkLoading = ref(false)
+
+const pendingInRange = computed(() => {
+  if (!bulkFrom.value || !bulkTo.value) return []
+  const from = new Date(bulkFrom.value)
+  const to = new Date(bulkTo.value)
+  to.setHours(23, 59, 59, 999)
+  return pending.value.filter(v => {
+    const d = new Date(v.created_at)
+    return d >= from && d <= to
+  })
+})
+
+async function bulkApproveRange() {
+  if (!pendingInRange.value.length) return
+  bulkLoading.value = true
+  const ids = pendingInRange.value.map(v => v.id)
+  await supabase.from('votes').update({ status: 'approved' }).in('id', ids)
+  bulkLoading.value = false
+  load()
+}
 
 const modal = reactive({ show: false, title: '', message: '', confirmLabel: '', danger: false, onConfirm: () => {} })
 function confirm(opts: { title: string, message: string, confirmLabel: string, danger: boolean, onConfirm: () => void }) {
