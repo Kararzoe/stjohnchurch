@@ -21,7 +21,8 @@ export default defineEventHandler(async (event) => {
     })
     return res
   } catch (e: any) {
-    const msg = e?.data?.message || e?.message || 'TagPay initialization failed'
-    throw createError({ statusCode: 500, message: msg })
+    // Return full error details so we can debug
+    const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
+    throw createError({ statusCode: 500, message: JSON.stringify(detail) })
   }
 })
