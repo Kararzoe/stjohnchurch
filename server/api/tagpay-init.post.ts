@@ -14,14 +14,14 @@ export default defineEventHandler(async (event) => {
         email: `${phone}@vote.stjohn.ng`,
         name,
         phone,
-        ref: reference,
+        reference,
+        paymentMethod: 'card',
         callback_url: callbackUrl,
         currency: 'NGN',
       },
     })
     return res
   } catch (e: any) {
-    // Return full error details so we can debug
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     throw createError({ statusCode: 500, message: JSON.stringify(detail) })
   }
