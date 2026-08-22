@@ -128,52 +128,6 @@
       </div>
     </div>
 
-    <!-- ── STEP: DETAILS (before payment) ── -->
-    <div v-if="harvestActive && step === 'details'" class="py-12 px-4">
-      <div class="max-w-lg mx-auto space-y-5">
-        <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Almost Done</p>
-          <h2 class="font-playfair text-3xl font-black text-navy">Your Details</h2>
-          <div class="flex items-center justify-center gap-3 mt-3">
-            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
-            <input v-model="payForm.name" type="text" placeholder="Your full name"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
-            <input v-model="payForm.phone" type="tel" placeholder="08012345678" inputmode="numeric" pattern="[0-9]*"
-              @input="payForm.phone = payForm.phone.replace(/[^0-9]/g, '')"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Number of Votes (₦200 each)</label>
-            <div class="flex items-center gap-4">
-              <button @click="voteQty = Math.max(1, voteQty - 1)" class="w-11 h-11 rounded-xl border-2 border-gray-200 text-navy font-black text-xl hover:border-gold transition-all">−</button>
-              <span class="flex-1 text-center font-playfair font-black text-3xl text-navy">{{ voteQty }}</span>
-              <button @click="voteQty++" class="w-11 h-11 rounded-xl border-2 border-gray-200 text-navy font-black text-xl hover:border-gold transition-all">+</button>
-            </div>
-            <p class="text-center text-sm text-gold font-black mt-3">Total: ₦{{ (voteQty * 200).toLocaleString() }}</p>
-          </div>
-          <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
-          <button @click="initPayment" :disabled="submitting"
-            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
-            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            {{ submitting ? 'Loading payment...' : '💳 Pay ₦' + (voteQty * 200).toLocaleString() + ' with TagPay' }}
-          </button>
-          <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
-          <div class="border-t border-gray-100 pt-4">
-            <p class="text-xs text-gray-400 text-center mb-3">Or pay via bank transfer instead</p>
-            <button @click="step = 'payment'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">🏦 Pay via Bank Transfer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- ── STEP: CONFIRM ── -->
     <div v-if="harvestActive && step === 'confirm'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
@@ -204,7 +158,7 @@
 
         <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Change Selection</button>
 
-        <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
+        <button @click="step = 'payment'; window.scrollTo({ top: 0, behavior: 'smooth' })"
           class="w-full py-5 rounded-2xl text-white font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           Continue to Payment →
@@ -259,7 +213,7 @@
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
           {{ submitting ? 'Submitting...' : '✅ I\'ve Paid — Submit My Vote' }}
         </button>
-        <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to TagPay</button>
+        <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
       </div>
     </div>
 
@@ -270,17 +224,12 @@
           <svg class="w-12 h-12 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
         </div>
         <h1 class="font-playfair text-5xl font-black text-navy mb-2">Vote Confirmed!</h1>
-        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">{{ paidWithTagPay ? 'Payment Verified' : 'Awaiting Verification' }}</p>
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Awaiting Verification</p>
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
-        <div v-if="paidWithTagPay" class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-left">
-          <p class="text-green-800 text-sm font-bold mb-1">✅ Payment Confirmed</p>
-          <p class="text-green-700 text-xs leading-relaxed">Your payment was verified and your vote has been automatically counted. Thank you for participating!</p>
-        </div>
-        <div v-else class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
           <p class="text-amber-800 text-sm font-bold mb-1">⏳ Pending Admin Approval</p>
           <p class="text-amber-700 text-xs leading-relaxed">Your vote has been submitted and is awaiting approval. Our admin team will verify your bank transfer and approve your vote. This usually takes a few hours.</p>
         </div>
-
         <div class="space-y-2 mb-8">
           <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
             <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ cat.label }}</p>
@@ -301,7 +250,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'confirm' | 'details' | 'payment' | 'done'>('vote')
+const step = ref<'vote' | 'confirm' | 'payment' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -309,7 +258,6 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const paidWithTagPay = ref(false)
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -360,21 +308,6 @@ onMounted(async () => {
     .filter((cat: any) => grouped[cat.id]?.length)
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 
-  // Handle TagPay callback — ref param means user just returned from payment
-  const urlParams = new URLSearchParams(window.location.search)
-  const ref = urlParams.get('ref')
-  if (ref) {
-    window.history.replaceState({}, '', window.location.pathname)
-    // Poll Supabase for up to 10s waiting for webhook to approve the votes
-    let approved = false
-    for (let i = 0; i < 10; i++) {
-      await new Promise(r => setTimeout(r, 1000))
-      const { data } = await supabase.from('votes').select('status').eq('reference', ref).limit(1).single()
-      if (data?.status === 'approved') { approved = true; break }
-    }
-    paidWithTagPay.value = approved
-    step.value = 'done'
-  }
 })
 
 onUnmounted(() => clearInterval(timer))
@@ -383,7 +316,7 @@ const totalVoted = computed(() => Object.keys(votes).length)
 
 function selectContestant(categoryId: string, contestant: any) {
   votes[categoryId] = contestant.id
-  step.value = 'details'
+  step.value = 'confirm'
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -399,59 +332,6 @@ function goToPayment() {
   submitError.value = ''
   step.value = 'details'
   window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-async function initPayment() {
-  if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
-  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
-
-  submitting.value = true
-  payError.value = ''
-
-  const reference = `HV-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
-
-  // Save votes as pending with this reference so webhook can find them
-  const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
-    voter_name: payForm.name,
-    voter_phone: payForm.phone,
-    bank: 'TagPay',
-    reference,
-    qty: voteQty.value,
-    amount: voteQty.value * 200,
-    status: 'pending',
-    category: cat.id,
-    contestant_id: votes[cat.id],
-    contestant_name: getVotedContestant(cat)?.name ?? '',
-  }))
-
-  const { error: dbError } = await supabase.from('votes').insert(rows)
-  if (dbError) { payError.value = dbError.message; submitting.value = false; return }
-
-  try {
-    const res = await $fetch<any>('/api/tagpay-init', {
-      method: 'POST',
-      body: {
-        name: payForm.name,
-        phone: payForm.phone,
-        amount: voteQty.value * 200 * 100,
-        reference,
-        callbackUrl: `${window.location.origin}/harvest-vote?ref=${reference}`,
-      },
-    })
-    const link = res?.data?.authorization_url || res?.data?.payment_url || res?.data?.checkout_url || res?.authorization_url || res?.payment_url
-    if (link) {
-      window.location.href = link
-    } else {
-      // TagPay didn't return a link — fall back to bank transfer silently
-      step.value = 'payment'
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  } catch (e: any) {
-    // TagPay failed — fall back to bank transfer silently
-    step.value = 'payment'
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-  submitting.value = false
 }
 
 async function submitVotes() {
@@ -477,7 +357,6 @@ async function submitVotes() {
   const { error } = await supabase.from('votes').insert(rows)
   submitting.value = false
   if (error) { payError.value = error.message; return }
-  paidWithTagPay.value = false
   step.value = 'done'
 }
 </script>
