@@ -4,13 +4,13 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt'],
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
-    tagpaySecretKey: process.env.TAGPAY_SECRET_KEY,
-    tagpayWebhookSecret: process.env.TAGPAY_WEBHOOK_SECRET,
-    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    tagpaySecretKey: '',
+    tagpayWebhookSecret: '',
+    supabaseServiceRoleKey: '',
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
-      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY,
-      tagpayPublicKey: process.env.TAGPAY_PUBLIC_KEY,
+      supabaseUrl: '',
+      supabaseKey: '',
+      tagpayPublicKey: '',
     }
   },
   app: {
