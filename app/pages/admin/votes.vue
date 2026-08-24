@@ -62,6 +62,21 @@
       </button>
     </div>
 
+    <!-- Bulk Action Bar -->
+    <div v-if="selected.length" class="bg-navy rounded-2xl p-4 mb-4 flex items-center justify-between gap-3 flex-wrap">
+      <span class="text-white text-sm font-bold">{{ selected.length }} selected</span>
+      <div class="flex gap-2 flex-wrap">
+        <button v-if="tab === 'pending'" @click="bulkAction('approved')" class="px-4 py-2 rounded-xl bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve All</button>
+        <button v-if="tab === 'pending'" @click="bulkAction('rejected')" class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">✗ Reject All</button>
+        <button v-if="tab === 'approved'" @click="bulkAction('pending')" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black hover:bg-amber-600 transition-all">↩ Move to Pending</button>
+        <button v-if="tab === 'approved'" @click="bulkAction('rejected')" class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">✗ Reject All</button>
+        <button v-if="tab === 'rejected'" @click="bulkAction('pending')" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black hover:bg-amber-600 transition-all">↩ Restore All</button>
+        <button v-if="tab === 'rejected'" @click="bulkAction('approved')" class="px-4 py-2 rounded-xl bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve All</button>
+        <button v-if="tab === 'rejected'" @click="bulkDelete" class="px-4 py-2 rounded-xl bg-red-700 text-white text-xs font-black hover:bg-red-800 transition-all">🗑 Delete All</button>
+        <button @click="selected = []" class="px-4 py-2 rounded-xl border border-white/30 text-white text-xs font-bold hover:bg-white/10 transition-all">Cancel</button>
+      </div>
+    </div>
+
     <div v-if="loading" class="text-center py-20 text-gray-400">Loading...</div>
 
     <!-- ── PENDING TAB ── -->
@@ -89,6 +104,7 @@
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <th class="px-4 py-3"><input type="checkbox" :checked="allSelected(pending)" @change="toggleAll(pending)" class="w-4 h-4 rounded accent-gold cursor-pointer" /></th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
@@ -101,6 +117,7 @@
             </thead>
             <tbody>
               <tr v-for="row in pending" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3"><input type="checkbox" :value="row.id" v-model="selected" class="w-4 h-4 rounded accent-gold cursor-pointer" /></td>
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
                 <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
@@ -139,6 +156,7 @@
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <th class="px-4 py-3"><input type="checkbox" :checked="allSelected(approved)" @change="toggleAll(approved)" class="w-4 h-4 rounded accent-gold cursor-pointer" /></th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
@@ -151,6 +169,7 @@
             </thead>
             <tbody>
               <tr v-for="row in approved" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3"><input type="checkbox" :value="row.id" v-model="selected" class="w-4 h-4 rounded accent-gold cursor-pointer" /></td>
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
                 <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
@@ -186,6 +205,7 @@
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <th class="px-4 py-3"><input type="checkbox" :checked="allSelected(rejected)" @change="toggleAll(rejected)" class="w-4 h-4 rounded accent-gold cursor-pointer" /></th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
@@ -198,6 +218,7 @@
             </thead>
             <tbody>
               <tr v-for="row in rejected" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                <td class="px-4 py-3"><input type="checkbox" :value="row.id" v-model="selected" class="w-4 h-4 rounded accent-gold cursor-pointer" /></td>
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
                 <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
@@ -274,6 +295,8 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 const supabase = useSupabase()
 const loading = ref(true)
 const tab = ref<'pending' | 'approved' | 'rejected' | 'leaderboard'>('pending')
+const selected = ref<string[]>([])
+watch(tab, () => { selected.value = [] })
 const voteData = ref<any[]>([])
 const allContestants = ref<any[]>([])
 const harvestActive = useState('harvestActive', () => true)
@@ -337,7 +360,30 @@ function confirm(opts: { title: string, message: string, confirmLabel: string, d
   Object.assign(modal, { ...opts, show: true })
 }
 
-async function approveRow(row: any) {
+function allSelected(rows: any[]) {
+  return rows.length > 0 && rows.every(r => selected.value.includes(r.id))
+}
+function toggleAll(rows: any[]) {
+  if (allSelected(rows)) {
+    selected.value = selected.value.filter(id => !rows.find(r => r.id === id))
+  } else {
+    const newIds = rows.map(r => r.id).filter(id => !selected.value.includes(id))
+    selected.value = [...selected.value, ...newIds]
+  }
+}
+async function bulkAction(status: string) {
+  if (!selected.value.length) return
+  await supabase.from('votes').update({ status }).in('id', selected.value)
+  selected.value = []
+  load()
+}
+async function bulkDelete() {
+  if (!selected.value.length) return
+  await supabase.from('votes').delete().in('id', selected.value)
+  selected.value = []
+  load()
+}
+
   await supabase.from('votes').update({ status: 'approved' }).eq('id', row.id)
   load()
 }
