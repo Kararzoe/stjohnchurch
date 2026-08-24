@@ -2,6 +2,10 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const { name, phone, amount, reference, callbackUrl } = await readBody(event)
 
+  if (!config.tagpaySecretKey) {
+    throw createError({ statusCode: 500, message: 'TAGPAY_SECRET_KEY is not set on server' })
+  }
+
   try {
     const res = await $fetch<any>('https://gwt.tagpay.ng/v1/transaction/initialize', {
       method: 'POST',
