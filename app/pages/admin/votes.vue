@@ -384,6 +384,7 @@ async function bulkDelete() {
   load()
 }
 
+async function approveRow(row: any) {
   await supabase.from('votes').update({ status: 'approved' }).eq('id', row.id)
   load()
 }
