@@ -21,18 +21,7 @@ export default defineEventHandler(async (event) => {
     const txId = init?.data?.id
     if (!txId) return { error: 'No transaction ID returned', init }
 
-    // Poll up to 5× for virtual account details
-    let bankName: string | null = null
-    let accountNumber: string | null = null
-    for (let i = 0; i < 5; i++) {
-      await new Promise(r => setTimeout(r, 1200))
-      const tx = await $fetch<any>(`https://gwt.tagpay.ng/v1/transaction/${txId}`, { headers })
-      bankName = tx?.data?.bankName ?? null
-      accountNumber = tx?.data?.accountNumber ?? null
-      if (bankName && accountNumber) break
-    }
-
-    return { success: true, bankName, accountNumber, reference }
+    return { success: true, init }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }

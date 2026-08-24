@@ -469,16 +469,7 @@ async function initPayment() {
       submitting.value = false
       return
     }
-    if (res?.bankName && res?.accountNumber) {
-      tagpayAccount.bankName = res.bankName
-      tagpayAccount.accountNumber = res.accountNumber
-      tagpayAccount.reference = res.reference
-      tagpayAccount.amount = voteQty.value * 200
-      submitting.value = false
-      goTo('tagpay-transfer')
-      return
-    }
-    payError.value = 'Could not get virtual account. Please use bank transfer below.'
+    payError.value = 'DEBUG: ' + JSON.stringify(res?.init)
     submitting.value = false
     return
   } catch (e: any) {
