@@ -473,7 +473,7 @@ async function initPayment() {
       window.location.href = res.checkoutUrl
       return
     }
-    payError.value = 'No checkout URL returned: ' + JSON.stringify(res)
+    payError.value = 'No checkout URL (v2): ' + JSON.stringify(res)
     submitting.value = false
     return
   } catch (e: any) {
