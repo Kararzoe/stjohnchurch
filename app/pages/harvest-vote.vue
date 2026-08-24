@@ -361,13 +361,13 @@ onMounted(async () => {
 
   // Handle TagPay callback
   const urlParams = new URLSearchParams(window.location.search)
-  const ref = urlParams.get('ref')
-  if (ref) {
+  const txRef = urlParams.get('ref')
+  if (txRef) {
     window.history.replaceState({}, '', window.location.pathname)
     let approved = false
     for (let i = 0; i < 10; i++) {
       await new Promise(r => setTimeout(r, 1000))
-      const { data } = await supabase.from('votes').select('status').eq('reference', ref).limit(1).single()
+      const { data } = await supabase.from('votes').select('status').eq('reference', txRef).limit(1).single()
       if (data?.status === 'approved') { approved = true; break }
     }
     paidWithTagPay.value = approved
