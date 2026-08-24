@@ -165,10 +165,10 @@
             style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
             {{ submitting ? 'Loading payment...' : '💳 Pay ₦' + (voteQty * 200).toLocaleString() + ' with TagPay' }}
           </button>
-          <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
+          <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
           <div class="border-t border-gray-100 pt-4">
             <p class="text-xs text-gray-400 text-center mb-3">Or pay via bank transfer instead</p>
-            <button @click="step = 'payment'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">🏦 Pay via Bank Transfer</button>
+            <button @click="goTo('payment')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">🏦 Pay via Bank Transfer</button>
           </div>
         </div>
       </div>
@@ -202,9 +202,9 @@
           </div>
         </div>
 
-        <button @click="step = 'vote'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Change Selection</button>
+        <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Change Selection</button>
 
-        <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })"
+        <button @click="goTo('details')"
           class="w-full py-5 rounded-2xl text-white font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
           style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           Continue to Payment →
@@ -259,7 +259,7 @@
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
           {{ submitting ? 'Submitting...' : '✅ I\'ve Paid — Submit My Vote' }}
         </button>
-        <button @click="step = 'details'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to TagPay</button>
+        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to TagPay</button>
       </div>
     </div>
 
@@ -381,12 +381,16 @@ const totalVoted = computed(() => Object.keys(votes).length)
 
 function selectContestant(categoryId: string, contestant: any) {
   votes[categoryId] = contestant.id
-  step.value = 'details'
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  goTo('details')
 }
 
 function getVotedContestant(cat: any) {
   return cat.contestants.find((c: any) => c.id === votes[cat.id])
+}
+
+function goTo(s: typeof step.value) {
+  step.value = s
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function goToPayment() {
@@ -395,8 +399,7 @@ function goToPayment() {
     return
   }
   submitError.value = ''
-  step.value = 'details'
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  goTo('details')
 }
 
 async function initPayment() {
@@ -434,8 +437,7 @@ async function initPayment() {
     if (link) {
       window.location.href = link
     } else {
-      step.value = 'payment'
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      goTo('payment')
     }
   } catch (e: any) {
     const msg = e?.data?.message ?? e?.message ?? 'TagPay error'
