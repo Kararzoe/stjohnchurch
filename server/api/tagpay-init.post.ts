@@ -3,7 +3,17 @@ export default defineEventHandler(async (event) => {
   const { name, phone, amount, reference, callbackUrl } = await readBody(event)
 
   if (!config.tagpaySecretKey) {
-    throw createError({ statusCode: 500, message: 'TAGPAY_SECRET_KEY is not set on server' })
+    return { error: 'TAGPAY_SECRET_KEY is not set' }
+  }
+
+  const body = {
+    amount,
+    email: `${phone}@vote.stjohn.ng`,
+    name,
+    phone,
+    ref: reference,
+    callback_url: callbackUrl,
+    currency: 'NGN',
   }
 
   try {
@@ -13,20 +23,11 @@ export default defineEventHandler(async (event) => {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
-      body: {
-        amount,
-        email: `${phone}@vote.stjohn.ng`,
-        name,
-        phone,
-        reference,
-        paymentMethod: 'card',
-        callback_url: callbackUrl,
-        currency: 'NGN',
-      },
+      body,
     })
-    return res
+    return { success: true, res }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
-    throw createError({ statusCode: 500, message: typeof detail === 'string' ? detail : JSON.stringify(detail) })
+    return { error: typeof detail === 'string' ? detail : JSON.stringify(detail), sentBody: body }
   }
 })

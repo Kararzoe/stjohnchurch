@@ -433,11 +433,18 @@ async function initPayment() {
         callbackUrl: `${window.location.origin}/harvest-vote?ref=${reference}`,
       },
     })
-    const link = res?.data?.authorization_url || res?.data?.payment_url || res?.data?.checkout_url || res?.authorization_url || res?.payment_url
+    if (res?.error) {
+      payError.value = res.error + (res.sentBody ? ' | sent: ' + JSON.stringify(res.sentBody) : '')
+      submitting.value = false
+      return
+    }
+    const link = res?.res?.data?.authorization_url || res?.res?.data?.payment_url || res?.res?.data?.checkout_url || res?.res?.authorization_url || res?.res?.payment_url
     if (link) {
       window.location.href = link
     } else {
-      goTo('payment')
+      payError.value = 'No payment link returned: ' + JSON.stringify(res)
+      submitting.value = false
+      return
     }
   } catch (e: any) {
     const msg = e?.data?.message ?? e?.message ?? 'TagPay error'
