@@ -268,25 +268,27 @@
       <div class="max-w-lg mx-auto space-y-5">
         <div class="text-center mb-2">
           <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
-          <h2 class="font-playfair text-3xl font-black text-navy">Transfer to Virtual Account</h2>
+          <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
-        <div class="rounded-2xl border-2 border-gold/30 p-5" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-3">{{ tagpayAccount.bankName }}</p>
-          <div class="bg-white/10 rounded-xl p-4 mb-3">
-            <p class="text-white font-playfair font-black text-2xl tracking-widest">{{ tagpayAccount.accountNumber }}</p>
-          </div>
-          <p class="text-gray-300 text-xs leading-relaxed">Transfer exactly <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to this account. This account is unique to your transaction and expires shortly.</p>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4 text-center">
+          <p class="text-gray-600 text-sm">Your vote has been saved. Click below to complete payment of <strong class="text-navy">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay.</p>
+          <a :href="tagpayAccount.checkoutUrl" target="_blank"
+            class="block w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            💳 Open TagPay Checkout
+          </a>
+          <p class="text-xs text-gray-400 break-all">{{ tagpayAccount.checkoutUrl }}</p>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">⚠️ Do not close this page until your transfer is confirmed. Once payment is received your vote will be automatically approved.</p>
+          <p class="text-amber-800 text-xs leading-relaxed">After paying, come back here and click confirm below.</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Checking payment...' : "✅ I've Transferred — Confirm" }}
+          {{ submitting ? 'Checking payment...' : "✅ I've Paid — Confirm" }}
         </button>
         <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
         <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
@@ -331,7 +333,7 @@ useScrollReveal()
 
 const supabase = useSupabase()
 const step = ref<'vote' | 'confirm' | 'details' | 'payment' | 'tagpay-transfer' | 'done'>('vote')
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0 })
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '' })
 const paidWithTagPay = ref(false)
 const activeTab = ref(0)
 const submitError = ref('')
@@ -470,7 +472,11 @@ async function initPayment() {
       return
     }
     if (res?.checkoutUrl) {
-      window.location.href = res.checkoutUrl
+      tagpayAccount.reference = reference
+      tagpayAccount.amount = voteQty.value * 200
+      tagpayAccount.checkoutUrl = res.checkoutUrl
+      submitting.value = false
+      goTo('tagpay-transfer')
       return
     }
     payError.value = 'No checkout URL (v2): ' + JSON.stringify(res)
