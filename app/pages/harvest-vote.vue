@@ -160,16 +160,11 @@
             <p class="text-center text-sm text-gold font-black mt-3">Total: ₦{{ (voteQty * 200).toLocaleString() }}</p>
           </div>
           <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
-          <button @click="initPayment" :disabled="submitting"
-            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
+          <button @click="goTo('payment')"
+            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
             style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            {{ submitting ? 'Loading payment...' : '💳 Pay ₦' + (voteQty * 200).toLocaleString() + ' with TagPay' }}
+            🏦 Pay ₦{{ (voteQty * 200).toLocaleString() }} via Bank Transfer
           </button>
-          <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
-          <div class="border-t border-gray-100 pt-4">
-            <p class="text-xs text-gray-400 text-center mb-3">Or pay via bank transfer instead</p>
-            <button @click="goTo('payment')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">🏦 Pay via Bank Transfer</button>
-          </div>
         </div>
       </div>
     </div>
@@ -259,7 +254,7 @@
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
           {{ submitting ? 'Submitting...' : '✅ I\'ve Paid — Submit My Vote' }}
         </button>
-        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to TagPay</button>
+        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
       </div>
     </div>
 
