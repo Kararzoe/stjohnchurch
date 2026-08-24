@@ -469,7 +469,11 @@ async function initPayment() {
       submitting.value = false
       return
     }
-    payError.value = 'DEBUG: ' + JSON.stringify(res?.init)
+    if (res?.checkoutUrl) {
+      window.location.href = res.checkoutUrl
+      return
+    }
+    payError.value = 'No checkout URL returned: ' + JSON.stringify(res)
     submitting.value = false
     return
   } catch (e: any) {

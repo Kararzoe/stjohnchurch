@@ -6,22 +6,23 @@ export default defineEventHandler(async (event) => {
     return { error: 'TAGPAY_SECRET_KEY is not set' }
   }
 
-  const headers = {
-    Authorization: `Bearer ${config.tagpaySecretKey}`,
-    'Content-Type': 'application/json',
-  }
-
   try {
     const init = await $fetch<any>('https://gwt.tagpay.ng/v1/transaction/initialize', {
       method: 'POST',
-      headers,
+      headers: {
+        Authorization: `Bearer ${config.tagpaySecretKey}`,
+        'Content-Type': 'application/json',
+      },
       body: { amount, email: `${phone}@vote.stjohn.ng`, name, phone, reference, paymentMethod: 'bank_transfer', callback_url: callbackUrl, currency: 'NGN' },
     })
 
+    const gatewayRef = init?.data?.gatewayReference
     const txId = init?.data?.id
-    if (!txId) return { error: 'No transaction ID returned', init }
+    if (!gatewayRef && !txId) return { error: 'No transaction reference returned', init }
 
-    return { success: true, init }
+    // TagPay hosted checkout — try gatewayReference first, fall back to id
+    const checkoutUrl = `https://checkout.tagpay.ng/pay/${gatewayRef ?? txId}`
+    return { success: true, checkoutUrl, reference }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }
