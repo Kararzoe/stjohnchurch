@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const res = await $fetch<any>('https://merchant.tagpay.ng/checkout/sessions', {
+    const res = await $fetch<any>('https://gwt.tagpay.ng/v1/transaction/initialize', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
@@ -17,16 +17,19 @@ export default defineEventHandler(async (event) => {
         amount,
         email: `${phone}@vote.stjohn.ng`,
         name,
+        phone,
         reference,
+        paymentMethod: 'bank_transfer',
         callback_url: callbackUrl,
         currency: 'NGN',
       },
     })
 
-    const paymentUrl = res?.paymentUrl ?? res?.data?.paymentUrl ?? res?.payment_url ?? res?.data?.payment_url
-    if (!paymentUrl) return { error: 'No paymentUrl in response', res }
+    const gatewayRef = res?.data?.gatewayReference
+    if (!gatewayRef) return { error: 'No gatewayReference returned', res }
 
-    return { success: true, checkoutUrl: paymentUrl, reference }
+    const checkoutUrl = `https://merchant.tagpay.ng/pay?sessionKey=${gatewayRef}`
+    return { success: true, checkoutUrl, reference }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }
