@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
     const txId = init?.data?.id
     if (!gatewayRef && !txId) return { error: 'No transaction reference returned', init }
 
-    // TagPay hosted checkout — try gatewayReference first, fall back to id
-    const checkoutUrl = `https://checkout.tagpay.ng/pay/${gatewayRef ?? txId}`
+    // Try UUID id first, fall back to gatewayReference
+    const checkoutUrl = `https://checkout.tagpay.ng/pay/${txId ?? gatewayRef}`
     return { success: true, checkoutUrl, reference }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
