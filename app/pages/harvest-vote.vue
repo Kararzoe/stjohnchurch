@@ -437,9 +437,11 @@ async function initPayment() {
       step.value = 'payment'
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  } catch {
-    step.value = 'payment'
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  } catch (e: any) {
+    const msg = e?.data?.message ?? e?.message ?? 'TagPay error'
+    payError.value = msg
+    submitting.value = false
+    return
   }
   submitting.value = false
 }
