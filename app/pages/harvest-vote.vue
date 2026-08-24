@@ -263,6 +263,36 @@
       </div>
     </div>
 
+    <!-- ── STEP: TAGPAY TRANSFER ── -->
+    <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
+      <div class="max-w-lg mx-auto space-y-5">
+        <div class="text-center mb-2">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
+          <h2 class="font-playfair text-3xl font-black text-navy">Transfer to Virtual Account</h2>
+          <div class="flex items-center justify-center gap-3 mt-3">
+            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+          </div>
+        </div>
+        <div class="rounded-2xl border-2 border-gold/30 p-5" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-3">{{ tagpayAccount.bankName }}</p>
+          <div class="bg-white/10 rounded-xl p-4 mb-3">
+            <p class="text-white font-playfair font-black text-2xl tracking-widest">{{ tagpayAccount.accountNumber }}</p>
+          </div>
+          <p class="text-gray-300 text-xs leading-relaxed">Transfer exactly <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to this account. This account is unique to your transaction and expires shortly.</p>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <p class="text-amber-800 text-xs leading-relaxed">⚠️ Do not close this page until your transfer is confirmed. Once payment is received your vote will be automatically approved.</p>
+        </div>
+        <button @click="pollTagPay" :disabled="submitting"
+          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
+          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+          {{ submitting ? 'Checking payment...' : "✅ I've Transferred — Confirm" }}
+        </button>
+        <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
+        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
+      </div>
+    </div>
+
     <!-- ── STEP: DONE ── -->
     <div v-if="harvestActive && step === 'done'" class="py-20 px-4 text-center">
       <div class="max-w-md mx-auto">
@@ -300,7 +330,8 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'confirm' | 'details' | 'payment' | 'done'>('vote')
+const step = ref<'vote' | 'confirm' | 'details' | 'payment' | 'tagpay-transfer' | 'done'>('vote')
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0 })
 const paidWithTagPay = ref(false)
 const activeTab = ref(0)
 const submitError = ref('')
@@ -434,18 +465,22 @@ async function initPayment() {
       },
     })
     if (res?.error) {
-      payError.value = res.error + (res.sentBody ? ' | sent: ' + JSON.stringify(res.sentBody) : '')
+      payError.value = res.error
       submitting.value = false
       return
     }
-    const link = res?.res?.data?.authorization_url || res?.res?.data?.payment_url || res?.res?.data?.checkout_url || res?.res?.authorization_url || res?.res?.payment_url
-    if (link) {
-      window.location.href = link
-    } else {
-      payError.value = 'No payment link returned: ' + JSON.stringify(res)
+    if (res?.bankName && res?.accountNumber) {
+      tagpayAccount.bankName = res.bankName
+      tagpayAccount.accountNumber = res.accountNumber
+      tagpayAccount.reference = res.reference
+      tagpayAccount.amount = voteQty.value * 200
       submitting.value = false
+      goTo('tagpay-transfer')
       return
     }
+    payError.value = 'Could not get virtual account. Please use bank transfer below.'
+    submitting.value = false
+    return
   } catch (e: any) {
     const msg = e?.data?.message ?? e?.message ?? 'TagPay error'
     payError.value = msg
@@ -453,6 +488,24 @@ async function initPayment() {
     return
   }
   submitting.value = false
+}
+
+async function pollTagPay() {
+  submitting.value = true
+  payError.value = ''
+  let approved = false
+  for (let i = 0; i < 12; i++) {
+    await new Promise(r => setTimeout(r, 2500))
+    const { data } = await supabase.from('votes').select('status').eq('reference', tagpayAccount.reference).limit(1).single()
+    if (data?.status === 'approved') { approved = true; break }
+  }
+  submitting.value = false
+  if (approved) {
+    paidWithTagPay.value = true
+    goTo('done')
+  } else {
+    payError.value = 'Payment not confirmed yet. Please wait a moment and try again, or contact the admin.'
+  }
 }
 
 async function submitVotes() {
