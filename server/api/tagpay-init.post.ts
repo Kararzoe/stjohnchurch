@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const res = await $fetch<any>('https://gwt.tagpay.ng/v1/checkout/sessions', {
+    const res = await $fetch<any>('https://merchant.tagpay.ng/checkout/sessions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
