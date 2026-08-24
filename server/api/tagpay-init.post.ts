@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
     email: `${phone}@vote.stjohn.ng`,
     name,
     phone,
-    ref: reference,
+    reference,
+    paymentMethod: 'card',
     callback_url: callbackUrl,
     currency: 'NGN',
   }
