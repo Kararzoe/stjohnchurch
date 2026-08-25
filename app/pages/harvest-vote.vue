@@ -64,45 +64,98 @@
         <!-- Category tabs -->
         <div class="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide">
           <button v-for="(cat, i) in categories" :key="cat.id" @click="activeTab = i"
-            :class="['px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 shrink-0 border-2',
+            :class="['px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 shrink-0 border-2 flex items-center gap-2',
               activeTab === i ? 'text-white border-transparent shadow-lg' : votes[cat.id] ? 'bg-gold/10 text-gold border-gold/40' : 'bg-white text-gray-500 border-gray-200 hover:border-navy hover:text-navy']"
             :style="activeTab === i ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''"
           >
-            {{ cat.label }}
+            <span>{{ cat.label }}</span>
+            <span :class="['text-xs font-black px-2 py-0.5 rounded-full', activeTab === i ? 'bg-white/20 text-gold-light' : 'bg-gray-100 text-gray-500']">
+              {{ (categoryTotals[cat.id] ?? 0).toLocaleString() }} votes
+            </span>
           </button>
         </div>
 
         <!-- Active category -->
         <transition name="tab-slide" mode="out-in">
           <div :key="activeTab">
-            <div class="relative mb-6 rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #1a2744 0%, #2d4a8a 100%)">
+            <div class="relative mb-6 rounded-2xl overflow-hidden shadow-sm" style="background: linear-gradient(135deg, #1a2744 0%, #2d4a8a 100%)">
               <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 24px 24px;" />
-              <div class="relative flex items-center justify-between px-6 py-4">
+              <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5">
                 <div>
                   <p class="text-gold text-xs uppercase tracking-[0.3em] font-bold">Category {{ activeTab + 1 }} of {{ categories.length }}</p>
-                  <h2 class="font-playfair font-black text-white text-xl leading-tight">{{ categories[activeTab]?.label }}</h2>
-                  <p class="text-gray-400 text-xs mt-0.5">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap a card to vote</p>
+                  <h2 class="font-playfair font-black text-white text-2xl leading-tight mt-0.5">{{ categories[activeTab]?.label }}</h2>
+                  <p class="text-gray-300 text-xs mt-1">{{ categories[activeTab]?.contestants.length }} contestants &mdash; tap any card to vote</p>
+                </div>
+                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-gold/30 rounded-2xl px-4 py-2.5 self-start sm:self-auto shadow-inner">
+                  <div class="w-9 h-9 rounded-xl bg-gold/20 flex items-center justify-center text-lg">🗳️</div>
+                  <div>
+                    <p class="text-[10px] text-gold-light uppercase tracking-widest font-bold">Category Total</p>
+                    <p class="text-base font-black text-white leading-tight">
+                      {{ (categoryTotals[categories[activeTab]?.id] ?? 0).toLocaleString() }}
+                      <span class="text-gold-light text-xs font-semibold">votes</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Contestant cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
               <div v-for="contestant in categories[activeTab]?.contestants ?? []" :key="contestant.id"
                 @click="selectContestant(categories[activeTab].id, contestant)"
-                :class="['relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex flex-col cursor-pointer shadow-sm border border-gray-100 hover:shadow-md hover:border-gold/30']"
+                :class="['relative rounded-2xl overflow-hidden text-left group transition-all duration-300 bg-white flex flex-col cursor-pointer shadow-sm border border-gray-100 hover:shadow-xl hover:border-gold/40 hover:-translate-y-1']"
               >
-                <div class="relative w-full aspect-[3/4] overflow-hidden">
+                <!-- Image Container -->
+                <div class="relative w-full aspect-[4/5] overflow-hidden bg-navy/5">
                   <img v-if="contestant.photo" :src="contestant.photo" :alt="contestant.name" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-                  <div v-else class="w-full h-full" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)" />
-                  <div class="absolute top-2 left-2 w-7 h-7 rounded-full text-white text-xs font-black flex items-center justify-center" style="background: rgba(26,39,68,0.85)">{{ contestant.number }}</div>
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div class="absolute bottom-0 left-0 right-0 p-3">
-                    <p class="font-playfair font-black text-white text-sm leading-tight">{{ contestant.name }}</p>
+                  <div v-else class="w-full h-full flex flex-col items-center justify-center" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                    <span class="text-4xl text-gold/60">✝</span>
+                  </div>
+
+                  <!-- Number badge -->
+                  <div class="absolute top-3 left-3 w-8 h-8 rounded-full text-white text-xs font-black flex items-center justify-center shadow-lg border border-white/20" style="background: rgba(26,39,68,0.9)">
+                    #{{ contestant.number }}
+                  </div>
+
+                  <!-- Vote count badge (top right) -->
+                  <div class="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-lg border border-gold/40" style="background: rgba(26,39,68,0.92); color: #f5e27a;">
+                    <span>🗳️</span>
+                    <span>{{ (contestantVotes[contestant.id] ?? 0).toLocaleString() }}</span>
+                    <span class="text-[10px] uppercase font-bold text-gray-300">votes</span>
+                  </div>
+
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                  <!-- Bottom text on photo -->
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <p class="font-playfair font-black text-white text-lg leading-snug drop-shadow-md">{{ contestant.name }}</p>
+                    <p v-if="contestant.tagline" class="text-gray-300 text-xs mt-0.5 line-clamp-1 drop-shadow">{{ contestant.tagline }}</p>
                   </div>
                 </div>
-                <div class="py-3 px-3 text-center text-sm font-black uppercase tracking-widest" style="background: linear-gradient(135deg, #1a2744, #2d4a8a); color: white">
-                  Vote
+
+                <!-- Card footer with vote stats & CTA button -->
+                <div class="p-3.5 bg-white flex flex-col gap-2.5">
+                  <!-- Vote progress bar -->
+                  <div>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                      <span class="font-bold text-navy text-xs">
+                        {{ (contestantVotes[contestant.id] ?? 0).toLocaleString() }} <span class="text-gray-400 font-normal">votes</span>
+                      </span>
+                      <span class="text-gold font-black text-xs">
+                        {{ getVotePercent(contestant.id, categories[activeTab]?.id) }}%
+                      </span>
+                    </div>
+                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="h-full rounded-full transition-all duration-700"
+                        :style="`width: ${getVotePercent(contestant.id, categories[activeTab]?.id)}%; background: linear-gradient(90deg, #b8860b, #d4af37)`" />
+                    </div>
+                  </div>
+
+                  <div class="py-2.5 px-4 text-center text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-sm group-hover:shadow-md text-white flex items-center justify-center gap-1.5"
+                    style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                    <span>Vote for {{ contestant.name.split(' ')[0] }}</span>
+                    <span>→</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -343,6 +396,18 @@ const contestSubtitle = ref('Cast your vote for your favourite contestants · St
 const categories = ref<any[]>([])
 const harvestActive = ref(true)
 
+const contestantVotes = ref<Record<string, number>>({})
+const categoryTotals = ref<Record<string, number>>({})
+const grandTotalVotes = ref(0)
+
+function getVotePercent(contestantId: string, categoryId?: string) {
+  if (!categoryId) return 0
+  const catTotal = categoryTotals.value[categoryId] ?? 0
+  if (!catTotal) return 0
+  const cVotes = contestantVotes.value[contestantId] ?? 0
+  return Math.round((cVotes / catTotal) * 100)
+}
+
 function calcCountdown() {
   const end = new Date('2026-11-01T00:00:00+01:00').getTime()
   const diff = end - Date.now()
@@ -365,11 +430,12 @@ onMounted(async () => {
   countdown.value = calcCountdown()
   timer = setInterval(() => { countdown.value = calcCountdown() }, 1000)
 
-  const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }] = await Promise.all([
+  const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }, { data: votesData }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
     supabase.from('contest_categories').select('*').order('sort_order'),
     supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
     supabase.from('site_content').select('value').eq('key', 'harvest_active').single(),
+    supabase.from('votes').select('contestant_id, category, qty, status'),
   ])
   harvestActive.value = hd ? hd.value === 'true' : true
   if (titleData) {
@@ -378,6 +444,28 @@ onMounted(async () => {
       if (r.key === 'contest_subtitle') contestSubtitle.value = r.value
     })
   }
+
+  // Calculate approved vote counts
+  const cVotes: Record<string, number> = {}
+  const catVotes: Record<string, number> = {}
+  let totalApproved = 0
+
+  votesData?.forEach((v: any) => {
+    if (v.status === 'approved') {
+      const q = v.qty || 1
+      if (v.contestant_id) {
+        cVotes[v.contestant_id] = (cVotes[v.contestant_id] ?? 0) + q
+      }
+      if (v.category) {
+        catVotes[v.category] = (catVotes[v.category] ?? 0) + q
+      }
+      totalApproved += q
+    }
+  })
+  contestantVotes.value = cVotes
+  categoryTotals.value = catVotes
+  grandTotalVotes.value = totalApproved
+
   const grouped: Record<string, any[]> = {}
   for (const c of contestants ?? []) {
     if (!grouped[c.category]) grouped[c.category] = []

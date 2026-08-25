@@ -55,12 +55,12 @@
         v-for="cat in categories" :key="cat.id"
         @click="activeTab = cat.id"
         :class="[
-          'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 shrink-0',
+          'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 shrink-0 flex items-center gap-2',
           activeTab === cat.id ? 'bg-navy text-white border-navy' : 'bg-white text-gray-500 border-gray-200 hover:border-navy hover:text-navy'
         ]"
       >
-        {{ cat.icon }} {{ cat.label }}
-        <span class="ml-1 text-xs font-black">({{ contestantsByCategory(cat.id).length }})</span>
+        <span>{{ cat.icon }} {{ cat.label }}</span>
+        <span class="text-xs font-black opacity-80">({{ contestantsByCategory(cat.id).length }} · {{ (categoryTotals[cat.id] ?? 0).toLocaleString() }} votes)</span>
       </button>
     </div>
 
@@ -197,6 +197,7 @@ const loading = ref(true)
 const contestants = ref<any[]>([])
 const categories = ref<any[]>([])
 const voteCounts = ref<Record<string, number>>({})
+const categoryTotals = ref<Record<string, number>>({})
 const activeTab = ref('')
 
 // Title
@@ -226,16 +227,28 @@ async function load() {
   loading.value = true
   const [{ data: cs }, { data: vs }, { data: cats }, { data: titleData }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
-    supabase.from('votes').select('contestant_id'),
+    supabase.from('votes').select('contestant_id, category, qty, status'),
     supabase.from('contest_categories').select('*').order('sort_order'),
     supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
   ])
   contestants.value = cs ?? []
   categories.value = cats ?? []
-  if (categories.value.length > 0) activeTab.value = categories.value[0].id
+  if (categories.value.length > 0 && !activeTab.value) activeTab.value = categories.value[0].id
+
   const counts: Record<string, number> = {}
-  vs?.forEach((v: any) => { counts[v.contestant_id] = (counts[v.contestant_id] ?? 0) + 1 })
+  const catCounts: Record<string, number> = {}
+
+  vs?.forEach((v: any) => {
+    if (v.status === 'approved') {
+      const q = v.qty || 1
+      if (v.contestant_id) counts[v.contestant_id] = (counts[v.contestant_id] ?? 0) + q
+      if (v.category) catCounts[v.category] = (catCounts[v.category] ?? 0) + q
+    }
+  })
+
   voteCounts.value = counts
+  categoryTotals.value = catCounts
+
   if (titleData) {
     titleData.forEach((r: any) => {
       if (r.key === 'contest_title') contestTitle.value = r.value
