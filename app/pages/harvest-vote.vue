@@ -112,9 +112,9 @@
                     <span class="text-4xl text-gold/60">✝</span>
                   </div>
 
-                  <!-- Number badge -->
+                  <!-- Number badge (no #) -->
                   <div class="absolute top-3 left-3 w-8 h-8 rounded-full text-white text-xs font-black flex items-center justify-center shadow-lg border border-white/20" style="background: rgba(26,39,68,0.9)">
-                    #{{ contestant.number }}
+                    {{ contestant.number }}
                   </div>
 
                   <!-- Vote count badge (top right) -->
@@ -133,22 +133,14 @@
                   </div>
                 </div>
 
-                <!-- Card footer with vote stats & CTA button -->
+                <!-- Card footer with vote count & CTA button -->
                 <div class="p-3.5 bg-white flex flex-col gap-2.5">
-                  <!-- Vote progress bar -->
-                  <div>
-                    <div class="flex items-center justify-between text-xs mb-1">
-                      <span class="font-bold text-navy text-xs">
-                        {{ (contestantVotes[contestant.id] ?? 0).toLocaleString() }} <span class="text-gray-400 font-normal">votes</span>
-                      </span>
-                      <span class="text-gold font-black text-xs">
-                        {{ getVotePercent(contestant.id, categories[activeTab]?.id) }}%
-                      </span>
-                    </div>
-                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-full rounded-full transition-all duration-700"
-                        :style="`width: ${getVotePercent(contestant.id, categories[activeTab]?.id)}%; background: linear-gradient(90deg, #b8860b, #d4af37)`" />
-                    </div>
+                  <div class="flex items-center justify-between px-1">
+                    <span class="text-xs text-gray-500 font-semibold">Total Votes</span>
+                    <span class="font-black text-navy text-sm">
+                      {{ (contestantVotes[contestant.id] ?? 0).toLocaleString() }}
+                      <span class="text-gold text-xs font-bold">votes</span>
+                    </span>
                   </div>
 
                   <div class="py-2.5 px-4 text-center text-xs font-black uppercase tracking-wider rounded-xl transition-all shadow-sm group-hover:shadow-md text-white flex items-center justify-center gap-1.5"
@@ -245,7 +237,7 @@
             </div>
             <div>
               <p class="font-playfair font-black text-navy text-lg">{{ getVotedContestant(cat)?.name }}</p>
-              <p class="text-xs text-gray-400 mt-0.5">Contestant #{{ getVotedContestant(cat)?.number }}</p>
+              <p class="text-xs text-gray-400 mt-0.5">Contestant {{ getVotedContestant(cat)?.number }}</p>
             </div>
           </div>
         </div>
@@ -399,14 +391,6 @@ const harvestActive = ref(true)
 const contestantVotes = ref<Record<string, number>>({})
 const categoryTotals = ref<Record<string, number>>({})
 const grandTotalVotes = ref(0)
-
-function getVotePercent(contestantId: string, categoryId?: string) {
-  if (!categoryId) return 0
-  const catTotal = categoryTotals.value[categoryId] ?? 0
-  if (!catTotal) return 0
-  const cVotes = contestantVotes.value[contestantId] ?? 0
-  return Math.round((cVotes / catTotal) * 100)
-}
 
 function calcCountdown() {
   const end = new Date('2026-11-01T00:00:00+01:00').getTime()
