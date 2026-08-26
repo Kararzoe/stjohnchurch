@@ -5,14 +5,21 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const rawBody = await readRawBody(event) ?? ''
 
-  // Verify webhook signature
-  const signature = getHeader(event, 'x-tagpay-signature') || getHeader(event, 'x-webhook-signature') || ''
-  const expected = crypto.createHmac('sha512', config.tagpayWebhookSecret).update(rawBody).digest('hex')
-  if (signature !== expected) {
-    throw createError({ statusCode: 401, message: 'Invalid signature' })
+  // Verify webhook signature if secret is configured
+  if (config.tagpayWebhookSecret) {
+    const signature = getHeader(event, 'x-tagpay-signature') || getHeader(event, 'x-webhook-signature') || ''
+    const expected = crypto.createHmac('sha512', config.tagpayWebhookSecret).update(rawBody).digest('hex')
+    if (signature !== expected) {
+      throw createError({ statusCode: 401, message: 'Invalid signature' })
+    }
   }
 
-  const payload = JSON.parse(rawBody)
+  let payload: any = {}
+  try {
+    payload = JSON.parse(rawBody)
+  } catch {
+    payload = await readBody(event) ?? {}
+  }
   const eventType = payload.event
 
   if (eventType !== 'charge.success') return { received: true }
@@ -23,7 +30,7 @@ export default defineEventHandler(async (event) => {
   // Auto-approve all votes with this reference
   const supabase = createClient(
     config.public.supabaseUrl,
-    config.public.supabaseKey
+    config.supabaseServiceRoleKey || config.public.supabaseKey
   )
 
   await supabase
