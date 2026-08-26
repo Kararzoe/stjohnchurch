@@ -4,13 +4,13 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt'],
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
-    tagpaySecretKey: '',
-    tagpayWebhookSecret: '',
-    supabaseServiceRoleKey: '',
+    tagpaySecretKey: process.env.TAGPAY_SECRET_KEY || process.env.NUXT_TAGPAY_SECRET_KEY || '',
+    tagpayWebhookSecret: process.env.TAGPAY_WEBHOOK_SECRET || process.env.NUXT_TAGPAY_WEBHOOK_SECRET || '',
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NUXT_SUPABASE_SERVICE_ROLE_KEY || '',
     public: {
-      supabaseUrl: '',
-      supabaseKey: '',
-      tagpayPublicKey: '',
+      supabaseUrl: process.env.SUPABASE_URL || process.env.NUXT_PUBLIC_SUPABASE_URL || 'https://bworzpdoqinverdtbooq.supabase.co',
+      supabaseKey: process.env.SUPABASE_KEY || process.env.NUXT_PUBLIC_SUPABASE_KEY || 'sb_publishable_iydqBWj7YvaHtM-CI4zDJg_7NY0Ieln',
+      tagpayPublicKey: process.env.TAGPAY_PUBLIC_KEY || process.env.NUXT_PUBLIC_TAGPAY_PUBLIC_KEY || '',
     }
   },
   app: {
