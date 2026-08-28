@@ -328,30 +328,30 @@
     <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
         <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Virtual Account</p>
           <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10 text-center">
-            <p class="text-gray-300 text-sm mb-1">Amount to pay</p>
-            <p class="text-white font-playfair font-black text-3xl">₦{{ tagpayAccount.amount.toLocaleString() }}</p>
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-gold text-xs uppercase tracking-widest font-bold">Diamond Bank</p>
+            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Virtual Account</span>
           </div>
-          <a :href="tagpayAccount.checkoutUrl" target="_blank"
-            class="block w-full py-4 rounded-xl font-black text-navy text-center text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            💳 Open TagPay to Pay
-          </a>
-          <div class="space-y-1.5 text-xs text-gray-300 mt-4">
-            <p>1. Click the button above to open TagPay.</p>
-            <p>2. TagPay will show you a virtual account to transfer to.</p>
-            <p>3. After paying, come back here and click confirm.</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+            <p class="text-gray-300 text-xs mb-1">Account Number</p>
+            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">1128613331</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">St John of the Cross</p>
+          </div>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
+            <p>2. Use <strong class="text-white">{{ payForm.name }}</strong> as your transfer narration.</p>
+            <p>3. Click confirm below after transferring.</p>
           </div>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the virtual account above, then click confirm. Your vote will be approved automatically.</p>
+          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the account above, then click confirm. Your vote will be approved automatically once payment is received.</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
@@ -539,12 +539,11 @@ async function initPayment() {
   }))
 
   const { error: dbErr } = await supabase.from('votes').insert(rows)
-  if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
+  submitting.value = false
+  if (dbErr) { payError.value = dbErr.message; return }
 
-  tagpayAccount.checkoutUrl = `https://merchant.tagpay.ng/link/PLK_2e3e9696f0364b2a?amount=${voteQty.value * 200}&ref=${txRef}`
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
-  submitting.value = false
   goTo('tagpay-transfer')
 }
 
