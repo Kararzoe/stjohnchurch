@@ -335,20 +335,19 @@
           </div>
         </div>
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ tagpayAccount.bankName }}</p>
-            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">One-time Account</span>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10 text-center">
+            <p class="text-gray-300 text-sm mb-1">Amount to pay</p>
+            <p class="text-white font-playfair font-black text-3xl">₦{{ tagpayAccount.amount.toLocaleString() }}</p>
           </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p v-if="tagpayAccount.accountNumber" class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-            <p v-else class="text-gold-light text-sm animate-pulse">Generating account...</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">Tap to copy</p>
-          </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
-            <p>2. This account is unique to your transaction — do not share it.</p>
-            <p>3. Click confirm below after transferring.</p>
+          <a :href="tagpayAccount.checkoutUrl" target="_blank"
+            class="block w-full py-4 rounded-xl font-black text-navy text-center text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            💳 Open TagPay to Pay
+          </a>
+          <div class="space-y-1.5 text-xs text-gray-300 mt-4">
+            <p>1. Click the button above to open TagPay.</p>
+            <p>2. TagPay will show you a virtual account to transfer to.</p>
+            <p>3. After paying, come back here and click confirm.</p>
           </div>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
@@ -542,16 +541,7 @@ async function initPayment() {
   const { error: dbErr } = await supabase.from('votes').insert(rows)
   if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
 
-  const res = await $fetch<any>('/api/tagpay-init', {
-    method: 'POST',
-    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: txRef, callbackUrl: window.location.href },
-  })
-
-  submitting.value = false
-
-  if (res.error) { payError.value = res.error; return }
-
-  tagpayAccount.checkoutUrl = res.checkoutUrl
+  tagpayAccount.checkoutUrl = `https://merchant.tagpay.ng/link/PLK_2e3e9696f0364b2a?amount=${voteQty.value * 200}&ref=${txRef}`
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
   submitting.value = false
