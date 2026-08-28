@@ -19,7 +19,12 @@ export default defineEventHandler(async (event) => {
     const txId = init?.data?.id
     if (!txId) return { error: 'No transaction ID returned', raw: init }
 
-    return { success: true, txId, reference, checkoutUrl: init?.data?.checkoutUrl ?? init?.data?.payment_url ?? null, raw: init?.data }
+    const d = init.data
+    const bankName = d?.bankName ?? d?.bank_name ?? d?.virtualAccount?.bankName ?? d?.virtual_account?.bank_name ?? null
+    const accountNumber = d?.accountNumber ?? d?.account_number ?? d?.virtualAccount?.accountNumber ?? d?.virtual_account?.account_number ?? null
+    const checkoutUrl = d?.checkoutUrl ?? d?.checkout_url ?? d?.payment_url ?? d?.paymentUrl ?? null
+
+    return { success: true, txId, reference, bankName, accountNumber, checkoutUrl, raw: d }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }

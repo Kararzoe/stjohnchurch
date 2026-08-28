@@ -336,12 +336,19 @@
         </div>
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           <p class="text-gold text-xs uppercase tracking-widest font-bold mb-4">Complete Payment</p>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10 text-center">
-            <p class="text-gray-300 text-sm mb-3">Transfer <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay</p>
-            <a v-if="tagpayAccount.checkoutUrl" :href="tagpayAccount.checkoutUrl" target="_blank"
-              class="inline-block px-6 py-3 rounded-xl font-black text-navy text-sm"
-              style="background: linear-gradient(90deg, #d4af37, #f5e27a)">💳 Open TagPay →</a>
-            <p v-else class="text-amber-300 text-xs">No checkout URL returned — see raw data below</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+            <div v-if="tagpayAccount.accountNumber">
+              <p class="text-gray-300 text-xs mb-1">{{ tagpayAccount.bankName || 'Bank' }}</p>
+              <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+              <p class="text-gold-light text-xs font-semibold mt-1">One-time virtual account</p>
+            </div>
+            <div v-else>
+              <p class="text-gray-300 text-sm mb-3">Transfer <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay</p>
+              <a v-if="tagpayAccount.checkoutUrl" :href="tagpayAccount.checkoutUrl" target="_blank"
+                class="inline-block px-6 py-3 rounded-xl font-black text-navy text-sm"
+                style="background: linear-gradient(90deg, #d4af37, #f5e27a)">💳 Open TagPay →</a>
+              <p v-else class="text-amber-300 text-xs">No checkout URL returned — see raw data below</p>
+            </div>
           </div>
           <p class="text-gray-400 text-xs break-all mt-2">ref: {{ tagpayAccount.reference }}</p>
           <pre class="text-green-300 text-xs mt-3 break-all whitespace-pre-wrap">{{ tagpayAccount.raw }}</pre>
@@ -547,9 +554,10 @@ async function initPayment() {
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
   tagpayAccount.checkoutUrl = res.checkoutUrl ?? ''
+  tagpayAccount.bankName = res.bankName ?? ''
+  tagpayAccount.accountNumber = res.accountNumber ?? ''
   tagpayAccount.raw = JSON.stringify(res.raw ?? res, null, 2)
 
-  // Open TagPay checkout in new tab so virtual account gets assigned
   if (res.checkoutUrl) window.open(res.checkoutUrl, '_blank')
 
   goTo('tagpay-transfer')
