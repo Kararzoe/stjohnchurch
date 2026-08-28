@@ -521,12 +521,12 @@ async function initPayment() {
   submitting.value = true
   payError.value = ''
 
-  const ref = `harvest-${Date.now()}`
+  const txRef = `harvest-${Date.now()}`
   const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
     bank: 'TagPay',
-    reference: ref,
+    reference: txRef,
     qty: voteQty.value,
     amount: voteQty.value * 200,
     status: 'pending',
@@ -540,7 +540,7 @@ async function initPayment() {
 
   const res = await $fetch<any>('/api/tagpay-init', {
     method: 'POST',
-    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: ref, callbackUrl: window.location.href },
+    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: txRef, callbackUrl: window.location.href },
   })
 
   submitting.value = false
@@ -549,7 +549,7 @@ async function initPayment() {
 
   tagpayAccount.bankName = res.bankName
   tagpayAccount.accountNumber = res.accountNumber
-  tagpayAccount.reference = res.reference
+  tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
   goTo('tagpay-transfer')
 }
