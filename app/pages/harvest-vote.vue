@@ -341,7 +341,8 @@
           </div>
           <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
             <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p v-if="tagpayAccount.accountNumber" class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p v-else class="text-gold-light text-sm animate-pulse">Generating account...</p>
             <p class="text-gold-light text-xs font-semibold mt-1">Tap to copy</p>
           </div>
           <div class="space-y-1.5 text-xs text-gray-300">
@@ -550,11 +551,22 @@ async function initPayment() {
 
   if (res.error) { payError.value = res.error; return }
 
-  tagpayAccount.bankName = res.bankName
-  tagpayAccount.accountNumber = res.accountNumber
+  tagpayAccount.txId = res.txId
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
+  submitting.value = false
   goTo('tagpay-transfer')
+
+  // Poll from browser for virtual account
+  for (let i = 0; i < 10; i++) {
+    await new Promise(r => setTimeout(r, 3000))
+    const poll = await $fetch<any>('/api/tagpay-poll', { method: 'POST', body: { txId: res.txId } })
+    if (poll.bankName && poll.accountNumber) {
+      tagpayAccount.bankName = poll.bankName
+      tagpayAccount.accountNumber = poll.accountNumber
+      break
+    }
+  }
 }
 
 async function pollTagPay() {
