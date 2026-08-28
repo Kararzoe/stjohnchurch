@@ -328,33 +328,35 @@
     <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
         <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Virtual Account</p>
           <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-4">Complete Payment</p>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10 text-center">
-            <p class="text-gray-300 text-sm mb-3">Pay <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay</p>
-            <a :href="tagpayAccount.checkoutUrl" target="_blank"
-              class="inline-block px-6 py-3 rounded-xl font-black text-navy text-sm"
-              style="background: linear-gradient(90deg, #d4af37, #f5e27a)">💳 Open TagPay Checkout →</a>
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ tagpayAccount.bankName }}</p>
+            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">One-time Account</span>
           </div>
-          <div class="space-y-1.5 text-xs text-gray-300 mt-3">
-            <p>1. Click <strong class="text-gold">Open TagPay Checkout</strong> above.</p>
-            <p>2. Pay via card, bank transfer, or USSD on the TagPay page.</p>
-            <p>3. Come back here and click confirm once done.</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+            <p class="text-gray-300 text-xs mb-1">Account Number</p>
+            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">Tap to copy</p>
+          </div>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
+            <p>2. This account is unique to your transaction — do not share it.</p>
+            <p>3. Click confirm below after transferring.</p>
           </div>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">After paying on TagPay, click confirm below. Your vote will be approved automatically.</p>
+          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the virtual account above, then click confirm. Your vote will be approved automatically.</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Checking payment...' : "✅ I've Paid — Confirm" }}
+          {{ submitting ? 'Checking payment...' : "✅ I've Transferred — Confirm" }}
         </button>
         <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
         <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
@@ -548,13 +550,10 @@ async function initPayment() {
 
   if (res.error) { payError.value = res.error; return }
 
-  tagpayAccount.txId = res.txId
+  tagpayAccount.bankName = res.bankName
+  tagpayAccount.accountNumber = res.accountNumber
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
-  tagpayAccount.checkoutUrl = res.checkoutUrl ?? ''
-
-  if (res.checkoutUrl) window.open(res.checkoutUrl, '_blank')
-
   goTo('tagpay-transfer')
 }
 

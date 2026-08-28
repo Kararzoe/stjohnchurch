@@ -17,12 +17,26 @@ export default defineEventHandler(async (event) => {
     })
 
     const txId = init?.data?.id
-    const gatewayRef = init?.data?.gatewayReference
     if (!txId) return { error: 'No transaction ID returned', raw: init }
 
-    const checkoutUrl = `https://merchant.tagpay.ng/pay?sessionKey=${gatewayRef}`
+    // Poll up to 8x with 3s gap for virtual account
+    for (let i = 0; i < 8; i++) {
+      await new Promise(r => setTimeout(r, 3000))
+      const tx = await $fetch<any>(`https://gwt.tagpay.ng/v1/transaction/${txId}`, { headers })
+      const d = tx?.data ?? {}
+      // Return ALL fields so we can see exactly what TagPay sends back
+      if (d.bankName || d.accountNumber || d.bank_name || d.account_number) {
+        return {
+          success: true,
+          bankName: d.bankName ?? d.bank_name ?? '',
+          accountNumber: d.accountNumber ?? d.account_number ?? '',
+          reference,
+          raw: d,
+        }
+      }
+    }
 
-    return { success: true, txId, reference, checkoutUrl, raw: init.data }
+    return { error: 'TagPay did not assign a virtual account after waiting. Please use manual bank transfer.', raw: init?.data }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }
