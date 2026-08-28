@@ -345,7 +345,7 @@
             <p class="text-gold-light text-xs font-semibold mt-1">St John of the Cross</p>
           </div>
           <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
+            <p>1. Transfer <strong class="text-gold text-sm">any amount (min ₦200)</strong> to the account above.</p>
             <p>2. Use <strong class="text-white">{{ payForm.name }}</strong> as your transfer narration.</p>
             <p>3. Click confirm below after transferring.</p>
           </div>
