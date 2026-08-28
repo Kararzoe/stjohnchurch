@@ -344,6 +344,7 @@
             <p v-else class="text-amber-300 text-xs">No checkout URL returned — see raw data below</p>
           </div>
           <p class="text-gray-400 text-xs break-all mt-2">ref: {{ tagpayAccount.reference }}</p>
+          <pre class="text-green-300 text-xs mt-3 break-all whitespace-pre-wrap">{{ tagpayAccount.raw }}</pre>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
@@ -401,7 +402,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '', txId: '' })
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '', txId: '', raw: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -546,6 +547,7 @@ async function initPayment() {
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
   tagpayAccount.checkoutUrl = res.checkoutUrl ?? ''
+  tagpayAccount.raw = JSON.stringify(res.raw ?? res, null, 2)
 
   // Open TagPay checkout in new tab so virtual account gets assigned
   if (res.checkoutUrl) window.open(res.checkoutUrl, '_blank')
