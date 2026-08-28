@@ -17,14 +17,12 @@ export default defineEventHandler(async (event) => {
     })
 
     const txId = init?.data?.id
+    const gatewayRef = init?.data?.gatewayReference
     if (!txId) return { error: 'No transaction ID returned', raw: init }
 
-    const d = init.data
-    const bankName = d?.bankName ?? d?.bank_name ?? d?.virtualAccount?.bankName ?? d?.virtual_account?.bank_name ?? null
-    const accountNumber = d?.accountNumber ?? d?.account_number ?? d?.virtualAccount?.accountNumber ?? d?.virtual_account?.account_number ?? null
-    const checkoutUrl = d?.checkoutUrl ?? d?.checkout_url ?? d?.payment_url ?? d?.paymentUrl ?? null
+    const checkoutUrl = `https://merchant.tagpay.ng/pay?sessionKey=${gatewayRef}`
 
-    return { success: true, txId, reference, bankName, accountNumber, checkoutUrl, raw: d }
+    return { success: true, txId, reference, checkoutUrl, raw: init.data }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }
