@@ -334,17 +334,21 @@
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4 text-center">
-          <p class="text-gray-600 text-sm">Your vote has been saved. Click below to complete payment of <strong class="text-navy">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay.</p>
-          <a :href="tagpayAccount.checkoutUrl" target="_blank"
-            class="block w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
-            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            💳 Open TagPay Checkout
-          </a>
-          <p class="text-xs text-gray-400 break-all">{{ tagpayAccount.checkoutUrl }}</p>
+        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-4">{{ tagpayAccount.bankName }}</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+            <p class="text-gray-300 text-xs mb-1">Account Number</p>
+            <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">One-time virtual account</p>
+          </div>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
+            <p>2. This account is unique to your transaction — do not share it.</p>
+            <p>3. Click confirm below after transferring.</p>
+          </div>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">After paying, come back here and click confirm below.</p>
+          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the virtual account above, then click confirm. Your vote will be approved automatically.</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
@@ -393,8 +397,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'confirm' | 'details' | 'payment' | 'tagpay-transfer' | 'done'>('vote')
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '' })
+const step = ref<'vote' | 'details' | 'payment' | 'tagpay-transfer' | 'done'>('vote')
 const paidWithTagPay = ref(false)
 const activeTab = ref(0)
 const submitError = ref('')
@@ -403,6 +406,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0 })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -480,31 +484,7 @@ onMounted(async () => {
     .filter((cat: any) => grouped[cat.id]?.length)
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 
-  // Handle TagPay callback
-  const urlParams = new URLSearchParams(window.location.search)
-  const txRef = urlParams.get('ref')
-  if (txRef) {
-    window.history.replaceState({}, '', window.location.pathname)
-    let approved = false
-    for (let i = 0; i < 8; i++) {
-      await new Promise(r => setTimeout(r, 1200))
-      const { data } = await supabase.from('votes').select('status').eq('reference', txRef).limit(1).single()
-      if (data?.status === 'approved') { approved = true; break }
-    }
-    if (!approved) {
-      try {
-        const verifyRes = await $fetch<any>('/api/tagpay-verify', {
-          method: 'POST',
-          body: { reference: txRef }
-        })
-        if (verifyRes?.approved || verifyRes?.success) {
-          approved = true
-        }
-      } catch {}
-    }
-    paidWithTagPay.value = approved
-    step.value = 'done'
-  }
+
 })
 
 onUnmounted(() => clearInterval(timer))
@@ -537,14 +517,16 @@ function goToPayment() {
 async function initPayment() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
   if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
+
   submitting.value = true
   payError.value = ''
-  const reference = `HV-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`
+
+  const ref = `harvest-${Date.now()}`
   const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
     bank: 'TagPay',
-    reference,
+    reference: ref,
     qty: voteQty.value,
     amount: voteQty.value * 200,
     status: 'pending',
@@ -552,61 +534,41 @@ async function initPayment() {
     contestant_id: votes[cat.id],
     contestant_name: getVotedContestant(cat)?.name ?? '',
   }))
-  const { error: dbError } = await supabase.from('votes').insert(rows)
-  if (dbError) { payError.value = dbError.message; submitting.value = false; return }
-  try {
-    const res = await $fetch<any>('/api/tagpay-init', {
-      method: 'POST',
-      body: {
-        name: payForm.name,
-        phone: payForm.phone,
-        amount: voteQty.value * 200 * 100,
-        reference,
-        callbackUrl: `${window.location.origin}/harvest-vote?ref=${reference}`,
-      },
-    })
-    if (res?.error) {
-      payError.value = res.error
-      submitting.value = false
-      return
-    }
-    if (res?.checkoutUrl) {
-      tagpayAccount.reference = reference
-      tagpayAccount.amount = voteQty.value * 200
-      tagpayAccount.checkoutUrl = res.checkoutUrl
-      submitting.value = false
-      // Redirect to TagPay checkout
-      window.location.href = res.checkoutUrl
-      return
-    }
-    payError.value = 'Could not generate TagPay checkout. Please try manual bank transfer.'
-    submitting.value = false
-    return
-  } catch (e: any) {
-    const msg = e?.data?.message ?? e?.message ?? 'TagPay initialization error'
-    payError.value = msg
-    submitting.value = false
-    return
-  }
+
+  const { error: dbErr } = await supabase.from('votes').insert(rows)
+  if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
+
+  const res = await $fetch<any>('/api/tagpay-init', {
+    method: 'POST',
+    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: ref, callbackUrl: window.location.href },
+  })
+
   submitting.value = false
+
+  if (res.error) { payError.value = res.error; return }
+
+  tagpayAccount.bankName = res.bankName
+  tagpayAccount.accountNumber = res.accountNumber
+  tagpayAccount.reference = res.reference
+  tagpayAccount.amount = voteQty.value * 200
+  goTo('tagpay-transfer')
 }
 
 async function pollTagPay() {
   submitting.value = true
   payError.value = ''
-  let approved = false
   for (let i = 0; i < 12; i++) {
-    await new Promise(r => setTimeout(r, 2500))
+    await new Promise(r => setTimeout(r, 3000))
     const { data } = await supabase.from('votes').select('status').eq('reference', tagpayAccount.reference).limit(1).single()
-    if (data?.status === 'approved') { approved = true; break }
+    if (data?.status === 'approved') {
+      paidWithTagPay.value = true
+      submitting.value = false
+      goTo('done')
+      return
+    }
   }
   submitting.value = false
-  if (approved) {
-    paidWithTagPay.value = true
-    goTo('done')
-  } else {
-    payError.value = 'Payment not confirmed yet. Please wait a moment and try again, or contact the admin.'
-  }
+  payError.value = 'Payment not confirmed yet. Please wait a moment and try again.'
 }
 
 async function submitVotes() {
