@@ -335,20 +335,15 @@
           </div>
         </div>
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-4">{{ tagpayAccount.bankName }}</p>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">One-time virtual account</p>
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-4">Complete Payment</p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10 text-center">
+            <p class="text-gray-300 text-sm mb-3">Transfer <strong class="text-gold">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> via TagPay</p>
+            <a v-if="tagpayAccount.checkoutUrl" :href="tagpayAccount.checkoutUrl" target="_blank"
+              class="inline-block px-6 py-3 rounded-xl font-black text-navy text-sm"
+              style="background: linear-gradient(90deg, #d4af37, #f5e27a)">💳 Open TagPay →</a>
+            <p v-else class="text-amber-300 text-xs">No checkout URL returned — see raw data below</p>
           </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
-            <p>2. This account is unique to your transaction — do not share it.</p>
-            <p>3. Click confirm below after transferring.</p>
-          </div>
-        </div>
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the virtual account above, then click confirm. Your vote will be approved automatically.</p>
+          <p class="text-gray-400 text-xs break-all mt-2">ref: {{ tagpayAccount.reference }}</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
@@ -406,7 +401,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0 })
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '', txId: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -547,10 +542,14 @@ async function initPayment() {
 
   if (res.error) { payError.value = res.error; return }
 
-  tagpayAccount.bankName = res.bankName
-  tagpayAccount.accountNumber = res.accountNumber
+  tagpayAccount.txId = res.txId
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
+  tagpayAccount.checkoutUrl = res.checkoutUrl ?? ''
+
+  // Open TagPay checkout in new tab so virtual account gets assigned
+  if (res.checkoutUrl) window.open(res.checkoutUrl, '_blank')
+
   goTo('tagpay-transfer')
 }
 
