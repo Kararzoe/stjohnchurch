@@ -328,7 +328,7 @@
     <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
         <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Virtual Account</p>
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
           <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
@@ -551,22 +551,11 @@ async function initPayment() {
 
   if (res.error) { payError.value = res.error; return }
 
-  tagpayAccount.txId = res.txId
+  tagpayAccount.checkoutUrl = res.checkoutUrl
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
   submitting.value = false
   goTo('tagpay-transfer')
-
-  // Poll from browser for virtual account
-  for (let i = 0; i < 10; i++) {
-    await new Promise(r => setTimeout(r, 3000))
-    const poll = await $fetch<any>('/api/tagpay-poll', { method: 'POST', body: { txId: res.txId } })
-    if (poll.bankName && poll.accountNumber) {
-      tagpayAccount.bankName = poll.bankName
-      tagpayAccount.accountNumber = poll.accountNumber
-      break
-    }
-  }
 }
 
 async function pollTagPay() {
