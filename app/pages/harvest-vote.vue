@@ -561,7 +561,9 @@ async function pollTagPay() {
     }
   }
   submitting.value = false
-  payError.value = 'Payment not confirmed yet. Please wait a moment and try again.'
+  // Go to done anyway — webhook will approve when transfer is received
+  paidWithTagPay.value = false
+  goTo('done')
 }
 
 async function submitVotes() {

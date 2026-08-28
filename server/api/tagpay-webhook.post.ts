@@ -24,20 +24,38 @@ export default defineEventHandler(async (event) => {
 
   if (eventType !== 'charge.success') return { received: true }
 
-  const reference = payload.data?.reference
-  if (!reference) return { received: true }
-
-  // Auto-approve all votes with this reference
   const supabase = createClient(
     config.public.supabaseUrl,
     config.supabaseServiceRoleKey || config.public.supabaseKey
   )
 
-  await supabase
-    .from('votes')
-    .update({ status: 'approved' })
-    .eq('reference', reference)
-    .eq('status', 'pending')
+  const reference = payload.data?.reference
+  const amountKobo = payload.data?.amount
+  const amountNaira = amountKobo ? Math.round(amountKobo / 100) : null
+
+  // Try match by reference first (API transactions)
+  if (reference) {
+    const { data: byRef } = await supabase.from('votes').select('id').eq('reference', reference).eq('status', 'pending').limit(1)
+    if (byRef?.length) {
+      await supabase.from('votes').update({ status: 'approved' }).eq('reference', reference).eq('status', 'pending')
+      return { received: true }
+    }
+  }
+
+  // Fallback: match oldest pending TagPay vote with matching amount
+  if (amountNaira) {
+    const { data: byAmount } = await supabase
+      .from('votes')
+      .select('reference')
+      .eq('status', 'pending')
+      .eq('bank', 'TagPay')
+      .eq('amount', amountNaira)
+      .order('created_at', { ascending: true })
+      .limit(1)
+    if (byAmount?.length) {
+      await supabase.from('votes').update({ status: 'approved' }).eq('reference', byAmount[0].reference).eq('status', 'pending')
+    }
+  }
 
   return { received: true }
 })
