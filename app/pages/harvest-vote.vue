@@ -356,7 +356,7 @@
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Checking payment...' : "✅ I've Transferred — Confirm" }}
+          {{ submitting ? 'Verifying payment...' : "✅ I've Transferred — Confirm" }}
         </button>
         <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
         <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
@@ -550,7 +550,7 @@ async function initPayment() {
 async function pollTagPay() {
   submitting.value = true
   payError.value = ''
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 10; i++) {
     await new Promise(r => setTimeout(r, 3000))
     const { data } = await supabase.from('votes').select('status').eq('reference', tagpayAccount.reference).limit(1).single()
     if (data?.status === 'approved') {
@@ -560,8 +560,8 @@ async function pollTagPay() {
       return
     }
   }
+  // 30s elapsed, go to done with pending status
   submitting.value = false
-  // Go to done anyway — webhook will approve when transfer is received
   paidWithTagPay.value = false
   goTo('done')
 }
