@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const init = await $fetch<any>('https://gwt.tagpay.ng/v1/transaction/initialize', {
       method: 'POST',
       headers,
-      body: { amount, email: `${phone}@vote.stjohn.ng`, name, phone, reference, paymentMethod: 'bank_transfer', callback_url: callbackUrl, currency: 'NGN' },
+      body: { amount: amount * 100, email: `${phone}@vote.stjohn.ng`, name, phone, reference, paymentMethod: 'bank_transfer', callback_url: callbackUrl, currency: 'NGN' },
     })
 
     const txId = init?.data?.id
