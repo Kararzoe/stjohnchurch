@@ -1,4 +1,5 @@
 <template>
+  <ClientOnly>
   <div class="min-h-screen bg-cream">
 
     <!-- ── CLOSED ── -->
@@ -351,10 +352,11 @@
     </div>
 
   </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default', ssr: false })
+definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
