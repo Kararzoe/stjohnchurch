@@ -1,34 +1,32 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const { name, phone, amount, reference, callbackUrl } = await readBody(event)
+  const { name, amount, reference } = await readBody(event)
 
   if (!config.tagpaySecretKey) return { error: 'TAGPAY_SECRET_KEY is not set' }
 
   try {
-    const res = await $fetch<any>('https://gwt.tagpay.ng/v1/transaction/initialize', {
+    const res = await $fetch<any>('https://gwt.tagpay.ng/v1/collection-accounts', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
       body: {
-        amount: amount * 100,
-        email: `${phone}@vote.stjohn.ng`,
+        type: 'expiring',
+        expectedAmount: amount * 100,
         name,
-        phone,
         reference,
-        currency: 'NGN',
-        paymentMethod: 'bank_transfer',
-        callback_url: callbackUrl,
       },
     })
 
-    const gatewayRef = res?.data?.gatewayReference
-    if (!gatewayRef) return { error: 'No gateway reference returned', raw: res }
+    const d = res?.data
+    if (!d?.accountNumber) return { error: 'No account number returned', raw: res }
 
     return {
       success: true,
-      checkoutUrl: `https://merchant.tagpay.ng/pay?sessionKey=${gatewayRef}`,
+      accountNumber: d.accountNumber,
+      accountName: d.accountName,
+      expiresAt: d.expiresAt,
       reference,
     }
   } catch (e: any) {
