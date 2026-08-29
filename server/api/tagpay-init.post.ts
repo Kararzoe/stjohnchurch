@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
       success: true,
       accountNumber: d.accountNumber,
       accountName: d.accountName,
-      bankName: d.bankName ?? d.bank_name ?? d.vendorName ?? d.vendor_name ?? 'Bank',
+      bankName: d.bankName ?? d.bank_name ?? 'Bank',
       reference: d.reference,
       expiresAt: d.expiresAt,
     }
