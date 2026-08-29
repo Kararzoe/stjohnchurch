@@ -13,15 +13,13 @@ export default defineEventHandler(async (event) => {
 
   let res: any
   try {
-    res = await $fetch<any>('https://api.tagpay.ng/v1/collection-accounts', {
+    res = await $fetch<any>('https://api.tagpay.ng/v1/virtual-accounts', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
       body: {
-        type: 'expiring',
-        expires_at: Math.floor(Date.now() / 1000) + 1800,
         amount: amount * 100,
         reference,
         customer_name: name,
