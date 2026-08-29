@@ -227,35 +227,18 @@
 
           <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
 
-          <!-- Dual Payment Choices -->
-          <div class="pt-2 space-y-3">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Choose Payment Option</p>
-
-            <!-- Option 1: Online TagPay -->
-            <button @click="initPayment" :disabled="submitting"
-              class="w-full p-4 rounded-2xl text-navy font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 flex items-center justify-between group cursor-pointer border border-gold/30"
-              style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-              <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-navy/10 flex items-center justify-center text-2xl shrink-0">💳</div>
-                <div>
-                  <p class="text-sm font-black text-navy leading-tight">Pay Online with TagPay</p>
-                  <p class="text-[11px] text-navy/75 font-semibold">Card / USSD / Transfer · Instant Auto-Approval</p>
-                </div>
-              </div>
-              <span class="text-sm font-black text-navy shrink-0 ml-2">{{ submitting ? 'Loading...' : `₦${(voteQty * 200).toLocaleString()} →` }}</span>
-            </button>
-
-            <!-- Option 2: Manual Bank Transfer -->
+          <div class="pt-2">
             <button @click="goTo('payment')"
-              class="w-full p-4 rounded-2xl border-2 border-gray-200 text-navy font-bold text-sm transition-all hover:border-navy hover:bg-gray-50 flex items-center justify-between bg-white shadow-sm cursor-pointer">
+              class="w-full p-4 rounded-2xl text-white font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer"
+              style="background: linear-gradient(90deg, #b8860b, #d4af37)">
               <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center text-2xl shrink-0">🏦</div>
+                <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-2xl shrink-0">🏦</div>
                 <div>
-                  <p class="text-sm font-bold text-navy leading-tight">Manual Bank Transfer</p>
-                  <p class="text-[11px] text-gray-400 font-normal">Access Bank · Awaiting Admin Verification</p>
+                  <p class="text-sm font-black leading-tight">Pay via Bank Transfer</p>
+                  <p class="text-[11px] font-semibold opacity-80">Access Bank · Admin Verification</p>
                 </div>
               </div>
-              <span class="text-xs text-gray-400 font-bold shrink-0 ml-2">₦{{ (voteQty * 200).toLocaleString() }} →</span>
+              <span class="text-sm font-black shrink-0 ml-2">₦{{ (voteQty * 200).toLocaleString() }} →</span>
             </button>
           </div>
 
@@ -333,13 +316,9 @@
           <svg class="w-12 h-12 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
         </div>
         <h1 class="font-playfair text-5xl font-black text-navy mb-2">Vote Confirmed!</h1>
-        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">{{ paidWithTagPay ? 'Payment Verified' : 'Awaiting Verification' }}</p>
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Awaiting Verification</p>
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
-        <div v-if="paidWithTagPay" class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-left">
-          <p class="text-green-800 text-sm font-bold mb-1">✅ Payment Confirmed</p>
-          <p class="text-green-700 text-xs leading-relaxed">Your payment was verified and your vote has been automatically counted. Thank you for participating!</p>
-        </div>
-        <div v-else class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
           <p class="text-amber-800 text-sm font-bold mb-1">⏳ Pending Admin Approval</p>
           <p class="text-amber-700 text-xs leading-relaxed">Your vote has been submitted and is awaiting approval. Our admin team will verify your bank transfer and approve your vote. This usually takes a few hours.</p>
         </div>
@@ -359,12 +338,11 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default', ssr: false })
+definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
 const step = ref<'vote' | 'details' | 'payment' | 'done'>('vote')
-const paidWithTagPay = ref(false)
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -372,16 +350,13 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayReference = ref('')
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
 const categories = ref<any[]>([])
 const harvestActive = ref(true)
-
 const contestantVotes = ref<Record<string, number>>({})
 const categoryTotals = ref<Record<string, number>>({})
-const grandTotalVotes = ref(0)
 
 function calcCountdown() {
   const end = new Date('2026-11-01T00:00:00+01:00').getTime()
@@ -401,33 +376,9 @@ function calcCountdown() {
 const countdown = ref(calcCountdown())
 let timer: any
 
-async function verifyTagPay(reference: string) {
-  submitting.value = true
-  payError.value = ''
-  const res = await $fetch<any>('/api/tagpay-verify', {
-    method: 'POST',
-    body: { reference },
-  })
-  submitting.value = false
-  paidWithTagPay.value = res?.approved === true
-  goTo('done')
-}
-
 onMounted(async () => {
   countdown.value = calcCountdown()
   timer = setInterval(() => { countdown.value = calcCountdown() }, 1000)
-
-  // Returning from TagPay checkout
-  if (import.meta.client) {
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('step') === 'verify') {
-      const ref = sessionStorage.getItem('tagpay_ref')
-      if (ref) {
-        sessionStorage.removeItem('tagpay_ref')
-        await verifyTagPay(ref)
-      }
-    }
-  }
 
   const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }, { data: votesData }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
@@ -436,6 +387,7 @@ onMounted(async () => {
     supabase.from('site_content').select('value').eq('key', 'harvest_active').single(),
     supabase.from('votes').select('contestant_id, category, qty, status'),
   ])
+
   harvestActive.value = hd ? hd.value === 'true' : true
   if (titleData) {
     titleData.forEach((r: any) => {
@@ -444,26 +396,17 @@ onMounted(async () => {
     })
   }
 
-  // Calculate approved vote counts
   const cVotes: Record<string, number> = {}
   const catVotes: Record<string, number> = {}
-  let totalApproved = 0
-
   votesData?.forEach((v: any) => {
     if (v.status === 'approved') {
       const q = v.qty || 1
-      if (v.contestant_id) {
-        cVotes[v.contestant_id] = (cVotes[v.contestant_id] ?? 0) + q
-      }
-      if (v.category) {
-        catVotes[v.category] = (catVotes[v.category] ?? 0) + q
-      }
-      totalApproved += q
+      if (v.contestant_id) cVotes[v.contestant_id] = (cVotes[v.contestant_id] ?? 0) + q
+      if (v.category) catVotes[v.category] = (catVotes[v.category] ?? 0) + q
     }
   })
   contestantVotes.value = cVotes
   categoryTotals.value = catVotes
-  grandTotalVotes.value = totalApproved
 
   const grouped: Record<string, any[]> = {}
   for (const c of contestants ?? []) {
@@ -473,8 +416,6 @@ onMounted(async () => {
   categories.value = (cats ?? [])
     .filter((cat: any) => grouped[cat.id]?.length)
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
-
-
 })
 
 onUnmounted(() => clearInterval(timer))
@@ -504,46 +445,6 @@ function goToPayment() {
   goTo('details')
 }
 
-async function initPayment() {
-  if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
-  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
-
-  submitting.value = true
-  payError.value = ''
-
-  const txRef = `harvest-${Date.now()}`
-  const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
-    voter_name: payForm.name,
-    voter_phone: payForm.phone,
-    bank: 'TagPay',
-    reference: txRef,
-    qty: voteQty.value,
-    amount: voteQty.value * 200,
-    status: 'pending',
-    category: cat.id,
-    contestant_id: votes[cat.id],
-    contestant_name: getVotedContestant(cat)?.name ?? '',
-  }))
-
-  const { error: dbErr } = await supabase.from('votes').insert(rows)
-  if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
-
-  const res = await $fetch<any>('/api/tagpay-init', {
-    method: 'POST',
-    body: { name: payForm.name, amount: voteQty.value * 200, reference: txRef },
-  })
-
-  submitting.value = false
-  if (res.error || !res.paymentUrl) {
-    payError.value = res.error ?? (res.raw ? JSON.stringify(res.raw) : 'No payment URL returned')
-    return
-  }
-
-  // Store reference in sessionStorage so we can verify on return
-  sessionStorage.setItem('tagpay_ref', txRef)
-  window.location.href = res.paymentUrl
-}
-
 async function submitVotes() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
   if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
@@ -567,7 +468,6 @@ async function submitVotes() {
   const { error } = await supabase.from('votes').insert(rows)
   submitting.value = false
   if (error) { payError.value = error.message; return }
-  paidWithTagPay.value = false
   step.value = 'done'
 }
 </script>
