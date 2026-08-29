@@ -1,36 +1,29 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const { name, amount, reference } = await readBody(event)
+  const { name, email, amount, reference } = await readBody(event)
 
   if (!config.tagpaySecretKey) return { error: 'TAGPAY_SECRET_KEY is not set' }
 
   try {
-    const res = await $fetch<any>('https://gwt.tagpay.ng/v1/collection-accounts', {
+    const res = await $fetch<any>('https://gwt.tagpay.ng/checkout/sessions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
       body: {
-        type: 'expiring',
-        expectedAmount: amount * 100,
-        name,
+        amount: amount * 100,
         reference,
+        customerName: name,
+        customerEmail: email || 'voter@stjohncatholicchurch.org',
+        callbackUrl: 'https://stjohncatholicchurch.org/harvest-vote?step=verify',
       },
     })
 
-    const d = res?.data
-    if (!d?.accountNumber) return { error: 'No account number returned', raw: res }
+    const paymentUrl = res?.paymentUrl ?? res?.data?.paymentUrl
+    if (!paymentUrl) return { error: 'No payment URL returned', raw: res }
 
-    return {
-      success: true,
-      collectionAccountId: d.id,
-      accountNumber: d.accountNumber,
-      accountName: d.accountName,
-      bankName: d.bankName ?? 'Diamond Bank',
-      expiresAt: d.expiresAt,
-      reference,
-    }
+    return { success: true, paymentUrl, reference }
   } catch (e: any) {
     const detail = e?.data ?? e?.response?._data ?? e?.message ?? 'unknown'
     return { error: typeof detail === 'string' ? detail : JSON.stringify(detail) }
