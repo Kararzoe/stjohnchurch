@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       body: {
         type: 'expiring',
         reference,
-        expected_amount: amount * 100, // kobo
+        expectedAmount: amount * 100, // kobo
         label: `Vote - ${name}`.slice(0, 80),
         metadata: { name, phone },
       },
