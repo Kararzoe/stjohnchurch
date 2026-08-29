@@ -337,16 +337,16 @@
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           <div class="flex items-center justify-between mb-4">
             <p class="text-gold text-xs uppercase tracking-widest font-bold">Diamond Bank</p>
-            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Virtual Account</span>
+            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
           </div>
           <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
             <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">0001728752</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">St John of the Cross - Harvest Votes</p>
+            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
           </div>
           <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer <strong class="text-gold text-sm">any amount (min ₦200)</strong> to the account above.</p>
-            <p>2. Use <strong class="text-white">{{ payForm.name }}</strong> as your transfer narration.</p>
+            <p>1. Transfer any amount (min <strong class="text-gold">₦200</strong>) to the account above.</p>
+            <p>2. You have <strong class="text-gold">15 minutes</strong> to complete the transfer.</p>
             <p>3. Click confirm below after transferring.</p>
           </div>
         </div>
@@ -409,7 +409,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', reference: '', amount: 0, checkoutUrl: '', txId: '' })
+const tagpayAccount = reactive({ bankName: '', accountNumber: '', accountName: '', reference: '', amount: 0, expiresAt: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -539,11 +539,21 @@ async function initPayment() {
   }))
 
   const { error: dbErr } = await supabase.from('votes').insert(rows)
-  submitting.value = false
-  if (dbErr) { payError.value = dbErr.message; return }
+  if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
 
+  const res = await $fetch<any>('/api/tagpay-init', {
+    method: 'POST',
+    body: { amount: voteQty.value * 200, reference: txRef },
+  })
+
+  submitting.value = false
+  if (res.error) { payError.value = res.error; return }
+
+  tagpayAccount.accountNumber = res.accountNumber
+  tagpayAccount.accountName = res.accountName
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
+  tagpayAccount.expiresAt = res.expiresAt
   goTo('tagpay-transfer')
 }
 
