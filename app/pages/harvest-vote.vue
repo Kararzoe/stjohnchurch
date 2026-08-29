@@ -228,30 +228,18 @@
 
           <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
 
-          <div class="pt-2 space-y-3">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Choose Payment Option</p>
-            <button @click="initPayment" :disabled="submitting"
-              class="w-full p-4 rounded-2xl text-navy font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 flex items-center justify-between cursor-pointer border border-gold/30"
+          <div class="pt-2">
+            <button @click="goTo('payment')"
+              class="w-full p-4 rounded-2xl text-navy font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer border border-gold/30"
               style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
               <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-navy/10 flex items-center justify-center text-2xl shrink-0">💳</div>
+                <div class="w-11 h-11 rounded-xl bg-navy/10 flex items-center justify-center text-2xl shrink-0">🏦</div>
                 <div>
-                  <p class="text-sm font-black text-navy leading-tight">Pay Online with TagPay</p>
-                  <p class="text-[11px] text-navy/75 font-semibold">Card / USSD / Transfer · Instant Approval</p>
+                  <p class="text-sm font-black text-navy leading-tight">Pay via Bank Transfer</p>
+                  <p class="text-[11px] text-navy/75 font-semibold">Access Bank · Admin Verification</p>
                 </div>
               </div>
-              <span class="text-sm font-black text-navy shrink-0 ml-2">{{ submitting ? 'Loading...' : `₦${(voteQty * 200).toLocaleString()} →` }}</span>
-            </button>
-            <button @click="goTo('payment')"
-              class="w-full p-4 rounded-2xl border-2 border-gray-200 text-navy font-bold text-sm transition-all hover:border-navy hover:bg-gray-50 flex items-center justify-between bg-white shadow-sm cursor-pointer">
-              <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center text-2xl shrink-0">🏦</div>
-                <div>
-                  <p class="text-sm font-bold text-navy leading-tight">Manual Bank Transfer</p>
-                  <p class="text-[11px] text-gray-400 font-normal">Access Bank · Admin Verification</p>
-                </div>
-              </div>
-              <span class="text-xs text-gray-400 font-bold shrink-0 ml-2">₦{{ (voteQty * 200).toLocaleString() }} →</span>
+              <span class="text-sm font-black text-navy shrink-0 ml-2">₦{{ (voteQty * 200).toLocaleString() }} →</span>
             </button>
           </div>
 
@@ -329,13 +317,9 @@
           <svg class="w-12 h-12 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
         </div>
         <h1 class="font-playfair text-5xl font-black text-navy mb-2">Vote Confirmed!</h1>
-        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">{{ approved ? 'Payment Verified' : 'Awaiting Verification' }}</p>
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Awaiting Verification</p>
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
-        <div v-if="approved" class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-left">
-          <p class="text-green-800 text-sm font-bold mb-1">✅ Payment Confirmed</p>
-          <p class="text-green-700 text-xs leading-relaxed">Your payment was verified and your vote has been automatically counted. Thank you!</p>
-        </div>
-        <div v-else class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
           <p class="text-amber-800 text-sm font-bold mb-1">⏳ Pending Admin Approval</p>
           <p class="text-amber-700 text-xs leading-relaxed">Your vote has been submitted and is awaiting approval. Our admin team will verify your bank transfer and approve your vote. This usually takes a few hours.</p>
         </div>
@@ -361,7 +345,6 @@ useScrollReveal()
 
 const supabase = useSupabase()
 const step = ref<'vote' | 'details' | 'payment' | 'done'>('vote')
-const approved = ref(false)
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -398,23 +381,6 @@ let timer: any
 onMounted(async () => {
   countdown.value = calcCountdown()
   timer = setInterval(() => { countdown.value = calcCountdown() }, 1000)
-
-  // Returning from TagPay checkout
-  const params = new URLSearchParams(window.location.search)
-  if (params.get('verify') === '1') {
-    const sk = sessionStorage.getItem('tp_sk')
-    const ref = sessionStorage.getItem('tp_ref')
-    if (sk && ref) {
-      sessionStorage.removeItem('tp_sk')
-      sessionStorage.removeItem('tp_ref')
-      submitting.value = true
-      const res = await $fetch<any>('/api/tagpay-verify', { method: 'POST', body: { sessionKey: sk, reference: ref } })
-      submitting.value = false
-      approved.value = res?.approved === true
-      step.value = 'done'
-      return
-    }
-  }
 
   const [{ data: contestants }, { data: cats }, { data: titleData }, { data: hd }, { data: votesData }] = await Promise.all([
     supabase.from('contestants').select('*').order('number'),
@@ -479,28 +445,6 @@ function goToPayment() {
   }
   submitError.value = ''
   goTo('details')
-}
-
-async function initPayment() {
-  if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
-  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
-  submitting.value = true
-  payError.value = ''
-  const txRef = `harvest-${Date.now()}`
-  const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
-    voter_name: payForm.name, voter_phone: payForm.phone, bank: 'TagPay',
-    reference: txRef, qty: voteQty.value, amount: voteQty.value * 200,
-    status: 'pending', category: cat.id, contestant_id: votes[cat.id],
-    contestant_name: getVotedContestant(cat)?.name ?? '',
-  }))
-  const { error: dbErr } = await supabase.from('votes').insert(rows)
-  if (dbErr) { payError.value = dbErr.message; submitting.value = false; return }
-  const res = await $fetch<any>('/api/tagpay-init', { method: 'POST', body: { name: payForm.name, amount: voteQty.value * 200, reference: txRef } })
-  submitting.value = false
-  if (res.error) { payError.value = res.error; return }
-  sessionStorage.setItem('tp_sk', res.sessionKey)
-  sessionStorage.setItem('tp_ref', txRef)
-  window.location.href = res.paymentUrl
 }
 
 async function submitVotes() {
