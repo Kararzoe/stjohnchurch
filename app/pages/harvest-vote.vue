@@ -418,12 +418,14 @@ onMounted(async () => {
   timer = setInterval(() => { countdown.value = calcCountdown() }, 1000)
 
   // Returning from TagPay checkout
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get('step') === 'verify') {
-    const ref = sessionStorage.getItem('tagpay_ref')
-    if (ref) {
-      sessionStorage.removeItem('tagpay_ref')
-      await verifyTagPay(ref)
+  if (import.meta.client) {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('step') === 'verify') {
+      const ref = sessionStorage.getItem('tagpay_ref')
+      if (ref) {
+        sessionStorage.removeItem('tagpay_ref')
+        await verifyTagPay(ref)
+      }
     }
   }
 
