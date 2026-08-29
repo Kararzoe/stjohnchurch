@@ -341,8 +341,8 @@
           </div>
           <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
             <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">1128613331</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">St John of the Cross</p>
+            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">0001728752</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">St John of the Cross - Harvest Votes</p>
           </div>
           <div class="space-y-1.5 text-xs text-gray-300">
             <p>1. Transfer <strong class="text-gold text-sm">any amount (min ₦200)</strong> to the account above.</p>
