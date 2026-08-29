@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const status = res?.status || res?.data?.status
-  if (status !== 'paid' && status !== 'completed' && status !== 'success') {
+  if (status !== 'paid' && status !== 'completed' && status !== 'success' && status !== 'settled') {
     return { success: false, message: status === 'expired' ? 'Account expired.' : 'Payment not received yet.' }
   }
 

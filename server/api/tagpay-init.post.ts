@@ -20,6 +20,8 @@ export default defineEventHandler(async (event) => {
         'Content-Type': 'application/json',
       },
       body: {
+        type: 'expiring',
+        expires_at: Math.floor(Date.now() / 1000) + 1800,
         amount: amount * 100,
         reference,
         customer_name: name,
