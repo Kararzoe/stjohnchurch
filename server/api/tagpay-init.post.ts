@@ -12,25 +12,33 @@ export default defineEventHandler(async (event) => {
   const reference = `vote_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
   let res: any
-  try {
-    res = await $fetch<any>('https://api.tagpay.ng/v1/virtual-accounts', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${config.tagpaySecretKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: {
-        amount: amount * 100,
-        reference,
-        customer_name: name,
-        customer_phone: phone,
-        metadata: { name, phone },
-      },
-    })
-  } catch (e: any) {
-    const msg = e?.data?.message || e?.data?.error || e?.message || 'TagPay request failed'
-    throw createError({ statusCode: 502, message: msg })
+  const enumsToTry = ['one_time', 'oneTime', 'one-time', 'temporary', 'dynamic']
+  let lastError = ''
+  for (const typeVal of enumsToTry) {
+    try {
+      res = await $fetch<any>('https://api.tagpay.ng/v1/collection-accounts', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.tagpaySecretKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: {
+          type: typeVal,
+          expires_at: Math.floor(Date.now() / 1000) + 1800,
+          amount: amount * 100,
+          reference,
+          customer_name: name,
+          customer_phone: phone,
+          metadata: { name, phone },
+        },
+      })
+      break
+    } catch (e: any) {
+      lastError = e?.data?.message || e?.data?.error || e?.message || ''
+      if (!lastError.includes('enum')) throw createError({ statusCode: 502, message: lastError })
+    }
   }
+  if (!res) throw createError({ statusCode: 502, message: `All type values failed. Last error: ${lastError}` })
 
   const accountNumber = res?.account_number || res?.accountNumber || res?.data?.account_number || res?.data?.accountNumber
   const accountName = res?.account_name || res?.accountName || res?.data?.account_name || res?.data?.accountName || 'TagPay Virtual Account'
