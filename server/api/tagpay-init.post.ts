@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
         'Content-Type': 'application/json',
       },
       body: {
-        type: 'static',
         amount: amount * 100,
         reference,
         customer_name: name,
