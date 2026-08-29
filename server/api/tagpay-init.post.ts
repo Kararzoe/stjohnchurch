@@ -13,16 +13,17 @@ export default defineEventHandler(async (event) => {
 
   let res: any
   try {
-    res = await $fetch<any>('https://api.tagpay.ng/v1/collection-accounts', {
+    res = await $fetch<any>('https://api.tagpay.ng/checkout/sessions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
       body: {
-        type: 'static',
+        amount: amount * 100, // kobo
         reference,
-        label: `Vote - ${name}`.slice(0, 80),
+        customer_name: name,
+        callback_url: `${config.public.siteUrl}/vote-callback`,
         metadata: { name, phone },
       },
     })
@@ -31,8 +32,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 502, message: msg })
   }
 
-  if (!res?.accountNumber) {
-    throw createError({ statusCode: 502, message: `TagPay did not return an account number. Response: ${JSON.stringify(res)}` })
+  if (!res?.payment_url && !res?.paymentUrl) {
+    throw createError({ statusCode: 502, message: `TagPay did not return a checkout URL. Response: ${JSON.stringify(res)}` })
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
@@ -40,10 +41,5 @@ export default defineEventHandler(async (event) => {
   const { error } = await supabase.from('votes').insert(rows)
   if (error) throw createError({ statusCode: 500, message: error.message })
 
-  return {
-    reference,
-    accountNumber: res.accountNumber,
-    accountName: res.accountName,
-    expiresAt: res.expiresAt,
-  }
+  return { url: res.payment_url || res.paymentUrl, reference, sessionKey: res.session_key || res.sessionKey }
 })

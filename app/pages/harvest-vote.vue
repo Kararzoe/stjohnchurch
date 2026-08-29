@@ -415,11 +415,6 @@ const payError = ref('')
 const submitting = ref(false)
 const initiating = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ accountNumber: '', accountName: '', expiresAt: '', reference: '' })
-const tagpayTimeLeft = ref('')
-const tagpayExpired = ref(false)
-let tagpayTimer: any
-let pollTimer: any
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -488,7 +483,7 @@ onMounted(async () => {
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 })
 
-onUnmounted(() => { clearInterval(timer); clearInterval(tagpayTimer); clearInterval(pollTimer) })
+onUnmounted(() => clearInterval(timer))
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
@@ -533,51 +528,17 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ reference: string; accountNumber: string; accountName: string; expiresAt: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
-    tagpayAccount.accountNumber = res.accountNumber
-    tagpayAccount.accountName = res.accountName
-    tagpayAccount.expiresAt = res.expiresAt
-    tagpayAccount.reference = res.reference
-    tagpayExpired.value = false
-    startTagpayTimers(res.expiresAt, res.reference)
-    goTo('tagpay')
+    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
+    sessionStorage.setItem('tagpay_reference', res.reference)
+    window.location.href = res.url
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
-  } finally {
     initiating.value = false
   }
-}
-
-function startTagpayTimers(expiresAt: string, reference: string) {
-  clearInterval(tagpayTimer)
-  clearInterval(pollTimer)
-  const expiry = new Date(expiresAt).getTime()
-
-  tagpayTimer = setInterval(() => {
-    const diff = expiry - Date.now()
-    if (diff <= 0) {
-      tagpayExpired.value = true
-      tagpayTimeLeft.value = '00:00'
-      clearInterval(tagpayTimer)
-      clearInterval(pollTimer)
-      return
-    }
-    const m = Math.floor(diff / 60000)
-    const s = Math.floor((diff % 60000) / 1000)
-    tagpayTimeLeft.value = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  }, 1000)
-
-  pollTimer = setInterval(async () => {
-    const res = await $fetch<{ approved: boolean }>(`/api/tagpay-verify?reference=${reference}`).catch(() => null)
-    if (res?.approved) {
-      clearInterval(tagpayTimer)
-      clearInterval(pollTimer)
-      step.value = 'done'
-    }
-  }, 5000)
 }
 
 async function submitVotes() {
