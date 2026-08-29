@@ -359,7 +359,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({ layout: 'default', ssr: false })
 useScrollReveal()
 
 const supabase = useSupabase()
