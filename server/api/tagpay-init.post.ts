@@ -20,9 +20,8 @@ export default defineEventHandler(async (event) => {
         'Content-Type': 'application/json',
       },
       body: {
-        type: 'expiring',
+        type: 'static',
         reference,
-        expectedAmount: amount * 100, // kobo
         label: `Vote - ${name}`.slice(0, 80),
         metadata: { name, phone },
       },
