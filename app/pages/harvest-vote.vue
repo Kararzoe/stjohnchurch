@@ -347,7 +347,7 @@
           </div>
           <div class="space-y-1.5 text-xs text-gray-300">
             <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
-            <p>2. This account is unique to your transaction and expires in 15 minutes.</p>
+            <p>2. This account is unique to you and expires in 15 minutes.</p>
             <p>3. Click confirm below after transferring — your vote will be approved automatically.</p>
           </div>
         </div>

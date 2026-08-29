@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
         type: 'expiring',
         expectedAmount: amount * 100,
         name,
+        label: name,
         reference,
       },
     })
