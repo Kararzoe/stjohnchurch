@@ -13,27 +13,32 @@ export default defineEventHandler(async (event) => {
 
   let res: any
   try {
-    res = await $fetch<any>('https://api.tagpay.ng/checkout/sessions', {
+    res = await $fetch<any>('https://api.tagpay.ng/v1/collection-accounts', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
       },
       body: {
-        amount: amount * 100, // kobo
+        type: 'static',
+        amount: amount * 100,
         reference,
         customer_name: name,
-        callback_url: `${config.public.siteUrl}/vote-callback`,
+        customer_phone: phone,
         metadata: { name, phone },
       },
     })
   } catch (e: any) {
-    const msg = e?.data?.message || e?.message || 'TagPay request failed'
+    const msg = e?.data?.message || e?.data?.error || e?.message || 'TagPay request failed'
     throw createError({ statusCode: 502, message: msg })
   }
 
-  if (!res?.payment_url && !res?.paymentUrl) {
-    throw createError({ statusCode: 502, message: `TagPay did not return a checkout URL. Response: ${JSON.stringify(res)}` })
+  const accountNumber = res?.account_number || res?.accountNumber || res?.data?.account_number || res?.data?.accountNumber
+  const accountName = res?.account_name || res?.accountName || res?.data?.account_name || res?.data?.accountName || 'TagPay Virtual Account'
+  const bankName = res?.bank_name || res?.bankName || res?.data?.bank_name || res?.data?.bankName || 'Bank Transfer'
+
+  if (!accountNumber) {
+    throw createError({ statusCode: 502, message: `TagPay did not return an account number. Response: ${JSON.stringify(res)}` })
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
@@ -41,5 +46,5 @@ export default defineEventHandler(async (event) => {
   const { error } = await supabase.from('votes').insert(rows)
   if (error) throw createError({ statusCode: 500, message: error.message })
 
-  return { url: res.payment_url || res.paymentUrl, reference, sessionKey: res.session_key || res.sessionKey }
+  return { accountNumber, accountName, bankName, reference }
 })

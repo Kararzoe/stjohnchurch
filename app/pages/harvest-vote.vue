@@ -336,16 +336,10 @@
           </div>
         </div>
 
-        <div :class="['rounded-2xl p-4 text-center border-2', tagpayExpired ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200']">
-          <p :class="['text-xs font-bold uppercase tracking-widest mb-1', tagpayExpired ? 'text-red-500' : 'text-amber-600']">{{ tagpayExpired ? 'Account Expired' : 'Account expires in' }}</p>
-          <p :class="['font-playfair font-black text-4xl tabular-nums', tagpayExpired ? 'text-red-600' : 'text-amber-700']">{{ tagpayExpired ? '00:00' : tagpayTimeLeft }}</p>
-          <p v-if="tagpayExpired" class="text-red-500 text-xs mt-1">This account has expired. Please go back and try again.</p>
-        </div>
-
         <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
           <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">TagPay Virtual Account</p>
-            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
+            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ tagpayAccount.bankName || 'TagPay Virtual Account' }}</p>
+            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">One-time Account</span>
           </div>
           <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
             <p class="text-gray-300 text-xs mb-1">Account Number</p>
@@ -407,6 +401,8 @@ useScrollReveal()
 
 const supabase = useSupabase()
 const step = ref<'vote' | 'details' | 'payment' | 'tagpay' | 'done'>('vote')
+const tagpayAccount = ref({ accountNumber: '', accountName: '', bankName: '' })
+const tagpayReference = ref('')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -528,15 +524,16 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
-    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
-    sessionStorage.setItem('tagpay_reference', res.reference)
-    window.location.href = res.url
+    tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
+    tagpayReference.value = res.reference
+    goTo('tagpay')
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
+  } finally {
     initiating.value = false
   }
 }

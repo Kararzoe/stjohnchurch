@@ -2,21 +2,22 @@ import { createClient } from '@supabase/supabase-js'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const { session_key, reference } = getQuery(event) as { session_key: string; reference: string }
+  const { reference } = getQuery(event) as { reference: string }
 
-  if (!session_key || !reference) throw createError({ statusCode: 400, message: 'Missing session_key or reference' })
+  if (!reference) throw createError({ statusCode: 400, message: 'Missing reference' })
 
   let res: any
   try {
-    res = await $fetch<any>(`https://api.tagpay.ng/checkout/sessions/${session_key}`, {
+    res = await $fetch<any>(`https://api.tagpay.ng/v1/collection-accounts/${reference}`, {
       headers: { Authorization: `Bearer ${config.tagpaySecretKey}` },
     })
   } catch (e: any) {
-    return { success: false, message: 'Could not verify session.' }
+    return { success: false, message: 'Could not verify payment.' }
   }
 
-  if (res?.status !== 'completed') {
-    return { success: false, message: res?.status === 'expired' ? 'Session expired.' : 'Payment not completed yet.' }
+  const status = res?.status || res?.data?.status
+  if (status !== 'paid' && status !== 'completed' && status !== 'success') {
+    return { success: false, message: status === 'expired' ? 'Account expired.' : 'Payment not received yet.' }
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
