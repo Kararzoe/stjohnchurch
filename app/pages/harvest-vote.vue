@@ -408,7 +408,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ reference: '', amount: 0, accountNumber: '', accountName: '', bankName: '' })
+const tagpayAccount = reactive({ reference: '', collectionAccountId: '', amount: 0, accountNumber: '', accountName: '', bankName: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -549,6 +549,7 @@ async function initPayment() {
   if (res.error) { payError.value = res.error; return }
 
   tagpayAccount.reference = txRef
+  tagpayAccount.collectionAccountId = res.collectionAccountId
   tagpayAccount.amount = voteQty.value * 200
   tagpayAccount.accountNumber = res.accountNumber
   tagpayAccount.accountName = res.accountName
@@ -561,15 +562,29 @@ async function pollTagPay() {
   payError.value = ''
   for (let i = 0; i < 10; i++) {
     await new Promise(r => setTimeout(r, 3000))
-    const { data } = await supabase.from('votes').select('status').eq('reference', tagpayAccount.reference).limit(1).single()
-    if (data?.status === 'approved') {
-      paidWithTagPay.value = true
-      submitting.value = false
-      goTo('done')
-      return
+    // Check TagPay collection account directly if we have the ID
+    if (tagpayAccount.collectionAccountId) {
+      const res = await $fetch<any>('/api/tagpay-poll', {
+        method: 'POST',
+        body: { collectionAccountId: tagpayAccount.collectionAccountId, reference: tagpayAccount.reference },
+      })
+      if (res.paid) {
+        paidWithTagPay.value = true
+        submitting.value = false
+        goTo('done')
+        return
+      }
+    } else {
+      // Fallback: check Supabase (webhook may have already approved it)
+      const { data } = await supabase.from('votes').select('status').eq('reference', tagpayAccount.reference).limit(1).single()
+      if (data?.status === 'approved') {
+        paidWithTagPay.value = true
+        submitting.value = false
+        goTo('done')
+        return
+      }
     }
   }
-  // 30s elapsed, go to done with pending status
   submitting.value = false
   paidWithTagPay.value = false
   goTo('done')

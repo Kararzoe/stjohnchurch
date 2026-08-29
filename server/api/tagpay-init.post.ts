@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
+      collectionAccountId: d.id,
       accountNumber: d.accountNumber,
       accountName: d.accountName,
       bankName: d.bankName ?? 'Diamond Bank',
