@@ -324,43 +324,7 @@
       </div>
     </div>
 
-    <!-- ── STEP: TAGPAY TRANSFER ── -->
-    <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
-      <div class="max-w-lg mx-auto space-y-5">
-        <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Bank Transfer</p>
-          <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
-          <div class="flex items-center justify-center gap-3 mt-3">
-            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
-          </div>
-        </div>
 
-        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">Virtual Account</p>
-            <span class="text-xs bg-gold/20 text-gold px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
-          </div>
-          <div class="bg-white/10 rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-            <p class="text-gold text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
-          </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
-            <p>2. This account is unique to you and expires in 15 minutes.</p>
-            <p>3. Click confirm below after transferring — your vote will be approved automatically.</p>
-          </div>
-        </div>
-
-        <button @click="pollTagPay" :disabled="submitting"
-          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
-          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Verifying payment...' : "✅ I've Paid — Confirm" }}
-        </button>
-        <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
-        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
-      </div>
-    </div>
 
     <!-- ── STEP: DONE ── -->
     <div v-if="harvestActive && step === 'done'" class="py-20 px-4 text-center">
@@ -408,7 +372,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ reference: '', amount: 0, accountNumber: '', accountName: '', expiresAt: '' })
+const tagpayAccount = reactive({ reference: '', amount: 0, checkoutUrl: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -542,7 +506,7 @@ async function initPayment() {
 
   const res = await $fetch<any>('/api/tagpay-init', {
     method: 'POST',
-    body: { name: payForm.name, amount: voteQty.value * 200, reference: txRef },
+    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: txRef, callbackUrl: window.location.href },
   })
 
   submitting.value = false
@@ -550,10 +514,8 @@ async function initPayment() {
 
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
-  tagpayAccount.accountNumber = res.accountNumber
-  tagpayAccount.accountName = res.accountName
-  tagpayAccount.expiresAt = res.expiresAt
-  goTo('tagpay-transfer')
+  tagpayAccount.checkoutUrl = res.checkoutUrl
+  window.location.href = res.checkoutUrl
 }
 
 async function pollTagPay() {
