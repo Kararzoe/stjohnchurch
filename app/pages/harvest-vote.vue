@@ -401,6 +401,18 @@ function calcCountdown() {
 const countdown = ref(calcCountdown())
 let timer: any
 
+async function verifyTagPay(reference: string) {
+  submitting.value = true
+  payError.value = ''
+  const res = await $fetch<any>('/api/tagpay-verify', {
+    method: 'POST',
+    body: { reference },
+  })
+  submitting.value = false
+  paidWithTagPay.value = res?.approved === true
+  goTo('done')
+}
+
 onMounted(async () => {
   countdown.value = calcCountdown()
   timer = setInterval(() => { countdown.value = calcCountdown() }, 1000)
@@ -525,18 +537,6 @@ async function initPayment() {
   // Store reference in sessionStorage so we can verify on return
   sessionStorage.setItem('tagpay_ref', txRef)
   window.location.href = res.paymentUrl
-}
-
-async function verifyTagPay(reference: string) {
-  submitting.value = true
-  payError.value = ''
-  const res = await $fetch<any>('/api/tagpay-verify', {
-    method: 'POST',
-    body: { reference },
-  })
-  submitting.value = false
-  paidWithTagPay.value = res?.approved === true
-  goTo('done')
 }
 
 async function submitVotes() {
