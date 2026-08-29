@@ -534,7 +534,10 @@ async function initPayment() {
   })
 
   submitting.value = false
-  if (res.error) { payError.value = res.error; return }
+  if (res.error || !res.paymentUrl) {
+    payError.value = res.error ?? (res.raw ? JSON.stringify(res.raw) : 'No payment URL returned')
+    return
+  }
 
   // Store reference in sessionStorage so we can verify on return
   sessionStorage.setItem('tagpay_ref', txRef)
