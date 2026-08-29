@@ -228,7 +228,22 @@
 
           <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
 
-          <div class="pt-2">
+          <div class="pt-2 space-y-3">
+            <!-- TagPay online payment -->
+            <button @click="payWithTagpay" :disabled="initiating"
+              class="w-full p-4 rounded-2xl text-white font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer disabled:opacity-60"
+              style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+              <div class="flex items-center gap-3 text-left">
+                <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-2xl shrink-0">💳</div>
+                <div>
+                  <p class="text-sm font-black leading-tight">Pay Online with TagPay</p>
+                  <p class="text-[11px] text-gray-300 font-semibold">Card · Bank Transfer · USSD</p>
+                </div>
+              </div>
+              <span class="text-sm font-black shrink-0 ml-2">{{ initiating ? 'Loading...' : '₦' + (voteQty * 200).toLocaleString() + ' →' }}</span>
+            </button>
+
+            <!-- Manual bank transfer fallback -->
             <button @click="goTo('payment')"
               class="w-full p-4 rounded-2xl text-navy font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer border border-gold/30"
               style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
@@ -351,6 +366,7 @@ const votes = reactive<Record<string, string>>({})
 const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
+const initiating = ref(false)
 const payForm = reactive({ name: '', phone: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
@@ -445,6 +461,37 @@ function goToPayment() {
   }
   submitError.value = ''
   goTo('details')
+}
+
+async function payWithTagpay() {
+  if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
+  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
+
+  initiating.value = true
+  payError.value = ''
+
+  const voteRows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
+    voter_name: payForm.name,
+    voter_phone: payForm.phone,
+    qty: voteQty.value,
+    amount: voteQty.value * 200,
+    category: cat.id,
+    contestant_id: votes[cat.id],
+    contestant_name: getVotedContestant(cat)?.name ?? '',
+  }))
+
+  try {
+    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
+      method: 'POST',
+      body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
+    })
+    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
+    sessionStorage.setItem('tagpay_reference', res.reference)
+    window.location.href = res.url
+  } catch (e: any) {
+    payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
+    initiating.value = false
+  }
 }
 
 async function submitVotes() {
