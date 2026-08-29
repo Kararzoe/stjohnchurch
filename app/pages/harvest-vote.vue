@@ -325,6 +325,53 @@
 
 
 
+    <!-- ── STEP: TAGPAY VIRTUAL ACCOUNT ── -->
+    <div v-if="harvestActive && step === 'tagpay'" class="py-12 px-4">
+      <div class="max-w-lg mx-auto space-y-5">
+        <div class="text-center mb-2">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay Transfer</p>
+          <h2 class="font-playfair text-3xl font-black text-navy">Transfer to Virtual Account</h2>
+          <div class="flex items-center justify-center gap-3 mt-3">
+            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+          </div>
+        </div>
+
+        <div :class="['rounded-2xl p-4 text-center border-2', tagpayExpired ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200']">
+          <p :class="['text-xs font-bold uppercase tracking-widest mb-1', tagpayExpired ? 'text-red-500' : 'text-amber-600']">{{ tagpayExpired ? 'Account Expired' : 'Account expires in' }}</p>
+          <p :class="['font-playfair font-black text-4xl tabular-nums', tagpayExpired ? 'text-red-600' : 'text-amber-700']">{{ tagpayExpired ? '00:00' : tagpayTimeLeft }}</p>
+          <p v-if="tagpayExpired" class="text-red-500 text-xs mt-1">This account has expired. Please go back and try again.</p>
+        </div>
+
+        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-gold text-xs uppercase tracking-widest font-bold">TagPay Virtual Account</p>
+            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+            <p class="text-gray-300 text-xs mb-1">Account Number</p>
+            <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+            <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
+          </div>
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <p>1. Transfer exactly <strong class="text-gold text-sm">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
+            <p>2. Use any bank app or USSD to complete the transfer.</p>
+            <p>3. Your vote will be confirmed automatically once payment is received.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center space-y-2">
+          <p class="text-xs text-gray-400 font-semibold">Waiting for your transfer...</p>
+          <div class="flex items-center justify-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:0ms" />
+            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:150ms" />
+            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
+          </div>
+        </div>
+
+        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
+      </div>
+    </div>
+
     <!-- ── STEP: DONE ── -->
     <div v-if="harvestActive && step === 'done'" class="py-20 px-4 text-center">
       <div class="max-w-md mx-auto">
@@ -359,7 +406,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'details' | 'payment' | 'done'>('vote')
+const step = ref<'vote' | 'details' | 'payment' | 'tagpay' | 'done'>('vote')
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -368,6 +415,11 @@ const payError = ref('')
 const submitting = ref(false)
 const initiating = ref(false)
 const payForm = reactive({ name: '', phone: '' })
+const tagpayAccount = reactive({ accountNumber: '', accountName: '', expiresAt: '', reference: '' })
+const tagpayTimeLeft = ref('')
+const tagpayExpired = ref(false)
+let tagpayTimer: any
+let pollTimer: any
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -436,7 +488,7 @@ onMounted(async () => {
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 })
 
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => { clearInterval(timer); clearInterval(tagpayTimer); clearInterval(pollTimer) })
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
@@ -481,17 +533,51 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ reference: string; accountNumber: string; accountName: string; expiresAt: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
-    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
-    sessionStorage.setItem('tagpay_reference', res.reference)
-    window.location.href = res.url
+    tagpayAccount.accountNumber = res.accountNumber
+    tagpayAccount.accountName = res.accountName
+    tagpayAccount.expiresAt = res.expiresAt
+    tagpayAccount.reference = res.reference
+    tagpayExpired.value = false
+    startTagpayTimers(res.expiresAt, res.reference)
+    goTo('tagpay')
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
+  } finally {
     initiating.value = false
   }
+}
+
+function startTagpayTimers(expiresAt: string, reference: string) {
+  clearInterval(tagpayTimer)
+  clearInterval(pollTimer)
+  const expiry = new Date(expiresAt).getTime()
+
+  tagpayTimer = setInterval(() => {
+    const diff = expiry - Date.now()
+    if (diff <= 0) {
+      tagpayExpired.value = true
+      tagpayTimeLeft.value = '00:00'
+      clearInterval(tagpayTimer)
+      clearInterval(pollTimer)
+      return
+    }
+    const m = Math.floor(diff / 60000)
+    const s = Math.floor((diff % 60000) / 1000)
+    tagpayTimeLeft.value = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }, 1000)
+
+  pollTimer = setInterval(async () => {
+    const res = await $fetch<{ approved: boolean }>(`/api/tagpay-verify?reference=${reference}`).catch(() => null)
+    if (res?.approved) {
+      clearInterval(tagpayTimer)
+      clearInterval(pollTimer)
+      step.value = 'done'
+    }
+  }, 5000)
 }
 
 async function submitVotes() {
