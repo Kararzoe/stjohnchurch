@@ -29,20 +29,31 @@ export default defineEventHandler(async (event) => {
     config.supabaseServiceRoleKey || config.public.supabaseKey
   )
 
-  const reference = payload.data?.reference
+  // For collection account webhooks, the merchant reference is in collectionAccount.reference
+  const collectionRef = payload.data?.collectionAccount?.reference
+  const topLevelRef = payload.data?.reference
   const amountKobo = payload.data?.amount
   const amountNaira = amountKobo ? Math.round(amountKobo / 100) : null
 
-  // Try match by reference first (API transactions)
-  if (reference) {
-    const { data: byRef } = await supabase.from('votes').select('id').eq('reference', reference).eq('status', 'pending').limit(1)
+  // Match by collection account reference (our merchant reference)
+  if (collectionRef) {
+    const { data: byRef } = await supabase.from('votes').select('id').eq('reference', collectionRef).eq('status', 'pending').limit(1)
     if (byRef?.length) {
-      await supabase.from('votes').update({ status: 'approved' }).eq('reference', reference).eq('status', 'pending')
+      await supabase.from('votes').update({ status: 'approved' }).eq('reference', collectionRef).eq('status', 'pending')
       return { received: true }
     }
   }
 
-  // Fallback: match oldest pending TagPay vote with matching amount
+  // Fallback: match by top-level reference
+  if (topLevelRef) {
+    const { data: byRef } = await supabase.from('votes').select('id').eq('reference', topLevelRef).eq('status', 'pending').limit(1)
+    if (byRef?.length) {
+      await supabase.from('votes').update({ status: 'approved' }).eq('reference', topLevelRef).eq('status', 'pending')
+      return { received: true }
+    }
+  }
+
+  // Last resort: match oldest pending TagPay vote with matching amount
   if (amountNaira) {
     const { data: byAmount } = await supabase
       .from('votes')
