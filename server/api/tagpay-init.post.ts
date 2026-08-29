@@ -11,23 +11,29 @@ export default defineEventHandler(async (event) => {
 
   const reference = `vote_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
-  const res = await $fetch<any>('https://api.tagpay.ng/v1/checkout/sessions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.tagpaySecretKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: {
-      amount: amount * 100, // kobo
-      reference,
-      customer_name: name,
-      callback_url: `${config.public.siteUrl}/vote-callback`,
-      metadata: { name, phone },
-    },
-  })
+  let res: any
+  try {
+    res = await $fetch<any>('https://api.tagpay.ng/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.tagpaySecretKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        amount: amount * 100, // kobo
+        reference,
+        customer_name: name,
+        callback_url: `${config.public.siteUrl}/vote-callback`,
+        metadata: { name, phone },
+      },
+    })
+  } catch (e: any) {
+    const msg = e?.data?.message || e?.message || 'TagPay request failed'
+    throw createError({ statusCode: 502, message: msg })
+  }
 
   if (!res?.payment_url) {
-    throw createError({ statusCode: 502, message: 'TagPay did not return a checkout URL' })
+    throw createError({ statusCode: 502, message: `TagPay did not return a checkout URL. Response: ${JSON.stringify(res)}` })
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
