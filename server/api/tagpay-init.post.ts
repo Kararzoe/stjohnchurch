@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         phone,
         reference,
         currency: 'NGN',
-        payment_method: 'bank_transfer',
+        paymentMethod: 'bank_transfer',
         callback_url: callbackUrl,
       },
     })
