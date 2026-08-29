@@ -328,35 +328,28 @@
     <div v-if="harvestActive && step === 'tagpay-transfer'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
         <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Virtual Account</p>
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay</p>
           <h2 class="font-playfair text-3xl font-black text-navy">Complete Your Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
-        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ tagpayAccount.bankName || 'Bank Transfer' }}</p>
-            <span class="text-xs bg-red-500/30 text-red-200 px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
-          </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-3xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
-          </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer <strong class="text-gold text-sm">exactly ₦{{ tagpayAccount.amount.toLocaleString() }}</strong> to the account above.</p>
-            <p>2. You have <strong class="text-red-300">15 minutes</strong> to complete the transfer.</p>
-            <p>3. Click confirm below after transferring.</p>
-          </div>
+        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md text-center" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          <p class="text-gray-300 text-sm mb-2">Pay <strong class="text-gold text-lg">₦{{ tagpayAccount.amount.toLocaleString() }}</strong> securely via TagPay</p>
+          <p class="text-gray-400 text-xs mb-5">You will be redirected to TagPay's secure payment page where you can pay via bank transfer, card, or USSD.</p>
+          <a :href="tagpayAccount.checkoutUrl" target="_blank"
+            class="block w-full py-4 rounded-xl font-black text-navy text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            💳 Pay ₦{{ tagpayAccount.amount.toLocaleString() }} on TagPay →
+          </a>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p class="text-amber-800 text-xs leading-relaxed">Transfer to the account above, then click confirm. Your vote will be approved automatically once payment is received.</p>
+          <p class="text-amber-800 text-xs leading-relaxed">After completing payment on TagPay, come back here and click confirm. Your vote will be approved automatically.</p>
         </div>
         <button @click="pollTagPay" :disabled="submitting"
           class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60"
           style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Verifying payment...' : "✅ I've Transferred — Confirm" }}
+          {{ submitting ? 'Verifying payment...' : "✅ I've Paid — Confirm" }}
         </button>
         <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
         <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
@@ -409,7 +402,7 @@ const voteQty = ref(1)
 const payError = ref('')
 const submitting = ref(false)
 const payForm = reactive({ name: '', phone: '' })
-const tagpayAccount = reactive({ bankName: '', accountNumber: '', accountName: '', reference: '', amount: 0 })
+const tagpayAccount = reactive({ reference: '', amount: 0, checkoutUrl: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
 const contestSubtitle = ref('Cast your vote for your favourite contestants · St. John of the Cross & Order of St. Augustine')
@@ -543,17 +536,15 @@ async function initPayment() {
 
   const res = await $fetch<any>('/api/tagpay-init', {
     method: 'POST',
-    body: { amount: voteQty.value * 200, reference: txRef },
+    body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, reference: txRef, callbackUrl: window.location.href },
   })
 
   submitting.value = false
   if (res.error) { payError.value = res.error; return }
 
-  tagpayAccount.accountNumber = res.accountNumber
-  tagpayAccount.accountName = res.accountName
-  tagpayAccount.bankName = res.bankName
   tagpayAccount.reference = txRef
   tagpayAccount.amount = voteQty.value * 200
+  tagpayAccount.checkoutUrl = res.checkoutUrl
   goTo('tagpay-transfer')
 }
 
