@@ -16,16 +16,26 @@ export default defineEventHandler(async (event) => {
   let payload: any = {}
   try { payload = JSON.parse(rawBody) } catch { return { received: true } }
 
-  if (payload.event !== 'charge.success') return { received: true }
+  const eventName = getHeader(event, 'x-tagpay-event') || payload.event
+  if (eventName !== 'charge.success') return { received: true }
   if (payload.data?.status !== 'success') return { received: true }
+
+  const reference = payload.data?.reference
+  if (!reference || reference.startsWith('COLL_') || reference.startsWith('SUBWALLET_')) {
+    return { received: true }
+  }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
 
-  const reference = payload.data?.reference
+  // Deduplicate: only approve if still pending (idempotent — safe to replay)
+  const { data: pending } = await supabase
+    .from('votes')
+    .select('id')
+    .eq('reference', reference)
+    .eq('status', 'pending')
+    .limit(1)
 
-  // Checkout-linked charges have our vote reference directly
-  // COLL_ prefixed references are standalone collection account inflows — skip them
-  if (reference && !reference.startsWith('COLL_') && !reference.startsWith('SUBWALLET_')) {
+  if (pending?.length) {
     await supabase.from('votes').update({ status: 'approved' }).eq('reference', reference).eq('status', 'pending')
   }
 
