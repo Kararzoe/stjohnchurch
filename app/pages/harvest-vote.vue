@@ -234,10 +234,10 @@
               class="w-full p-4 rounded-2xl text-white font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer disabled:opacity-60"
               style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
               <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-2xl shrink-0">💳</div>
+                <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-2xl shrink-0">🏦</div>
                 <div>
-                  <p class="text-sm font-black leading-tight">Pay Online with TagPay</p>
-                  <p class="text-[11px] text-gray-300 font-semibold">Card · Bank Transfer · USSD</p>
+                  <p class="text-sm font-black leading-tight">Pay via Bank Transfer</p>
+                  <p class="text-[11px] text-gray-300 font-semibold">Virtual Account · Auto-confirmed</p>
                 </div>
               </div>
               <span class="text-sm font-black shrink-0 ml-2">{{ initiating ? 'Loading...' : '₦' + (voteQty * 200).toLocaleString() + ' →' }}</span>
@@ -361,6 +361,12 @@
             <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
           </div>
         </div>
+
+        <button @click="navigateTo('/vote-callback')"
+          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 cursor-pointer"
+          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+          ✅ I've Paid — Confirm My Vote
+        </button>
 
         <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
       </div>
@@ -524,12 +530,14 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string; accountId: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
     tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
     tagpayReference.value = res.reference
+    sessionStorage.setItem('tagpay_account_id', res.accountId)
+    sessionStorage.setItem('tagpay_reference', res.reference)
     goTo('tagpay')
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
