@@ -530,12 +530,15 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ url: string; reference: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string; accountId: string; expiresAt: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
+    tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
+    tagpayReference.value = res.reference
+    sessionStorage.setItem('tagpay_account_id', res.accountId)
     sessionStorage.setItem('tagpay_reference', res.reference)
-    window.location.href = res.url
+    goTo('tagpay')
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
   } finally {

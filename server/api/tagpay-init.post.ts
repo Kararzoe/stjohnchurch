@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   let res: any
   try {
-    res = await $fetch<any>('https://gwt.tagpay.ng/v1/checkout/sessions', {
+    res = await $fetch<any>('https://gwt.tagpay.ng/v1/collection-accounts', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
@@ -21,12 +21,10 @@ export default defineEventHandler(async (event) => {
         'Idempotency-Key': reference,
       },
       body: {
-        amount: amount * 100,
+        type: 'expiring',
         reference,
-        customer_email: `${phone}@vote.stjohncatholicchurch.org`,
-        customer_name: name,
-        customer_phone: phone,
-        callback_url: `${config.public.siteUrl}/vote-callback`,
+        expectedAmount: amount * 100,
+        label: `Vote - ${name}`,
         metadata: { name, phone },
       },
     })
@@ -38,11 +36,15 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 502, message: `[${status}] ${code ? code + ': ' : ''}${msg} | raw: ${JSON.stringify(errBody)}` })
   }
 
-  const data = res?.data ?? res
-  const url = data?.payment_url || data?.url || data?.paymentUrl || data?.checkout_url || data?.checkoutUrl
+  const account = res?.data ?? res
+  const accountNumber = account?.accountNumber
+  const accountName = account?.accountName || 'TagPay Virtual Account'
+  const bankName = account?.bankName || 'Bank Transfer'
+  const accountId = account?.id
+  const expiresAt = account?.expiresAt
 
-  if (!url) {
-    throw createError({ statusCode: 502, message: `No payment URL returned. Response: ${JSON.stringify(res)}` })
+  if (!accountNumber) {
+    throw createError({ statusCode: 502, message: `No account number returned. Response: ${JSON.stringify(res)}` })
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
@@ -50,5 +52,5 @@ export default defineEventHandler(async (event) => {
   const { error } = await supabase.from('votes').insert(rows)
   if (error) throw createError({ statusCode: 500, message: error.message })
 
-  return { url, reference }
+  return { accountNumber, accountName, bankName, reference, accountId, expiresAt }
 })
