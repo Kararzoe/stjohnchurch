@@ -236,8 +236,8 @@
               <div class="flex items-center gap-3 text-left">
                 <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-2xl shrink-0">🏦</div>
                 <div>
-                  <p class="text-sm font-black leading-tight">Pay via Bank Transfer</p>
-                  <p class="text-[11px] text-gray-300 font-semibold">Virtual Account · Auto-confirmed</p>
+                  <p class="text-sm font-black leading-tight">Pay Online with TagPay</p>
+                  <p class="text-[11px] text-gray-300 font-semibold">Bank Transfer · Card · USSD</p>
                 </div>
               </div>
               <span class="text-sm font-black shrink-0 ml-2">{{ initiating ? 'Loading...' : '₦' + (voteQty * 200).toLocaleString() + ' →' }}</span>
@@ -530,15 +530,13 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string; accountId: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
-    tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
-    tagpayReference.value = res.reference
-    sessionStorage.setItem('tagpay_account_id', res.accountId)
+    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
     sessionStorage.setItem('tagpay_reference', res.reference)
-    goTo('tagpay')
+    window.location.href = res.url
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
   } finally {

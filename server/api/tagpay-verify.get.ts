@@ -2,27 +2,25 @@ import { createClient } from '@supabase/supabase-js'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const { account_id, reference } = getQuery(event) as { account_id: string; reference: string }
+  const { session_key, reference } = getQuery(event) as { session_key: string; reference: string }
 
-  if (!account_id || !reference) throw createError({ statusCode: 400, message: 'Missing account_id or reference' })
+  if (!session_key || !reference) throw createError({ statusCode: 400, message: 'Missing session_key or reference' })
 
   let res: any
   try {
-    res = await $fetch<any>(`https://gwt.tagpay.ng/v1/collection-accounts/${account_id}`, {
+    res = await $fetch<any>(`https://gwt.tagpay.ng/checkout/sessions/${session_key}`, {
       headers: { Authorization: `Bearer ${config.tagpaySecretKey}` },
     })
   } catch (e: any) {
-    return { success: false, message: 'Could not verify payment.' }
+    return { success: false, message: 'Could not verify session.' }
   }
 
-  const account = res?.data ?? res
-  const status = account?.status
+  const data = res?.data ?? res
+  const status = data?.status
 
-  if (status === 'expired') return { success: false, message: 'Account expired. Please try again.' }
-
-  // Check if any transactions came in
-  const txCount = account?.transactionCount ?? 0
-  if (txCount === 0) return { success: false, message: 'Payment not received yet.' }
+  if (status !== 'completed' && status !== 'paid' && status !== 'success') {
+    return { success: false, message: status === 'expired' ? 'Session expired.' : 'Payment not completed yet.' }
+  }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
   await supabase.from('votes').update({ status: 'approved' }).eq('reference', reference).eq('status', 'pending')
