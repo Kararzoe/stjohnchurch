@@ -8,7 +8,10 @@ export default defineEventHandler(async (event) => {
   if (config.tagpayWebhookSecret) {
     const signature = getHeader(event, 'x-tagpay-signature') || ''
     const expected = crypto.createHmac('sha512', config.tagpayWebhookSecret).update(rawBody).digest('hex')
-    if (signature !== expected) {
+    const sigBuffer = Buffer.from(signature)
+    const expBuffer = Buffer.from(expected)
+    const valid = sigBuffer.length === expBuffer.length && crypto.timingSafeEqual(sigBuffer, expBuffer)
+    if (!valid) {
       throw createError({ statusCode: 401, message: 'Invalid signature' })
     }
   }
