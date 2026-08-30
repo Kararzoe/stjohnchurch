@@ -530,11 +530,10 @@ async function payWithTagpay() {
   }))
 
   try {
-    const res = await $fetch<{ url: string; reference: string; sessionKey: string }>('/api/tagpay-init', {
+    const res = await $fetch<{ url: string; reference: string }>('/api/tagpay-init', {
       method: 'POST',
       body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
     })
-    sessionStorage.setItem('tagpay_session_key', res.sessionKey)
     sessionStorage.setItem('tagpay_reference', res.reference)
     window.location.href = res.url
   } catch (e: any) {

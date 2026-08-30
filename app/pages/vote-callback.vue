@@ -32,19 +32,19 @@ const status = ref<'loading' | 'success' | 'failed'>('loading')
 const errorMsg = ref('')
 
 onMounted(async () => {
-  const session_key = sessionStorage.getItem('tagpay_session_key')
-  const reference = sessionStorage.getItem('tagpay_reference')
+  // TagPay returns reference in the callback URL query string
+  const urlRef = new URLSearchParams(window.location.search).get('reference')
+  const reference = urlRef || sessionStorage.getItem('tagpay_reference')
 
-  if (!session_key || !reference) {
+  if (!reference) {
     status.value = 'failed'
-    errorMsg.value = 'Missing payment details. Please try again.'
+    errorMsg.value = 'Missing payment reference. Please try again.'
     return
   }
 
   try {
-    const res = await $fetch<any>(`/api/tagpay-verify?session_key=${session_key}&reference=${reference}`)
+    const res = await $fetch<any>(`/api/tagpay-verify?reference=${reference}`)
     if (res.success) {
-      sessionStorage.removeItem('tagpay_session_key')
       sessionStorage.removeItem('tagpay_reference')
       status.value = 'success'
     } else {

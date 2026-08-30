@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   let res: any
   try {
-    res = await $fetch<any>('https://gwt.tagpay.ng/checkout/sessions', {
+    res = await $fetch<any>('https://gwt.tagpay.ng/v1/charges', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
       body: {
         amount: amount * 100,
         reference,
+        customer_email: `${phone}@vote.stjohncatholicchurch.org`,
         customer_name: name,
         customer_phone: phone,
         callback_url: `${config.public.siteUrl}/vote-callback`,
@@ -34,11 +35,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const data = res?.data ?? res
-  const url = data?.url || data?.payment_url || data?.paymentUrl || data?.checkoutUrl
-  const sessionKey = data?.sessionKey || data?.session_key || data?.id
+  const url = data?.payment_url || data?.paymentUrl || data?.url || data?.checkout_url
 
   if (!url) {
-    throw createError({ statusCode: 502, message: `No checkout URL returned. Response: ${JSON.stringify(res)}` })
+    throw createError({ statusCode: 502, message: `No payment URL returned. Response: ${JSON.stringify(res)}` })
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
@@ -46,5 +46,5 @@ export default defineEventHandler(async (event) => {
   const { error } = await supabase.from('votes').insert(rows)
   if (error) throw createError({ statusCode: 500, message: error.message })
 
-  return { url, reference, sessionKey }
+  return { url, reference }
 })
