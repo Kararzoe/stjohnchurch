@@ -31,8 +31,10 @@ export default defineEventHandler(async (event) => {
       },
     })
   } catch (e: any) {
-    const msg = e?.data?.message || e?.data?.error || e?.message || 'TagPay request failed'
-    throw createError({ statusCode: 502, message: msg })
+    const errBody = e?.data
+    const code = errBody?.error?.code || ''
+    const msg = errBody?.message || e?.message || 'TagPay request failed'
+    throw createError({ statusCode: 502, message: code ? `${code}: ${msg}` : msg })
   }
 
   const data = res?.data ?? res
