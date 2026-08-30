@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
       headers: {
         Authorization: `Bearer ${config.tagpaySecretKey}`,
         'Content-Type': 'application/json',
+        'Idempotency-Key': reference,
       },
       body: {
         amount: amount * 100,
