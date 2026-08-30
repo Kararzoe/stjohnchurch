@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const data = res?.data ?? res
-  const url = data?.payment_url || data?.paymentUrl || data?.url || data?.checkout_url
+  const url = data?.payment_url || data?.url || data?.paymentUrl || data?.checkout_url || data?.checkoutUrl
 
   if (!url) {
     throw createError({ statusCode: 502, message: `No payment URL returned. Response: ${JSON.stringify(res)}` })
