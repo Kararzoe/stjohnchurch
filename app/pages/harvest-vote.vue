@@ -328,47 +328,68 @@
     <!-- ── STEP: TAGPAY VIRTUAL ACCOUNT ── -->
     <div v-if="harvestActive && step === 'tagpay'" class="py-12 px-4">
       <div class="max-w-lg mx-auto space-y-5">
-        <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay Transfer</p>
-          <h2 class="font-playfair text-3xl font-black text-navy">Transfer to Virtual Account</h2>
-          <div class="flex items-center justify-center gap-3 mt-3">
-            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+
+        <!-- Payment confirmed inline -->
+        <div v-if="tagpayConfirmed" class="text-center space-y-5 py-6">
+          <div class="w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-xl animate-float" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+            <svg class="w-12 h-12 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
           </div>
+          <h2 class="font-playfair text-4xl font-black text-navy">Payment Received!</h2>
+          <p class="text-gray-500 text-sm">Your vote has been confirmed and recorded. Thank you!</p>
+          <div class="space-y-2">
+            <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
+              <p class="text-xs text-gray-400 uppercase tracking-widest font-semibold">{{ cat.label }}</p>
+              <p class="font-playfair font-bold text-navy text-sm">{{ getVotedContestant(cat)?.name }}</p>
+            </div>
+          </div>
+          <p class="text-gray-400 text-xs italic">"Give thanks to the Lord, for He is good; His love endures forever." — Psalm 107:1</p>
+          <NuxtLink to="/" class="inline-block px-10 py-4 rounded-xl text-white font-black shadow-lg" style="background: linear-gradient(90deg, #b8860b, #d4af37)">Back to Home</NuxtLink>
         </div>
 
-        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">{{ tagpayAccount.bankName || 'TagPay Virtual Account' }}</p>
-            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 30 mins</span>
+        <!-- Waiting state -->
+        <template v-else>
+          <div class="text-center mb-2">
+            <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">TagPay Transfer</p>
+            <h2 class="font-playfair text-3xl font-black text-navy">Transfer to Virtual Account</h2>
+            <div class="flex items-center justify-center gap-3 mt-3">
+              <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
+            </div>
           </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
-          </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
-            <p>2. Use any bank app or USSD to complete the transfer.</p>
-            <p>3. Your vote will be confirmed automatically once payment is received.</p>
-          </div>
-        </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center space-y-2">
-          <p class="text-xs text-gray-400 font-semibold">Waiting for your transfer...</p>
-          <div class="flex items-center justify-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:0ms" />
-            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:150ms" />
-            <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
+          <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+            <div class="flex items-center justify-between mb-4">
+              <p class="text-gold text-xs uppercase tracking-widest font-bold">TagPay · {{ tagpayAccount.bankName || 'Virtual Account' }}</p>
+              <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+              <p class="text-gray-300 text-xs mb-1">Account Number</p>
+              <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
+              <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
+            </div>
+            <div class="space-y-1.5 text-xs text-gray-300">
+              <p>1. Transfer exactly <strong class="text-gold text-sm">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
+              <p>2. Use any bank app or USSD to complete the transfer.</p>
+              <p>3. Your vote will be confirmed automatically once payment is received.</p>
+            </div>
           </div>
-        </div>
 
-        <button @click="navigateTo('/vote-callback')"
-          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 cursor-pointer"
-          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          ✅ I've Paid — Confirm My Vote
-        </button>
+          <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center space-y-2">
+            <p class="text-xs text-gray-400 font-semibold">Waiting for your transfer...</p>
+            <div class="flex items-center justify-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:0ms" />
+              <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:150ms" />
+              <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
+            </div>
+          </div>
 
-        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
+          <button @click="manualConfirm"
+            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 cursor-pointer"
+            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
+            ✅ I've Paid — Confirm My Vote
+          </button>
+
+          <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
+        </template>
       </div>
     </div>
 
@@ -409,6 +430,9 @@ const supabase = useSupabase()
 const step = ref<'vote' | 'details' | 'payment' | 'tagpay' | 'done'>('vote')
 const tagpayAccount = ref({ accountNumber: '', accountName: '', bankName: '' })
 const tagpayReference = ref('')
+const tagpayAccountId = ref('')
+const tagpayConfirmed = ref(false)
+let pollTimer: any
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
@@ -485,7 +509,31 @@ onMounted(async () => {
     .map((cat: any) => ({ ...cat, contestants: grouped[cat.id] }))
 })
 
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => {
+  clearInterval(timer)
+  clearInterval(pollTimer)
+})
+
+function startPolling() {
+  clearInterval(pollTimer)
+  pollTimer = setInterval(async () => {
+    if (step.value !== 'tagpay' || tagpayConfirmed.value) { clearInterval(pollTimer); return }
+    try {
+      const res = await $fetch<any>(`/api/tagpay-verify?account_id=${tagpayAccountId.value}&reference=${tagpayReference.value}`)
+      if (res.success) {
+        clearInterval(pollTimer)
+        sessionStorage.removeItem('tagpay_account_id')
+        sessionStorage.removeItem('tagpay_reference')
+        tagpayConfirmed.value = true
+      }
+    } catch {}
+  }, 4000)
+}
+
+async function manualConfirm() {
+  clearInterval(pollTimer)
+  await navigateTo('/vote-callback')
+}
 
 const totalVoted = computed(() => Object.keys(votes).length)
 
@@ -536,9 +584,11 @@ async function payWithTagpay() {
     })
     tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
     tagpayReference.value = res.reference
+    tagpayAccountId.value = res.accountId
     sessionStorage.setItem('tagpay_account_id', res.accountId)
     sessionStorage.setItem('tagpay_reference', res.reference)
     goTo('tagpay')
+    startPolling()
   } catch (e: any) {
     payError.value = e?.data?.message || 'Could not initiate payment. Please try again.'
   } finally {
