@@ -34,7 +34,8 @@ export default defineEventHandler(async (event) => {
     const errBody = e?.data
     const code = errBody?.error?.code || ''
     const msg = errBody?.message || e?.message || 'TagPay request failed'
-    throw createError({ statusCode: 502, message: code ? `${code}: ${msg}` : msg })
+    const status = e?.status || e?.statusCode || ''
+    throw createError({ statusCode: 502, message: `[${status}] ${code ? code + ': ' : ''}${msg} | raw: ${JSON.stringify(errBody)}` })
   }
 
   const data = res?.data ?? res
