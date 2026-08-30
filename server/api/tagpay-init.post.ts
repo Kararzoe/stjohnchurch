@@ -9,6 +9,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Missing required fields' })
   }
 
+  if (!config.tagpaySecretKey) {
+    throw createError({ statusCode: 500, message: `tagpaySecretKey is empty. Check NUXT_TAGPAY_SECRET_KEY in Vercel env vars.` })
+  }
+
   const reference = `vote_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
   let res: any
