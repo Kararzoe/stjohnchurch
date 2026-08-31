@@ -243,86 +243,13 @@
               <span class="text-sm font-black shrink-0 ml-2">{{ initiating ? 'Loading...' : '₦' + (voteQty * 200).toLocaleString() + ' →' }}</span>
             </button>
 
-            <!-- Manual bank transfer fallback -->
-            <button @click="goTo('payment')"
-              class="w-full p-4 rounded-2xl text-navy font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer border border-gold/30"
-              style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-              <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-navy/10 flex items-center justify-center text-2xl shrink-0">🏦</div>
-                <div>
-                  <p class="text-sm font-black text-navy leading-tight">Pay via Bank Transfer</p>
-                  <p class="text-[11px] text-navy/75 font-semibold">Access Bank · Admin Verification</p>
-                </div>
-              </div>
-              <span class="text-sm font-black text-navy shrink-0 ml-2">₦{{ (voteQty * 200).toLocaleString() }} →</span>
-            </button>
+
           </div>
 
           <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white mt-2">← Back to Contestants</button>
         </div>
       </div>
     </div>
-
-    <!-- ── STEP: PAYMENT (Manual Bank Transfer) ── -->
-    <div v-if="harvestActive && step === 'payment'" class="py-12 px-4">
-      <div class="max-w-lg mx-auto space-y-5">
-        <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Manual Transfer</p>
-          <h2 class="font-playfair text-3xl font-black text-navy">Pay via Access Bank</h2>
-          <div class="flex items-center justify-center gap-3 mt-3">
-            <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
-          </div>
-        </div>
-
-        <!-- Transfer summary -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 divide-y divide-gray-100 text-sm">
-          <div class="flex justify-between py-2">
-            <span class="text-gray-400">Voter Name</span>
-            <span class="font-bold text-navy">{{ payForm.name }}</span>
-          </div>
-          <div class="flex justify-between py-2">
-            <span class="text-gray-400">Phone Number</span>
-            <span class="font-bold text-navy">{{ payForm.phone }}</span>
-          </div>
-          <div class="flex justify-between py-2">
-            <span class="text-gray-400">Votes</span>
-            <span class="font-bold text-navy">{{ voteQty }} vote{{ voteQty > 1 ? 's' : '' }} (₦200 each)</span>
-          </div>
-          <div class="flex justify-between py-2 text-base">
-            <span class="font-bold text-navy">Total Amount</span>
-            <span class="font-black text-gold">₦{{ (voteQty * 200).toLocaleString() }}</span>
-          </div>
-        </div>
-
-        <!-- Bank Details Card -->
-        <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div class="flex items-center justify-between mb-4">
-            <p class="text-gold text-xs uppercase tracking-widest font-bold">Access Bank</p>
-            <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Parish Account</span>
-          </div>
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-            <p class="text-gray-300 text-xs mb-1">Account Number</p>
-            <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">0044170761</p>
-            <p class="text-gold-light text-xs font-semibold mt-1">St Johns Catholic Church</p>
-          </div>
-          <div class="space-y-1.5 text-xs text-gray-300">
-            <p>1. Transfer exactly <strong class="text-gold text-sm">₦{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
-            <p>2. Use <strong class="text-white">{{ payForm.name }}</strong> as the transfer narration.</p>
-            <p>3. Click the confirmation button below after completing payment.</p>
-          </div>
-        </div>
-
-        <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
-
-        <button @click="submitVotes" :disabled="submitting"
-          class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 disabled:opacity-60 cursor-pointer"
-          style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-          {{ submitting ? 'Submitting...' : "✅ I've Paid — Submit My Vote" }}
-        </button>
-        <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Payment Options</button>
-      </div>
-    </div>
-
 
 
     <!-- ── STEP: TAGPAY VIRTUAL ACCOUNT ── -->
@@ -427,7 +354,7 @@ definePageMeta({ layout: 'default' })
 useScrollReveal()
 
 const supabase = useSupabase()
-const step = ref<'vote' | 'details' | 'payment' | 'tagpay' | 'done'>('vote')
+const step = ref<'vote' | 'details' | 'tagpay' | 'done'>('vote')
 const tagpayAccount = ref({ accountNumber: '', accountName: '', bankName: '' })
 const tagpayReference = ref('')
 const tagpayAccountId = ref('')
@@ -438,8 +365,6 @@ const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
 const voteQty = ref(1)
 const payError = ref('')
-const submitting = ref(false)
-const initiating = ref(false)
 const payForm = reactive({ name: '', phone: '' })
 
 const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
@@ -560,6 +485,8 @@ function goToPayment() {
   goTo('details')
 }
 
+const initiating = ref(false)
+
 async function payWithTagpay() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
   if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
@@ -596,31 +523,6 @@ async function payWithTagpay() {
   }
 }
 
-async function submitVotes() {
-  if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
-  if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
-
-  submitting.value = true
-  payError.value = ''
-
-  const rows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
-    voter_name: payForm.name,
-    voter_phone: payForm.phone,
-    bank: 'Access Bank',
-    reference: 'self-declared',
-    qty: voteQty.value,
-    amount: voteQty.value * 200,
-    status: 'pending',
-    category: cat.id,
-    contestant_id: votes[cat.id],
-    contestant_name: getVotedContestant(cat)?.name ?? '',
-  }))
-
-  const { error } = await supabase.from('votes').insert(rows)
-  submitting.value = false
-  if (error) { payError.value = error.message; return }
-  step.value = 'done'
-}
 </script>
 
 <style scoped>
