@@ -285,7 +285,7 @@
 
           <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
             <div class="flex items-center justify-between mb-4">
-              <p class="text-gold text-xs uppercase tracking-widest font-bold">TagPay · {{ tagpayAccount.bankName || 'Virtual Account' }}</p>
+              <p class="text-gold text-lg font-black tracking-wide">TagPay · {{ tagpayAccount.bankName || 'Virtual Account' }}</p>
               <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 border border-white/10">
