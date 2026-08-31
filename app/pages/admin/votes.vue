@@ -68,8 +68,7 @@
       <div class="flex gap-2 flex-wrap">
         <button v-if="tab === 'pending'" @click="bulkAction('approved')" class="px-4 py-2 rounded-xl bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve All</button>
         <button v-if="tab === 'pending'" @click="bulkAction('rejected')" class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">✗ Reject All</button>
-        <button v-if="tab === 'approved'" @click="bulkAction('pending')" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black hover:bg-amber-600 transition-all">↩ Move to Pending</button>
-        <button v-if="tab === 'approved'" @click="bulkAction('rejected')" class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-black hover:bg-red-600 transition-all">✗ Reject All</button>
+
         <button v-if="tab === 'rejected'" @click="bulkAction('pending')" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black hover:bg-amber-600 transition-all">↩ Restore All</button>
         <button v-if="tab === 'rejected'" @click="bulkAction('approved')" class="px-4 py-2 rounded-xl bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve All</button>
         <button v-if="tab === 'rejected'" @click="bulkDelete" class="px-4 py-2 rounded-xl bg-red-700 text-white text-xs font-black hover:bg-red-800 transition-all">🗑 Delete All</button>
@@ -164,7 +163,6 @@
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Contestant</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Qty</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Amount</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -185,9 +183,7 @@
                 </td>
                 <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
                 <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
-                <td class="px-4 py-3">
-                  <button @click="confirm({ title: 'Undo Approval', message: `Move vote from ${row.voter_name} back to pending?`, confirmLabel: 'Yes, Undo', danger: true, onConfirm: () => rejectRow(row) })" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Undo</button>
-                </td>
+                <td class="px-4 py-3"></td>
               </tr>
             </tbody>
           </table>

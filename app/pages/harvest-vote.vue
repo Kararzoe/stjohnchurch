@@ -361,10 +361,10 @@
               <p class="text-gold text-xs uppercase tracking-widest font-bold">TagPay · {{ tagpayAccount.bankName || 'Virtual Account' }}</p>
               <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
             </div>
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
-              <p class="text-gray-300 text-xs mb-1">Account Number</p>
-              <p class="text-white font-playfair font-black text-2xl tracking-wider select-all">{{ tagpayAccount.accountNumber }}</p>
-              <p class="text-gold-light text-xs font-semibold mt-1">{{ tagpayAccount.accountName }}</p>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 border border-white/10">
+              <p class="text-gray-300 text-xs mb-2">Account Number</p>
+              <p class="text-white font-playfair font-black text-4xl tracking-widest select-all leading-tight">{{ tagpayAccount.accountNumber }}</p>
+              <p class="text-gold-light text-sm font-semibold mt-2">{{ tagpayAccount.accountName }}</p>
             </div>
             <div class="space-y-1.5 text-xs text-gray-300">
               <p>1. Transfer exactly <strong class="text-gold text-sm">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
