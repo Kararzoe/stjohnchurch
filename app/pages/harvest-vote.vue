@@ -218,11 +218,15 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Number of Votes (₦200 each)</label>
-            <div class="flex items-center gap-4">
-              <button @click="voteQty = Math.max(1, voteQty - 1)" class="w-11 h-11 rounded-xl border-2 border-gray-200 text-navy font-black text-xl hover:border-gold transition-all">−</button>
-              <span class="flex-1 text-center font-playfair font-black text-3xl text-navy">{{ voteQty }}</span>
-              <button @click="voteQty++" class="w-11 h-11 rounded-xl border-2 border-gray-200 text-navy font-black text-xl hover:border-gold transition-all">+</button>
-            </div>
+            <input
+              v-model.number="voteQty"
+              type="number"
+              min="1"
+              inputmode="numeric"
+              placeholder="Enter number of votes"
+              @input="voteQty = Math.max(1, Math.floor(voteQty) || 1)"
+              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-center font-playfair font-black text-3xl text-navy focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all"
+            />
             <p class="text-center text-sm text-gold font-black mt-3">Total Amount: ₦{{ (voteQty * 200).toLocaleString() }}</p>
           </div>
 
