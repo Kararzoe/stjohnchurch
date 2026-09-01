@@ -287,38 +287,58 @@
             </div>
           </div>
 
-          <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-            <div class="flex items-center justify-between mb-5">
-              <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl bg-gold/20 flex items-center justify-center text-xl">🏦</div>
-                <div>
-                  <p class="text-white text-xs font-semibold uppercase tracking-widest opacity-60">Powered by</p>
-                  <p class="text-gold font-black text-xl leading-tight">TagPay</p>
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+            <!-- Animated background -->
+            <div class="absolute inset-0" style="background: linear-gradient(135deg, #0f1c3a 0%, #1a2744 40%, #0f1c3a 100%)" />
+            <div class="absolute inset-0 opacity-30" style="background: radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.4) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(45,74,138,0.6) 0%, transparent 50%)" />
+            <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, rgba(212,175,55,0.15) 0px, rgba(212,175,55,0.15) 1px, transparent 1px, transparent 20px)" />
+
+            <div class="relative p-6">
+              <!-- Header -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #d4af37, #f5e27a)">
+                    <span class="text-navy font-black text-lg">💳</span>
+                  </div>
+                  <div>
+                    <p class="text-gray-400 text-[10px] uppercase tracking-[0.2em]">Powered by</p>
+                    <p class="text-white font-black text-2xl leading-none" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TagPay</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-400/50" style="background: rgba(239,68,68,0.15)">
+                  <span class="w-2 h-2 rounded-full bg-red-400 animate-ping inline-block" />
+                  <span class="text-red-300 text-xs font-black">Expires in 15 mins</span>
                 </div>
               </div>
-              <span class="text-xs bg-red-500/80 text-white px-3 py-1 rounded-full font-black tracking-wide animate-pulse">⏱ Expires in 15 mins</span>
-            </div>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 border border-white/10">
-              <p class="text-gray-300 text-xs mb-2 uppercase tracking-widest font-semibold">Virtual Account Number</p>
-              <p class="text-white font-playfair font-black text-4xl tracking-widest select-all leading-tight">{{ tagpayAccount.accountNumber }}</p>
-              <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
-                <div>
-                  <p class="text-gray-400 text-[10px] uppercase tracking-widest">Account Name</p>
-                  <p class="text-gold-light text-sm font-black mt-0.5">{{ tagpayAccount.accountName }}</p>
+              <!-- Account Number -->
+              <div class="rounded-xl p-5 mb-4 border border-white/10" style="background: rgba(255,255,255,0.06)">
+                <p class="text-gray-400 text-[10px] uppercase tracking-[0.25em] mb-2">Virtual Account Number</p>
+                <p class="text-white font-playfair font-black text-4xl tracking-widest select-all leading-tight">{{ tagpayAccount.accountNumber }}</p>
+              </div>
+
+              <!-- Account Name + Bank row -->
+              <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="rounded-xl p-3 border border-white/10" style="background: rgba(255,255,255,0.06)">
+                  <p class="text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-1">Account Name</p>
+                  <p class="text-white text-sm font-black leading-snug">{{ tagpayAccount.accountName }}</p>
                 </div>
-                <div class="text-right">
-                  <p class="text-gray-400 text-[10px] uppercase tracking-widest">Bank</p>
-                  <p class="text-white text-sm font-black mt-0.5">{{ tagpayAccount.bankName || 'Bank Transfer' }}</p>
+                <div class="rounded-xl p-3 border border-gold/20" style="background: rgba(212,175,55,0.08)">
+                  <p class="text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-1">Bank</p>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                    <p class="font-black text-sm" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ tagpayAccount.bankName || 'TagPay' }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="bg-gold/10 border border-gold/30 rounded-xl p-4 space-y-2">
-              <p class="text-gold text-xs font-black uppercase tracking-widest mb-1">How to pay</p>
-              <p class="text-gray-200 text-sm">1. Transfer exactly <strong class="text-gold text-base">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
-              <p class="text-gray-200 text-sm">2. Use any bank app or USSD to complete the transfer.</p>
-              <p class="text-gray-200 text-sm">3. Your vote confirms automatically once payment is received.</p>
+              <!-- Instructions -->
+              <div class="rounded-xl p-4 border border-gold/20 space-y-2" style="background: rgba(212,175,55,0.07)">
+                <p class="text-gold text-xs font-black uppercase tracking-widest mb-2">How to pay</p>
+                <p class="text-gray-200 text-sm">1. Transfer exactly <strong class="text-gold text-base">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
+                <p class="text-gray-200 text-sm">2. Use any bank app or USSD to complete the transfer.</p>
+                <p class="text-gray-200 text-sm">3. Your vote confirms automatically once payment is received.</p>
+              </div>
             </div>
           </div>
 
