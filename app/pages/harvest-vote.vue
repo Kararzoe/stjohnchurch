@@ -284,19 +284,37 @@
           </div>
 
           <div class="rounded-2xl border-2 border-gold/30 p-6 shadow-md" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-            <div class="flex items-center justify-between mb-4">
-              <p class="text-gold text-lg font-black tracking-wide">TagPay · {{ tagpayAccount.bankName || 'Virtual Account' }}</p>
-              <span class="text-xs bg-gold/20 text-gold-light px-2.5 py-1 rounded-full font-bold">Expires in 15 mins</span>
+            <div class="flex items-center justify-between mb-5">
+              <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-gold/20 flex items-center justify-center text-xl">🏦</div>
+                <div>
+                  <p class="text-white text-xs font-semibold uppercase tracking-widest opacity-60">Powered by</p>
+                  <p class="text-gold font-black text-xl leading-tight">TagPay</p>
+                </div>
+              </div>
+              <span class="text-xs bg-red-500/80 text-white px-3 py-1 rounded-full font-black tracking-wide animate-pulse">⏱ Expires in 15 mins</span>
             </div>
+
             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-4 border border-white/10">
-              <p class="text-gray-300 text-xs mb-2">Account Number</p>
+              <p class="text-gray-300 text-xs mb-2 uppercase tracking-widest font-semibold">Virtual Account Number</p>
               <p class="text-white font-playfair font-black text-4xl tracking-widest select-all leading-tight">{{ tagpayAccount.accountNumber }}</p>
-              <p class="text-gold-light text-sm font-semibold mt-2">{{ tagpayAccount.accountName }}</p>
+              <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                <div>
+                  <p class="text-gray-400 text-[10px] uppercase tracking-widest">Account Name</p>
+                  <p class="text-gold-light text-sm font-black mt-0.5">{{ tagpayAccount.accountName }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-gray-400 text-[10px] uppercase tracking-widest">Bank</p>
+                  <p class="text-white text-sm font-black mt-0.5">{{ tagpayAccount.bankName || 'Bank Transfer' }}</p>
+                </div>
+              </div>
             </div>
-            <div class="space-y-1.5 text-xs text-gray-300">
-              <p>1. Transfer exactly <strong class="text-gold text-sm">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
-              <p>2. Use any bank app or USSD to complete the transfer.</p>
-              <p>3. Your vote will be confirmed automatically once payment is received.</p>
+
+            <div class="bg-gold/10 border border-gold/30 rounded-xl p-4 space-y-2">
+              <p class="text-gold text-xs font-black uppercase tracking-widest mb-1">How to pay</p>
+              <p class="text-gray-200 text-sm">1. Transfer exactly <strong class="text-gold text-base">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
+              <p class="text-gray-200 text-sm">2. Use any bank app or USSD to complete the transfer.</p>
+              <p class="text-gray-200 text-sm">3. Your vote confirms automatically once payment is received.</p>
             </div>
           </div>
 
