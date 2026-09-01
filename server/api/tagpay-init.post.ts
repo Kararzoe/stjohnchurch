@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   const account = res?.data ?? res
   const accountNumber = account?.accountNumber
   const accountName = account?.accountName || 'TagPay Virtual Account'
-  const bankName = account?.bankName || 'Bank Transfer'
+  const bankName = 'TagPay'
   const accountId = account?.id
   const expiresAt = account?.expiresAt
 
