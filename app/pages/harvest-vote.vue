@@ -176,82 +176,96 @@
 
     <!-- ── STEP: DETAILS & PAYMENT METHOD ── -->
     <div v-if="harvestActive && step === 'details'" class="py-12 px-4">
-      <div class="max-w-lg mx-auto space-y-5">
-        <div class="text-center mb-2">
-          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Step 2 of 2</p>
+      <div class="max-w-lg mx-auto space-y-4">
+
+        <!-- Header -->
+        <div class="text-center mb-4">
+          <p class="text-gold text-xs uppercase tracking-widest font-bold mb-1">Almost there</p>
           <h2 class="font-playfair text-3xl font-black text-navy">Your Details & Payment</h2>
           <div class="flex items-center justify-center gap-3 mt-3">
             <div class="h-px w-12 bg-gold/40" /><span class="text-gold">✦</span><div class="h-px w-12 bg-gold/40" />
           </div>
         </div>
 
-        <!-- Selected Contestant Preview Card -->
-        <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-gray-100 bg-navy/5">
+        <!-- Selected Contestant Cards -->
+        <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id"
+          class="relative overflow-hidden rounded-2xl shadow-md"
+          style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+          <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #d4af37 1px, transparent 1px); background-size: 20px 20px;" />
+          <div class="relative flex items-center gap-4 p-4">
+            <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 border-gold/40 shadow-lg">
               <img v-if="getVotedContestant(cat)?.photo" :src="getVotedContestant(cat).photo" class="w-full h-full object-cover object-top" />
-              <div v-else class="w-full h-full flex items-center justify-center text-gold text-lg">✝</div>
+              <div v-else class="w-full h-full flex items-center justify-center text-gold text-xl">✝</div>
             </div>
-            <div class="min-w-0">
-              <p class="text-[11px] text-gold uppercase tracking-wider font-bold truncate">{{ cat.label }}</p>
-              <p class="font-playfair font-black text-navy text-base leading-tight truncate">{{ getVotedContestant(cat)?.name }}</p>
+            <div class="flex-1 min-w-0">
+              <p class="text-gold text-[10px] uppercase tracking-[0.25em] font-bold">{{ cat.label }}</p>
+              <p class="font-playfair font-black text-white text-lg leading-tight truncate mt-0.5">{{ getVotedContestant(cat)?.name }}</p>
               <p class="text-gray-400 text-xs mt-0.5">Contestant {{ getVotedContestant(cat)?.number }}</p>
             </div>
+            <button @click="goTo('vote')" class="shrink-0 text-xs text-gold border border-gold/40 hover:bg-gold/10 font-bold px-3 py-1.5 rounded-lg transition-all">Change</button>
           </div>
-          <button @click="goTo('vote')" class="text-xs text-navy/70 hover:text-gold font-bold px-3 py-1.5 rounded-lg border border-gray-200 shrink-0">
-            Change
-          </button>
         </div>
 
-        <!-- Voter Form -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
-            <input v-model="payForm.name" type="text" placeholder="Your full name"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Phone Number *</label>
-            <input v-model="payForm.phone" type="tel" placeholder="08012345678" inputmode="numeric" pattern="[0-9]*"
-              @input="payForm.phone = payForm.phone.replace(/[^0-9]/g, '')"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Number of Votes (₦200 each)</label>
-            <input
-              v-model.number="voteQty"
-              type="number"
-              min="1"
-              inputmode="numeric"
-              placeholder="Enter number of votes"
-              @input="voteQty = Math.max(1, Math.floor(voteQty) || 1)"
-              class="w-full border border-gray-200 rounded-xl px-4 py-3 text-center font-playfair font-black text-3xl text-navy focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all"
-            />
-            <p class="text-center text-sm text-gold font-black mt-3">Total Amount: ₦{{ (voteQty * 200).toLocaleString() }}</p>
-          </div>
+        <!-- Form Card -->
+        <div class="relative overflow-hidden rounded-2xl shadow-lg border border-gray-100 bg-white">
+          <!-- Top accent bar -->
+          <div class="h-1 w-full" style="background: linear-gradient(90deg, #b8860b, #d4af37, #f5e27a, #d4af37, #b8860b)" />
 
-          <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
+          <div class="p-6 space-y-5">
+            <!-- Name -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
+              <input v-model="payForm.name" type="text" placeholder="Enter your full name"
+                class="w-full border-2 border-gray-100 rounded-xl px-4 py-3.5 text-sm text-navy font-semibold focus:outline-none focus:border-gold transition-all placeholder:text-gray-300" />
+            </div>
 
-          <div class="pt-2 space-y-3">
-            <!-- TagPay online payment -->
-            <button @click="payWithTagpay" :disabled="initiating"
-              class="w-full p-4 rounded-2xl text-white font-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-between cursor-pointer disabled:opacity-60"
-              style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-              <div class="flex items-center gap-3 text-left">
-                <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-2xl shrink-0">🏦</div>
-                <div>
-                  <p class="text-sm font-black leading-tight">Pay Online with TagPay</p>
-                  <p class="text-[11px] text-gray-300 font-semibold">Bank Transfer · Card · USSD</p>
-                </div>
+            <!-- Phone -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+              <input v-model="payForm.phone" type="tel" placeholder="08012345678" inputmode="numeric" pattern="[0-9]*"
+                @input="payForm.phone = payForm.phone.replace(/[^0-9]/g, '')"
+                class="w-full border-2 border-gray-100 rounded-xl px-4 py-3.5 text-sm text-navy font-semibold focus:outline-none focus:border-gold transition-all placeholder:text-gray-300" />
+            </div>
+
+            <!-- Votes input -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Number of Votes <span class="text-gold">· ₦200 each</span></label>
+              <input
+                v-model.number="voteQty"
+                type="number"
+                min="1"
+                inputmode="numeric"
+                placeholder="e.g. 5"
+                class="w-full border-2 border-gray-100 rounded-xl px-4 py-3.5 text-navy font-playfair font-black text-2xl focus:outline-none focus:border-gold transition-all placeholder:text-gray-200 placeholder:font-sans placeholder:text-base"
+              />
+              <!-- Total amount display -->
+              <div v-if="voteQty && voteQty > 0" class="mt-3 rounded-xl px-4 py-3 flex items-center justify-between" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+                <span class="text-gray-300 text-sm font-semibold">{{ voteQty }} vote{{ voteQty > 1 ? 's' : '' }} × ₦200</span>
+                <span class="font-playfair font-black text-xl" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">₦{{ (voteQty * 200).toLocaleString() }}</span>
               </div>
-              <span class="text-sm font-black shrink-0 ml-2">{{ initiating ? 'Loading...' : '₦' + (voteQty * 200).toLocaleString() + ' →' }}</span>
+              <p v-else class="text-gray-400 text-xs mt-2 text-center">Enter how many votes you want to cast</p>
+            </div>
+
+            <p v-if="payError" class="text-red-500 text-xs bg-red-50 rounded-xl p-3 border border-red-100">{{ payError }}</p>
+
+            <!-- Pay button -->
+            <button @click="payWithTagpay" :disabled="initiating || !voteQty || voteQty < 1"
+              class="w-full py-4 rounded-2xl text-white font-black text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+              <span v-if="initiating" class="flex items-center gap-2">
+                <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                Generating Account...
+              </span>
+              <span v-else class="flex items-center gap-2">
+                <span class="text-xl">💳</span>
+                <span>Pay with TagPay{{ voteQty && voteQty > 0 ? ' · ₦' + (voteQty * 200).toLocaleString() : '' }}</span>
+                <span>→</span>
+              </span>
             </button>
-
-
           </div>
-
-          <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white mt-2">← Back to Contestants</button>
         </div>
+
+        <button @click="goTo('vote')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back to Contestants</button>
       </div>
     </div>
 
@@ -405,7 +419,7 @@ let pollTimer: any
 const activeTab = ref(0)
 const submitError = ref('')
 const votes = reactive<Record<string, string>>({})
-const voteQty = ref(1)
+const voteQty = ref<number | null>(null)
 const payError = ref('')
 const payForm = reactive({ name: '', phone: '' })
 
@@ -532,6 +546,7 @@ const initiating = ref(false)
 async function payWithTagpay() {
   if (!payForm.name) { payError.value = 'Please enter your full name.'; return }
   if (!payForm.phone || payForm.phone.length < 10) { payError.value = 'Please enter a valid phone number.'; return }
+  if (!voteQty.value || voteQty.value < 1) { payError.value = 'Please enter the number of votes.'; return }
 
   initiating.value = true
   payError.value = ''
@@ -539,8 +554,8 @@ async function payWithTagpay() {
   const voteRows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
-    qty: voteQty.value,
-    amount: voteQty.value * 200,
+    qty: qty,
+    amount: qty * 200,
     category: cat.id,
     contestant_id: votes[cat.id],
     contestant_name: getVotedContestant(cat)?.name ?? '',
@@ -549,7 +564,7 @@ async function payWithTagpay() {
   try {
     const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string; accountId: string; expiresAt: string }>('/api/tagpay-init', {
       method: 'POST',
-      body: { name: payForm.name, phone: payForm.phone, amount: voteQty.value * 200, voteRows },
+      body: { name: payForm.name, phone: payForm.phone, amount: qty * 200, voteRows },
     })
     tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
     tagpayReference.value = res.reference
