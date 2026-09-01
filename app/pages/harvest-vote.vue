@@ -551,6 +551,8 @@ async function payWithTagpay() {
   initiating.value = true
   payError.value = ''
 
+  const qty = Math.floor(voteQty.value)
+
   const voteRows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
