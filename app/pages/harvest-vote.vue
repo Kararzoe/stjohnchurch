@@ -310,14 +310,9 @@
             <div class="relative p-6">
               <!-- Header -->
               <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #d4af37, #f5e27a)">
-                    <span class="text-navy font-black text-lg">💳</span>
-                  </div>
-                  <div>
-                    <p class="text-gray-400 text-[10px] uppercase tracking-[0.2em]">Powered by</p>
-                    <p class="text-white font-black text-2xl leading-none" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TagPay</p>
-                  </div>
+                <div>
+                  <p class="text-gray-400 text-[10px] uppercase tracking-[0.2em]">Transfer to Bank</p>
+                  <p class="font-black text-2xl leading-none" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TagPay</p>
                 </div>
                 <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-400/50" style="background: rgba(239,68,68,0.15)">
                   <span class="w-2 h-2 rounded-full bg-red-400 animate-ping inline-block" />
