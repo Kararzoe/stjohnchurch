@@ -1,6 +1,7 @@
 export default defineNuxtConfig({
   routeRules: {
     '/harvest-vote': { ssr: false },
+    '/vote-callback': { ssr: false },
     '/admin/**': { ssr: false },
   },
   compatibilityDate: '2024-11-01', // deploy: force-refresh
