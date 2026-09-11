@@ -1,4 +1,8 @@
 export default defineNuxtConfig({
+  routeRules: {
+    '/harvest-vote': { ssr: false },
+    '/admin/**': { ssr: false },
+  },
   compatibilityDate: '2024-11-01', // deploy: force-refresh
   devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt'],
