@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
-  const rows = voteRows.map((r: any) => ({ ...r, reference, bank: 'TagPay', status: 'pending' }))
+  const rows = voteRows.map((r: any) => ({ ...r, reference, bank: 'TagPay', status: 'pending', tagpay_account_id: accountId }))
   const { error } = await supabase.from('votes').insert(rows)
   if (error) throw createError({ statusCode: 500, message: error.message })
 
