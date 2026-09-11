@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     '/vote-callback': { ssr: false },
     '/admin/**': { ssr: false },
   },
-  compatibilityDate: '2024-11-01', // deploy: force-refresh
+  compatibilityDate: '2024-11-01', // cache-bust-3
   devtools: { enabled: false },
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt'],
   css: ['~/assets/css/main.css'],
