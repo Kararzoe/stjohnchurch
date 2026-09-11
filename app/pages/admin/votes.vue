@@ -8,7 +8,6 @@
       </div>
       <div class="flex items-center gap-3">
         <span class="text-xs text-gray-400 font-semibold">{{ grandTotal }} approved votes</span>
-        <button @click="syncTagpay" :disabled="syncing" class="px-4 py-2 rounded-xl text-white text-sm font-black transition-all disabled:opacity-50" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">{{ syncing ? 'Syncing...' : '⚡ Sync TagPay' }}</button>
         <button @click="load" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:border-navy hover:text-navy transition-all">↻ Refresh</button>
       </div>
     </div>
@@ -293,7 +292,6 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const supabase = useSupabase()
 const loading = ref(true)
-const syncing = ref(false)
 const tab = ref<'pending' | 'approved' | 'rejected' | 'leaderboard'>('pending')
 const selected = ref<string[]>([])
 watch(tab, () => { selected.value = [] })
@@ -315,24 +313,6 @@ onMounted(async () => {
 async function toggleHarvest() {
   harvestActive.value = !harvestActive.value
   await supabase.from('site_content').upsert({ key: 'harvest_active', value: String(harvestActive.value) }, { onConflict: 'key' })
-}
-
-async function syncTagpay() {
-  syncing.value = true
-  const tagpayPending = voteData.value.filter(v => v.status === 'pending' && v.bank === 'TagPay')
-  const refs = [...new Set(tagpayPending.map((v: any) => v.reference))]
-  let approvedCount = 0
-  for (const ref of refs) {
-    const row = tagpayPending.find((v: any) => v.reference === ref)
-    if (!row?.tagpay_account_id) continue
-    try {
-      const res = await $fetch<any>(`/api/tagpay-verify?account_id=${row.tagpay_account_id}&reference=${ref}`)
-      if (res.success) approvedCount++
-    } catch {}
-  }
-  syncing.value = false
-  if (approvedCount > 0) load()
-  else alert('No new TagPay payments found.')
 }
 
 async function load() {

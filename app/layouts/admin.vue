@@ -1,5 +1,4 @@
 <template>
-  <ClientOnly>
   <div class="min-h-screen bg-gray-50">
 
     <!-- Mobile overlay -->
@@ -75,7 +74,6 @@
       </main>
     </div>
   </div>
-  </ClientOnly>
 </template>
 
 <script setup lang="ts">

@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-const scrollY = import.meta.client ? useWindowScroll().y : ref(0)
+const { y: scrollY } = useWindowScroll()
 const scrolled = computed(() => scrollY.value > 50)
 const menuOpen = ref(false)
 
