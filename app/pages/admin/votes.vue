@@ -1,4 +1,5 @@
 <template>
+  <ClientOnly>
   <div>
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -284,6 +285,7 @@
     </div>
 
   </div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
