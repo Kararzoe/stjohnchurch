@@ -42,14 +42,13 @@ export default defineEventHandler(async (event) => {
 
   if (!voteReference) return { received: true }
 
-  const { data: pending } = await supabase
-    .from('votes')
-    .select('id')
-    .eq('reference', voteReference)
-    .eq('status', 'pending')
-    .limit(1)
+  const metadata = payload.data?.metadata || {}
+  const voteRows = metadata.voteRows
 
-  if (pending?.length) {
+  if (voteRows?.length) {
+    const rows = voteRows.map((r: any) => ({ ...r, reference: voteReference, bank: 'TagPay', status: 'approved' }))
+    await supabase.from('votes').insert(rows)
+  } else {
     await supabase.from('votes').update({ status: 'approved' }).eq('reference', voteReference).eq('status', 'pending')
   }
 
