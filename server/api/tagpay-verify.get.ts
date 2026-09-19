@@ -11,17 +11,22 @@ export default defineEventHandler(async (event) => {
     res = await $fetch<any>(`https://gwt.tagpay.ng/v1/collection-accounts/${account_id}`, {
       headers: { Authorization: `Bearer ${config.tagpaySecretKey}` },
     })
-  } catch (e: any) {
+  } catch {
     return { success: false, message: 'Could not verify payment.' }
   }
 
   const account = res?.data ?? res
-  const status = account?.status
 
-  if (status === 'expired') return { success: false, message: 'Account expired. Please try again.' }
+  if (account?.status === 'expired') return { success: false, message: 'Account expired. Please try again.' }
   if ((account?.transactionCount ?? 0) === 0) return { success: false, message: 'Payment not received yet.' }
 
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
+
+  // Check if webhook already approved
+  const { data: existing } = await supabase.from('votes').select('status').eq('reference', reference).limit(1)
+  if (existing?.[0]?.status === 'approved') return { success: true }
+
+  // Approve pending rows
   await supabase.from('votes').update({ status: 'approved' }).eq('reference', reference).eq('status', 'pending')
 
   return { success: true }

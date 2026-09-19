@@ -7,7 +7,9 @@ export default defineEventHandler(async (event) => {
 
   if (config.tagpayWebhookSecret) {
     const signature = getHeader(event, 'x-tagpay-signature') || ''
-    const expected = crypto.createHmac('sha512', config.tagpayWebhookSecret).update(rawBody).digest('hex')
+    // Strip whsec_ prefix if present before using as HMAC key
+    const secret = config.tagpayWebhookSecret.replace(/^whsec_/, '')
+    const expected = crypto.createHmac('sha512', secret).update(rawBody).digest('hex')
     const sigBuffer = Buffer.from(signature)
     const expBuffer = Buffer.from(expected)
     const valid = sigBuffer.length === expBuffer.length && crypto.timingSafeEqual(sigBuffer, expBuffer)
@@ -23,34 +25,22 @@ export default defineEventHandler(async (event) => {
   if (eventName !== 'charge.success') return { received: true }
   if (payload.data?.status !== 'success') return { received: true }
 
-  const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
-
   const reference = payload.data?.reference
+  if (!reference) return { received: true }
 
-  // For collection account inflows, reference is prefixed COLL_<accountId>_<ourReference>
-  // Extract our vote reference from it
+  // Extract our vote_ reference from COLL_<accountId>_<ourReference> format
   let voteReference = reference
-  if (reference?.startsWith('COLL_')) {
-    // Format: COLL_<uuid>_<our_reference>
-    const parts = reference.split('_')
-    // Our reference starts with 'vote_', find it
-    const voteIdx = parts.findIndex((p: string) => p === 'vote')
+  if (reference.startsWith('COLL_')) {
+    const voteIdx = reference.indexOf('vote_')
     if (voteIdx !== -1) {
-      voteReference = parts.slice(voteIdx).join('_')
+      voteReference = reference.slice(voteIdx)
+    } else {
+      return { received: true }
     }
   }
 
-  if (!voteReference) return { received: true }
-
-  const metadata = payload.data?.metadata || {}
-  const voteRows = metadata.voteRows
-
-  if (voteRows?.length) {
-    const rows = voteRows.map((r: any) => ({ ...r, reference: voteReference, bank: 'TagPay', status: 'approved' }))
-    await supabase.from('votes').insert(rows)
-  } else {
-    await supabase.from('votes').update({ status: 'approved' }).eq('reference', voteReference).eq('status', 'pending')
-  }
+  const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
+  await supabase.from('votes').update({ status: 'approved' }).eq('reference', voteReference).eq('status', 'pending')
 
   return { received: true }
 })

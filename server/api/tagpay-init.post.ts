@@ -1,3 +1,5 @@
+import { createClient } from '@supabase/supabase-js'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const body = await readBody(event)
@@ -8,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!config.tagpaySecretKey) {
-    throw createError({ statusCode: 500, message: `tagpaySecretKey is empty. Check NUXT_TAGPAY_SECRET_KEY in Vercel env vars.` })
+    throw createError({ statusCode: 500, message: 'tagpaySecretKey is empty. Check NUXT_TAGPAY_SECRET_KEY in Vercel env vars.' })
   }
 
   const reference = `vote_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
@@ -27,7 +29,7 @@ export default defineEventHandler(async (event) => {
         reference,
         expectedAmount: amount * 100,
         label: `Vote - ${name}`,
-        metadata: { name, phone, voteRows },
+        metadata: { name, phone },
       },
     })
   } catch (e: any) {
@@ -48,6 +50,12 @@ export default defineEventHandler(async (event) => {
   if (!accountNumber) {
     throw createError({ statusCode: 502, message: `No account number returned. Response: ${JSON.stringify(res)}` })
   }
+
+  // Save votes as pending in Supabase
+  const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
+  const rows = voteRows.map((r: any) => ({ ...r, reference, bank: 'TagPay', status: 'pending' }))
+  const { error } = await supabase.from('votes').insert(rows)
+  if (error) throw createError({ statusCode: 500, message: error.message })
 
   return { accountNumber, accountName, bankName, reference, accountId, expiresAt }
 })
