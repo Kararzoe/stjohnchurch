@@ -38,12 +38,6 @@
 
     <!-- Tabs -->
     <div class="flex gap-2 mb-6">
-      <button @click="tab = 'pending'"
-        :class="['px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2', tab === 'pending' ? 'text-white border-transparent shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-navy']"
-        :style="tab === 'pending' ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''">
-        Pending
-        <span v-if="pending.length" class="ml-2 bg-red-500 text-white text-xs font-black px-2 py-0.5 rounded-full">{{ pending.length }}</span>
-      </button>
       <button @click="tab = 'approved'"
         :class="['px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2', tab === 'approved' ? 'text-white border-transparent shadow-lg' : 'bg-white text-gray-500 border-gray-200 hover:border-navy']"
         :style="tab === 'approved' ? 'background: linear-gradient(135deg, #1a2744, #2d4a8a)' : ''">
@@ -78,73 +72,6 @@
     </div>
 
     <div v-if="loading" class="text-center py-20 text-gray-400">Loading...</div>
-
-    <!-- ── PENDING TAB ── -->
-    <div v-else-if="tab === 'pending'">
-      <!-- Bulk Approve by Date Range -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4 flex flex-wrap items-end gap-3">
-        <div>
-          <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1">From</label>
-          <input type="date" v-model="bulkFrom" class="border border-gray-200 rounded-xl px-3 py-2 text-sm text-navy focus:outline-none focus:border-navy" />
-        </div>
-        <div>
-          <label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1">To</label>
-          <input type="date" v-model="bulkTo" class="border border-gray-200 rounded-xl px-3 py-2 text-sm text-navy focus:outline-none focus:border-navy" />
-        </div>
-        <button @click="bulkApproveRange" :disabled="!bulkFrom || !bulkTo || bulkLoading"
-          class="px-5 py-2 rounded-xl bg-green-500 text-white text-sm font-black hover:bg-green-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          {{ bulkLoading ? 'Approving…' : `✓ Approve All in Range (${pendingInRange.length})` }}
-        </button>
-      </div>
-      <div v-if="pending.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
-        No pending submissions 🎉
-      </div>
-      <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-                <th class="px-4 py-3"><input type="checkbox" :checked="allSelected(pending)" @change="toggleAll(pending)" class="w-4 h-4 rounded accent-gold cursor-pointer" /></th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Category</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Contestant</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Qty</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Amount</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="row in pending" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                <td class="px-4 py-3"><input type="checkbox" :value="row.id" v-model="selected" class="w-4 h-4 rounded accent-gold cursor-pointer" /></td>
-                <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
-                <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
-                <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
-                <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                      <img v-if="getContestant(row.contestant_id)?.photo" :src="getContestant(row.contestant_id).photo" class="w-full h-full object-cover object-top" />
-                      <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
-                    </div>
-                    <span class="font-semibold text-navy whitespace-nowrap">{{ row.contestant_name }}</span>
-                  </div>
-                </td>
-                <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
-                <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
-                <td class="px-4 py-3">
-                  <div class="flex gap-2">
-                    <button @click="confirm({ title: 'Approve Vote', message: `Approve vote from ${row.voter_name} for ${row.contestant_name}?`, confirmLabel: 'Yes, Approve', danger: false, onConfirm: () => approveRow(row) })" class="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-black hover:bg-green-600 transition-all">✓ Approve</button>
-                    <button @click="confirm({ title: 'Reject Vote', message: `Reject vote from ${row.voter_name} for ${row.contestant_name}?`, confirmLabel: 'Yes, Reject', danger: true, onConfirm: () => rejectRow(row) })" class="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 text-xs font-black hover:bg-red-100 transition-all border border-red-200">✗ Reject</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
     <!-- ── APPROVED TAB ── -->
     <div v-else-if="tab === 'approved'">
@@ -284,7 +211,7 @@ definePageMeta({ layout: 'admin', middleware: 'admin' })
 
 const supabase = useSupabase()
 const loading = ref(true)
-const tab = ref<'pending' | 'approved' | 'rejected' | 'leaderboard'>('pending')
+const tab = ref<'pending' | 'approved' | 'rejected' | 'leaderboard'>('approved')
 const selected = ref<string[]>([])
 watch(tab, () => { selected.value = [] })
 const voteData = ref<any[]>([])
@@ -318,32 +245,7 @@ async function load() {
   loading.value = false
 }
 
-// Pending: group rows by reference so one approval covers all categories
 const pending = computed(() => voteData.value.filter(v => v.status === 'pending'))
-
-const bulkFrom = ref('2025-08-09')
-const bulkTo = ref('2025-08-20')
-const bulkLoading = ref(false)
-
-const pendingInRange = computed(() => {
-  if (!bulkFrom.value || !bulkTo.value) return []
-  const from = new Date(bulkFrom.value)
-  const to = new Date(bulkTo.value)
-  to.setHours(23, 59, 59, 999)
-  return pending.value.filter(v => {
-    const d = new Date(v.created_at)
-    return d >= from && d <= to
-  })
-})
-
-async function bulkApproveRange() {
-  if (!pendingInRange.value.length) return
-  bulkLoading.value = true
-  const ids = pendingInRange.value.map(v => v.id)
-  await supabase.from('votes').update({ status: 'approved' }).in('id', ids)
-  bulkLoading.value = false
-  load()
-}
 
 const modal = reactive({ show: false, title: '', message: '', confirmLabel: '', danger: false, onConfirm: () => {} })
 function confirm(opts: { title: string, message: string, confirmLabel: string, danger: boolean, onConfirm: () => void }) {
