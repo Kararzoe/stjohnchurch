@@ -344,7 +344,7 @@
               <!-- Instructions -->
               <div class="rounded-xl p-4 border border-gold/20 space-y-2" style="background: rgba(212,175,55,0.07)">
                 <p class="text-gold text-xs font-black uppercase tracking-widest mb-2">How to pay</p>
-                <p class="text-gray-200 text-sm">1. Transfer exactly <strong class="text-gold text-base">&#8358;{{ (voteQty * 200).toLocaleString() }}</strong> to the account above.</p>
+                <p class="text-gray-200 text-sm">1. Transfer exactly <strong class="text-gold text-base">&#8358;{{ (voteQty * 200 * categories.filter(c => votes[c.id]).length).toLocaleString() }}</strong> to the account above.</p>
                 <p class="text-gray-200 text-sm">2. Use any bank app or USSD to complete the transfer.</p>
                 <p class="text-gray-200 text-sm">3. Your vote confirms automatically once payment is received.</p>
               </div>

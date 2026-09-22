@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 502, message: `No account number returned. Response: ${JSON.stringify(res)}` })
   }
 
-  // Save votes as pending in Supabase
+  // Save votes as pending in Supabase — webhook will approve once payment confirmed
   const supabase = createClient(config.public.supabaseUrl, config.supabaseServiceRoleKey)
   const rows = voteRows.map((r: any) => ({ ...r, reference, bank: 'TagPay', status: 'pending' }))
   const { error } = await supabase.from('votes').insert(rows)
