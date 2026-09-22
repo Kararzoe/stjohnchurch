@@ -351,20 +351,15 @@
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center space-y-3">
+          <div class="bg-white rounded-2xl border border-gray-100 p-5 text-center space-y-3">
             <div class="flex items-center justify-center gap-2">
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:0ms" />
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:150ms" />
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
             </div>
-            <p class="text-sm font-black text-navy">Processing...</p>
+            <p class="text-sm font-black text-navy">Waiting for payment confirmation...</p>
+            <p class="text-xs text-gray-400">Your vote will be confirmed automatically once your transfer is received.</p>
           </div>
-
-          <button @click="manualConfirm"
-            class="w-full py-5 rounded-2xl text-navy font-black text-lg transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 cursor-pointer"
-            style="background: linear-gradient(90deg, #d4af37, #f5e27a)">
-            ✅ I've Paid — Confirm My Vote
-          </button>
 
           <button @click="goTo('details')" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all bg-white">← Back</button>
         </template>
@@ -380,9 +375,9 @@
         <h1 class="font-playfair text-5xl font-black text-navy mb-2">Vote Confirmed!</h1>
         <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-4">Awaiting Verification</p>
         <div class="catholic-divider mb-5"><span class="text-gold text-base">✦</span></div>
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-left">
-          <p class="text-amber-800 text-sm font-bold mb-1">⏳ Pending Admin Approval</p>
-          <p class="text-amber-700 text-xs leading-relaxed">Your vote has been submitted and is awaiting approval. Our admin team will verify your bank transfer and approve your vote. This usually takes a few hours.</p>
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-left">
+          <p class="text-green-800 text-sm font-bold mb-1">✅ Payment Confirmed</p>
+          <p class="text-green-700 text-xs leading-relaxed">Your transfer has been received and your vote has been recorded automatically.</p>
         </div>
         <div class="space-y-2 mb-8">
           <div v-for="cat in categories.filter(c => votes[c.id])" :key="cat.id" class="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm">
