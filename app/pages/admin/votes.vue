@@ -148,7 +148,7 @@
 
     <!-- ── APPROVED TAB ── -->
     <div v-else-if="tab === 'approved'">
-      <div v-if="approved.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
+      <div v-if="approvedGrouped.length === 0" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400 text-sm">
         No approved votes yet
       </div>
       <div v-else class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -156,35 +156,27 @@
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-gray-100 text-left" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-                <th class="px-4 py-3"><input type="checkbox" :checked="allSelected(approved)" @change="toggleAll(approved)" class="w-4 h-4 rounded accent-gold cursor-pointer" /></th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Date</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Name</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Phone</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Category</th>
-                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Contestant</th>
+                <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Votes For</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Qty</th>
                 <th class="px-4 py-3 text-gold text-xs font-bold uppercase tracking-widest">Amount</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="row in approved" :key="row.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                <td class="px-4 py-3"><input type="checkbox" :value="row.id" v-model="selected" class="w-4 h-4 rounded accent-gold cursor-pointer" /></td>
+              <tr v-for="row in approvedGrouped" :key="row.reference" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                 <td class="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">{{ formatDate(row.created_at) }}</td>
                 <td class="px-4 py-3 font-semibold text-navy whitespace-nowrap">{{ row.voter_name }}</td>
                 <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ formatPhone(row.voter_phone) }}</td>
-                <td class="px-4 py-3 text-xs text-gold font-bold uppercase tracking-widest whitespace-nowrap">{{ getCategoryLabel(row.category) }}</td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                      <img v-if="getContestant(row.contestant_id)?.photo" :src="getContestant(row.contestant_id).photo" class="w-full h-full object-cover object-top" />
-                      <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs">✝</div>
-                    </div>
-                    <span class="font-semibold text-navy whitespace-nowrap">{{ row.contestant_name }}</span>
+                <td class="px-4 py-3 text-xs text-navy">
+                  <div v-for="r in row.rows" :key="r.id" class="flex items-center gap-1.5 mb-0.5">
+                    <span class="text-gold font-bold">{{ getCategoryLabel(r.category) }}:</span>
+                    <span>{{ r.contestant_name }}</span>
                   </div>
                 </td>
                 <td class="px-4 py-3 text-center font-black text-navy">{{ row.qty }}</td>
-                <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ (row.amount).toLocaleString() }}</td>
-                <td class="px-4 py-3"></td>
+                <td class="px-4 py-3 font-bold text-gold whitespace-nowrap">₦{{ row.totalAmount.toLocaleString() }}</td>
               </tr>
             </tbody>
           </table>
@@ -407,6 +399,16 @@ async function deleteRow(row: any) {
 const approved = computed(() => voteData.value.filter(v => v.status === 'approved'))
 const rejected = computed(() => voteData.value.filter(v => v.status === 'rejected'))
 const grandTotal = computed(() => approved.value.reduce((s, v) => s + (v.qty || 1), 0))
+
+const approvedGrouped = computed(() => {
+  const map: Record<string, any> = {}
+  approved.value.forEach(v => {
+    if (!map[v.reference]) map[v.reference] = { reference: v.reference, voter_name: v.voter_name, voter_phone: v.voter_phone, created_at: v.created_at, qty: v.qty, totalAmount: 0, rows: [] }
+    map[v.reference].rows.push(v)
+    map[v.reference].totalAmount += v.amount || 0
+  })
+  return Object.values(map).sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+})
 
 function catTotal(catId: string) {
   return approved.value.filter(v => v.category === catId).reduce((s, v) => s + (v.qty || 1), 0)
