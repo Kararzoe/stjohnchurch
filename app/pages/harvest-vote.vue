@@ -229,7 +229,7 @@
 
             <!-- Votes input -->
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Number of Votes <span class="text-gold">· ₦200 each</span></label>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Number of Votes <span class="text-gold">· ₦200 each per category</span></label>
               <input
                 v-model.number="voteQty"
                 type="number"
@@ -240,8 +240,8 @@
               />
               <!-- Total amount display -->
               <div v-if="voteQty && voteQty > 0" class="mt-3 rounded-xl px-4 py-3 flex items-center justify-between" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-                <span class="text-gray-300 text-sm font-semibold">{{ voteQty }} vote{{ voteQty > 1 ? 's' : '' }} × ₦200</span>
-                <span class="font-playfair font-black text-xl" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">₦{{ (voteQty * 200).toLocaleString() }}</span>
+                <span class="text-gray-300 text-sm font-semibold">{{ voteQty }} votes × {{ Object.keys(votes).length || 1 }} categor{{ Object.keys(votes).length === 1 ? 'y' : 'ies' }} × ₦200</span>
+                <span class="font-playfair font-black text-xl" style="background: linear-gradient(90deg, #d4af37, #f5e27a); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">₦{{ (voteQty * 200 * (Object.keys(votes).length || 1)).toLocaleString() }}</span>
               </div>
               <p v-else class="text-gray-400 text-xs mt-2 text-center">Enter how many votes you want to cast</p>
             </div>
@@ -258,7 +258,7 @@
               </span>
               <span v-else class="flex items-center gap-2">
                 <span class="text-xl">💳</span>
-                <span>Pay with TagPay{{ voteQty && voteQty > 0 ? ' · ₦' + (voteQty * 200).toLocaleString() : '' }}</span>
+                <span>Pay with TagPay{{ voteQty && voteQty > 0 ? ' · ₦' + (voteQty * 200 * (Object.keys(votes).length || 1)).toLocaleString() : '' }}</span>
                 <span>→</span>
               </span>
             </button>
@@ -466,7 +466,7 @@ onMounted(async () => {
   const cVotes: Record<string, number> = {}
   const catVotes: Record<string, number> = {}
   votesData?.forEach((v: any) => {
-    if (v.status === 'approved') {
+    if (v.status === 'approved' || v.status === 'pending') {
       const q = v.qty || 1
       if (v.contestant_id) cVotes[v.contestant_id] = (cVotes[v.contestant_id] ?? 0) + q
       if (v.category) catVotes[v.category] = (catVotes[v.category] ?? 0) + q
@@ -547,8 +547,10 @@ async function payWithTagpay() {
   payError.value = ''
 
   const qty = Math.floor(voteQty.value)
+  const selectedCats = categories.value.filter(cat => votes[cat.id])
+  const totalAmount = qty * 200 * selectedCats.length
 
-  const voteRows = categories.value.filter(cat => votes[cat.id]).map(cat => ({
+  const voteRows = selectedCats.map(cat => ({
     voter_name: payForm.name,
     voter_phone: payForm.phone,
     qty: qty,
@@ -561,7 +563,7 @@ async function payWithTagpay() {
   try {
     const res = await $fetch<{ accountNumber: string; accountName: string; bankName: string; reference: string; accountId: string; expiresAt: string }>('/api/tagpay-init', {
       method: 'POST',
-      body: { name: payForm.name, phone: payForm.phone, amount: qty * 200, voteRows },
+      body: { name: payForm.name, phone: payForm.phone, amount: totalAmount, voteRows },
     })
     tagpayAccount.value = { accountNumber: res.accountNumber, accountName: res.accountName, bankName: res.bankName }
     tagpayReference.value = res.reference
