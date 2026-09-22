@@ -352,8 +352,9 @@
           </div>
 
           <div class="bg-white rounded-2xl border border-gray-100 p-4 text-center space-y-2">
-            <p class="text-xs text-gray-400 font-semibold">Waiting for your transfer...</p>
-            <div class="flex items-center justify-center gap-2">
+            <p class="text-xs text-gray-500 font-semibold">⏳ Waiting for your transfer...</p>
+            <p class="text-xs text-gray-400">Once your payment is received, your votes will appear on the leaderboard automatically. This usually takes less than a minute.</p>
+            <div class="flex items-center justify-center gap-2 mt-2">
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:0ms" />
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:150ms" />
               <div class="w-2 h-2 rounded-full bg-gold animate-bounce" style="animation-delay:300ms" />
@@ -466,7 +467,7 @@ onMounted(async () => {
   const cVotes: Record<string, number> = {}
   const catVotes: Record<string, number> = {}
   votesData?.forEach((v: any) => {
-    if (v.status === 'approved' || v.status === 'pending') {
+    if (v.status === 'approved') {
       const q = v.qty || 1
       if (v.contestant_id) cVotes[v.contestant_id] = (cVotes[v.contestant_id] ?? 0) + q
       if (v.category) catVotes[v.category] = (catVotes[v.category] ?? 0) + q
