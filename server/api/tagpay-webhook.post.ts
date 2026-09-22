@@ -7,8 +7,8 @@ export default defineEventHandler(async (event) => {
 
   if (config.tagpayWebhookSecret) {
     const signature = getHeader(event, 'x-tagpay-signature') || ''
-    // Strip whsec_ prefix if present before using as HMAC key
-    const secret = config.tagpayWebhookSecret.replace(/^whsec_/, '')
+    // Try with full secret first, TagPay uses full whsec_ string as HMAC key
+    const secret = config.tagpayWebhookSecret
     const expected = crypto.createHmac('sha512', secret).update(rawBody).digest('hex')
     const sigBuffer = Buffer.from(signature)
     const expBuffer = Buffer.from(expected)
