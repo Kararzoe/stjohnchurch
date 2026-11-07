@@ -87,7 +87,7 @@
                 <p class="text-gray-300 text-xs mt-0.5">{{ formatDate(contest.created_at) }}</p>
               </div>
             </div>
-            <button @click="viewResults(contest)"
+            <button @click="router.push(`/admin/contestants/manage?id=${contest.id}&readonly=true`)"
               class="shrink-0 px-4 py-2 rounded-xl border-2 border-gray-200 text-gray-500 text-xs font-bold hover:border-navy hover:text-navy transition-all flex items-center gap-1.5">
               <span>View Results</span>
               <span>→</span>
@@ -132,61 +132,6 @@
       </div>
     </div>
 
-    <!-- Results Modal (read-only) -->
-    <div v-if="viewingContest" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
-      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-
-        <!-- Modal Header -->
-        <div class="p-6 border-b border-gray-100 flex items-start justify-between shrink-0" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-[10px] bg-white/20 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Final Results</span>
-            </div>
-            <h2 class="font-playfair text-xl font-bold text-white">{{ viewingContest.title }}</h2>
-            <p class="text-gray-300 text-xs mt-0.5">{{ viewingContest.subtitle }}</p>
-          </div>
-          <button @click="viewingContest = null" class="text-white/60 hover:text-white text-2xl leading-none mt-1">&times;</button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="overflow-y-auto flex-1 p-6">
-          <div v-if="viewLoading" class="text-center py-10 text-gray-400">Loading results...</div>
-          <div v-else class="space-y-6">
-            <div v-for="cat in viewCategories" :key="cat.id">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="text-lg">{{ cat.icon }}</span>
-                <p class="font-playfair font-bold text-navy">{{ cat.label }}</p>
-                <span class="text-xs text-gray-400 font-semibold ml-auto">{{ cat.contestants.reduce((s,c) => s + (viewVotes[c.id]??0), 0).toLocaleString() }} total votes</span>
-              </div>
-              <div class="space-y-2">
-                <div v-for="(c, i) in cat.contestants" :key="c.id"
-                  :class="['flex items-center gap-3 rounded-xl px-4 py-3 border', i === 0 ? 'border-gold/40 bg-gold/5' : 'border-gray-100 bg-gray-50']">
-                  <span :class="['w-7 h-7 rounded-full text-xs font-black flex items-center justify-center shrink-0', i === 0 ? 'bg-gold text-white' : 'bg-navy/10 text-navy']">{{ i + 1 }}</span>
-                  <div class="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-gray-200">
-                    <img v-if="c.photo" :src="c.photo" class="w-full h-full object-cover object-top" />
-                    <div v-else class="w-full h-full bg-navy/10 flex items-center justify-center text-xs text-navy">✝</div>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-navy text-sm truncate">{{ c.name }}</p>
-                    <p v-if="c.tagline" class="text-gray-400 text-xs truncate">{{ c.tagline }}</p>
-                  </div>
-                  <div class="text-right shrink-0">
-                    <p class="font-black text-navy text-sm">{{ (viewVotes[c.id] ?? 0).toLocaleString() }}</p>
-                    <p class="text-gold text-[10px] font-bold uppercase">votes</p>
-                  </div>
-                </div>
-                <p v-if="cat.contestants.length === 0" class="text-gray-400 text-xs text-center py-3">No contestants</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-4 border-t border-gray-100 shrink-0">
-          <button @click="viewingContest = null" class="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:border-navy hover:text-navy transition-all">Close</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Archive Confirm Modal -->
     <div v-if="archivingContest" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
@@ -213,10 +158,6 @@ const showNewContest = ref(false)
 const saving = ref(false)
 const newError = ref('')
 const newForm = reactive({ title: '', subtitle: 'Cast your vote for your favourite contestants' })
-const viewingContest = ref<any>(null)
-const viewLoading = ref(false)
-const viewCategories = ref<any[]>([])
-const viewVotes = ref<Record<string, number>>({})
 const archivingContest = ref<any>(null)
 
 onMounted(load)
@@ -269,28 +210,6 @@ async function doArchive() {
 
 function goManage() {
   router.push('/admin/contestants/manage')
-}
-
-async function viewResults(contest: any) {
-  viewingContest.value = contest
-  viewLoading.value = true
-  viewCategories.value = []
-  viewVotes.value = {}
-  const [{ data: cats }, { data: cs }, { data: vs }] = await Promise.all([
-    supabase.from('contest_categories').select('*').order('sort_order'),
-    supabase.from('contestants').select('*').order('number'),
-    supabase.from('votes').select('contestant_id, qty, status').eq('status', 'approved'),
-  ])
-  const counts: Record<string, number> = {}
-  vs?.forEach((v: any) => { counts[v.contestant_id] = (counts[v.contestant_id] ?? 0) + (v.qty || 1) })
-  viewVotes.value = counts
-  viewCategories.value = (cats ?? []).map((cat: any) => ({
-    ...cat,
-    contestants: (cs ?? [])
-      .filter((c: any) => c.category === cat.id)
-      .sort((a: any, b: any) => (counts[b.id] ?? 0) - (counts[a.id] ?? 0)),
-  }))
-  viewLoading.value = false
 }
 
 function formatDate(d: string) {

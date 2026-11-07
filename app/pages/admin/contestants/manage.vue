@@ -8,16 +8,17 @@
         </NuxtLink>
         <div>
           <h1 class="font-playfair text-2xl font-bold text-navy">{{ contestTitle }}</h1>
-          <p class="text-gray-400 text-sm mt-1">Manage categories and contestants</p>
+          <p class="text-gray-400 text-sm mt-1">{{ readonly ? 'Final results — read only' : 'Manage categories and contestants' }}</p>
         </div>
+        <span v-if="readonly" class="text-[10px] bg-gray-100 text-gray-500 font-black px-2 py-1 rounded-full uppercase tracking-wider">Ended</span>
       </div>
-      <button @click="openContestantForm()" class="px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
+      <button v-if="!readonly" @click="openContestantForm()" class="px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
         + Add Contestant
       </button>
     </div>
 
     <!-- Contest Title -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+    <div v-if="!readonly" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
       <div class="flex items-center justify-between mb-3">
         <h2 class="font-playfair font-bold text-navy">Contest Title & Subtitle</h2>
         <button @click="saveTitle" :disabled="savingTitle" class="px-4 py-2 rounded-xl text-white text-xs font-bold disabled:opacity-60" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
@@ -38,7 +39,7 @@
     </div>
 
     <!-- Categories -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+    <div v-if="!readonly" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-playfair font-bold text-navy">Categories</h2>
         <button @click="openCatForm()" class="px-4 py-2 rounded-xl text-white text-xs font-bold" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">+ Add Category</button>
@@ -93,7 +94,7 @@
               <td class="px-5 py-3"><p class="font-semibold text-navy text-sm">{{ c.name }}</p></td>
               <td class="px-5 py-3 hidden md:table-cell"><p class="text-gray-400 text-xs">{{ c.tagline }}</p></td>
               <td class="px-5 py-3 text-right"><span class="font-black text-navy text-sm">{{ voteCounts[c.id] ?? 0 }}</span></td>
-              <td class="px-5 py-3">
+              <td v-if="!readonly" class="px-5 py-3">
                 <div class="flex items-center gap-3 justify-end">
                   <button @click="openContestantForm(c)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
                   <button @click="deleteContestant(c.id)" class="text-xs text-red-400 hover:text-red-600 font-bold transition-colors">Delete</button>
@@ -188,6 +189,10 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 
+const route = useRoute()
+const readonly = computed(() => route.query.readonly === 'true')
+const contestId = computed(() => route.query.id as string | undefined)
+
 const supabase = useSupabase()
 const loading = ref(true)
 const contestants = ref<any[]>([])
@@ -219,7 +224,9 @@ async function load() {
     supabase.from('contestants').select('*').order('number'),
     supabase.from('votes').select('contestant_id, category, qty, status'),
     supabase.from('contest_categories').select('*').order('sort_order'),
-    supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
+    contestId.value
+      ? supabase.from('contests').select('title,subtitle').eq('id', contestId.value).single()
+      : supabase.from('site_content').select('key,value').in('key', ['contest_title', 'contest_subtitle']),
   ])
   contestants.value = cs ?? []
   categories.value = cats ?? []
@@ -235,8 +242,11 @@ async function load() {
   })
   voteCounts.value = counts
   categoryTotals.value = catCounts
-  if (titleData) {
-    titleData.forEach((r: any) => {
+  if (contestId.value) {
+    const d = titleData as any
+    if (d) { contestTitle.value = d.title ?? ''; contestSubtitle.value = d.subtitle ?? '' }
+  } else if (titleData) {
+    ;(titleData as any[]).forEach((r: any) => {
       if (r.key === 'contest_title') contestTitle.value = r.value
       if (r.key === 'contest_subtitle') contestSubtitle.value = r.value
     })
