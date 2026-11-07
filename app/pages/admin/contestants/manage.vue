@@ -2,9 +2,14 @@
   <div>
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="font-playfair text-2xl font-bold text-navy">{{ contestTitle || 'Contestants' }}</h1>
-        <p class="text-gray-400 text-sm mt-1">{{ contestSubtitle || 'Manage contest title, categories and contestants' }}</p>
+      <div class="flex items-center gap-3">
+        <NuxtLink to="/admin/contestants" class="text-gray-400 hover:text-navy transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        </NuxtLink>
+        <div>
+          <h1 class="font-playfair text-2xl font-bold text-navy">{{ contestTitle }}</h1>
+          <p class="text-gray-400 text-sm mt-1">Manage categories and contestants</p>
+        </div>
       </div>
       <button @click="openContestantForm()" class="px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all" style="background: linear-gradient(135deg, #1a2744, #2d4a8a)">
         + Add Contestant
@@ -22,7 +27,7 @@
       <div class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Title</label>
-          <input v-model="contestTitle" type="text" placeholder="e.g. Harvest/Bazaar Thanksgiving 2026" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold" />
+          <input v-model="contestTitle" type="text" placeholder="e.g. Harvest/Bazaar Thanksgiving 2027" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold" />
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Subtitle</label>
@@ -51,14 +56,9 @@
 
     <!-- Category tabs -->
     <div class="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
-      <button
-        v-for="cat in categories" :key="cat.id"
-        @click="activeTab = cat.id"
-        :class="[
-          'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 shrink-0 flex items-center gap-2',
-          activeTab === cat.id ? 'bg-navy text-white border-navy' : 'bg-white text-gray-500 border-gray-200 hover:border-navy hover:text-navy'
-        ]"
-      >
+      <button v-for="cat in categories" :key="cat.id" @click="activeTab = cat.id"
+        :class="['px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all border-2 shrink-0 flex items-center gap-2',
+          activeTab === cat.id ? 'bg-navy text-white border-navy' : 'bg-white text-gray-500 border-gray-200 hover:border-navy hover:text-navy']">
         <span>{{ cat.icon }} {{ cat.label }}</span>
         <span class="text-xs font-black opacity-80">({{ contestantsByCategory(cat.id).length }} · {{ (categoryTotals[cat.id] ?? 0).toLocaleString() }} votes)</span>
       </button>
@@ -83,9 +83,7 @@
           </thead>
           <tbody>
             <tr v-for="c in contestantsByCategory(activeTab)" :key="c.id" class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-              <td class="px-5 py-3">
-                <span class="w-7 h-7 rounded-full bg-navy/10 text-navy text-xs font-black flex items-center justify-center">{{ c.number }}</span>
-              </td>
+              <td class="px-5 py-3"><span class="w-7 h-7 rounded-full bg-navy/10 text-navy text-xs font-black flex items-center justify-center">{{ c.number }}</span></td>
               <td class="px-5 py-3">
                 <div class="w-10 h-10 rounded-xl overflow-hidden border border-gray-100">
                   <img v-if="c.photo" :src="c.photo" :alt="c.name" class="w-full h-full object-cover object-top" />
@@ -94,9 +92,7 @@
               </td>
               <td class="px-5 py-3"><p class="font-semibold text-navy text-sm">{{ c.name }}</p></td>
               <td class="px-5 py-3 hidden md:table-cell"><p class="text-gray-400 text-xs">{{ c.tagline }}</p></td>
-              <td class="px-5 py-3 text-right">
-                <span class="font-black text-navy text-sm">{{ voteCounts[c.id] ?? 0 }}</span>
-              </td>
+              <td class="px-5 py-3 text-right"><span class="font-black text-navy text-sm">{{ voteCounts[c.id] ?? 0 }}</span></td>
               <td class="px-5 py-3">
                 <div class="flex items-center gap-3 justify-end">
                   <button @click="openContestantForm(c)" class="text-xs text-gold hover:text-navy font-bold transition-colors">Edit</button>
@@ -199,21 +195,15 @@ const categories = ref<any[]>([])
 const voteCounts = ref<Record<string, number>>({})
 const categoryTotals = ref<Record<string, number>>({})
 const activeTab = ref('')
-
-// Title
-const contestTitle = ref('Harvest/Bazaar Thanksgiving 2026')
-const contestSubtitle = ref('Cast your vote for your favourite contestants')
+const contestTitle = ref('')
+const contestSubtitle = ref('')
 const savingTitle = ref(false)
 const titleSaved = ref(false)
-
-// Category form
 const showCatForm = ref(false)
 const editingCat = ref<any>(null)
 const savingCat = ref(false)
 const catError = ref('')
 const catForm = reactive({ id: '', icon: '', label: '' })
-
-// Contestant form
 const showContestantForm = ref(false)
 const editingContestant = ref<any>(null)
 const savingContestant = ref(false)
@@ -234,10 +224,8 @@ async function load() {
   contestants.value = cs ?? []
   categories.value = cats ?? []
   if (categories.value.length > 0 && !activeTab.value) activeTab.value = categories.value[0].id
-
   const counts: Record<string, number> = {}
   const catCounts: Record<string, number> = {}
-
   vs?.forEach((v: any) => {
     if (v.status === 'approved') {
       const q = v.qty || 1
@@ -245,10 +233,8 @@ async function load() {
       if (v.category) catCounts[v.category] = (catCounts[v.category] ?? 0) + q
     }
   })
-
   voteCounts.value = counts
   categoryTotals.value = catCounts
-
   if (titleData) {
     titleData.forEach((r: any) => {
       if (r.key === 'contest_title') contestTitle.value = r.value
@@ -273,7 +259,6 @@ async function saveTitle() {
   setTimeout(() => { titleSaved.value = false }, 3000)
 }
 
-// Category CRUD
 function openCatForm(cat?: any) {
   editingCat.value = cat ?? null
   catError.value = ''
@@ -286,10 +271,9 @@ async function saveCat() {
   if (!catForm.label) { catError.value = 'Label is required.'; return }
   if (!editingCat.value && !catForm.id) { catError.value = 'ID is required.'; return }
   savingCat.value = true
-  const payload = { icon: catForm.icon, label: catForm.label, sort_order: categories.value.length + 1 }
   const { error } = editingCat.value
     ? await supabase.from('contest_categories').update({ icon: catForm.icon, label: catForm.label }).eq('id', editingCat.value.id)
-    : await supabase.from('contest_categories').insert({ ...payload, id: catForm.id })
+    : await supabase.from('contest_categories').insert({ id: catForm.id, icon: catForm.icon, label: catForm.label, sort_order: categories.value.length + 1 })
   savingCat.value = false
   if (error) { catError.value = error.message; return }
   showCatForm.value = false
@@ -303,15 +287,11 @@ async function deleteCat(id: string) {
   load()
 }
 
-// Contestant CRUD
 function openContestantForm(c?: any) {
   editingContestant.value = c ?? null
   cFormError.value = ''
-  if (c) {
-    Object.assign(cForm, { category: c.category, number: c.number, name: c.name, tagline: c.tagline ?? '', photo: c.photo ?? '' })
-  } else {
-    Object.assign(cForm, { category: activeTab.value, number: contestantsByCategory(activeTab.value).length + 1, name: '', tagline: '', photo: '' })
-  }
+  if (c) Object.assign(cForm, { category: c.category, number: c.number, name: c.name, tagline: c.tagline ?? '', photo: c.photo ?? '' })
+  else Object.assign(cForm, { category: activeTab.value, number: contestantsByCategory(activeTab.value).length + 1, name: '', tagline: '', photo: '' })
   showContestantForm.value = true
 }
 
